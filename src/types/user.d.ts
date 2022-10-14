@@ -8,7 +8,7 @@ export interface userType {
   phonenumber?: number
   sex?: boolean | number
   avatar?: string
-  password?: string
+  password?: string | number
   status?: boolean | number
   del_flag?: boolean | number
   login_ip?: string

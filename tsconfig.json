@@ -5,15 +5,20 @@
     "sourceMap": true,
     "outDir": "./dist", // 指定输出目录, 默认是dist文件夹
     "rootDir": "./src",
-    "strict": true,
+    "strict": false,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "experimentalDecorators":true
+    "experimentalDecorators": true
   },
   // 需要编译的的文件和目录
-  "include": ["src"],
-  "exclude": ["node_modules", "dist", "public"],
-
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "public"
+  ],
 }

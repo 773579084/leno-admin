@@ -2,11 +2,14 @@ lockfileVersion: 5.4
 
 specifiers:
   '@koa/cors': ^4.0.0
+  '@types/bcryptjs': ^2.4.2
   '@types/koa': ^2.13.5
   '@types/koa-bodyparser': ^4.3.8
   '@types/koa-cors': ^0.0.2
   '@types/koa-router': ^7.4.4
+  '@types/koa__cors': ^3.3.0
   '@typescript-eslint/eslint-plugin': ^5.0.0
+  bcryptjs: ^2.4.3
   dotenv: ^16.0.3
   eslint: ^8.0.1
   eslint-config-prettier: ^8.5.0
@@ -29,6 +32,7 @@ specifiers:
 
 dependencies:
   '@koa/cors': registry.npmmirror.com/@koa/cors/4.0.0
+  bcryptjs: registry.npmmirror.com/bcryptjs/2.4.3
   dotenv: registry.npmmirror.com/dotenv/16.0.3
   koa: registry.npmmirror.com/koa/2.13.4
   koa-bodyparser: registry.npmmirror.com/koa-bodyparser/4.3.0
@@ -38,10 +42,12 @@ dependencies:
   sequelize: registry.npmmirror.com/sequelize/6.25.0_mysql2@2.3.3
 
 devDependencies:
+  '@types/bcryptjs': registry.npmmirror.com/@types/bcryptjs/2.4.2
   '@types/koa': registry.npmmirror.com/@types/koa/2.13.5
   '@types/koa-bodyparser': registry.npmmirror.com/@types/koa-bodyparser/4.3.8
   '@types/koa-cors': registry.npmmirror.com/@types/koa-cors/0.0.2
   '@types/koa-router': registry.npmmirror.com/@types/koa-router/7.4.4
+  '@types/koa__cors': registry.npmmirror.com/@types/koa__cors/3.3.0
   '@typescript-eslint/eslint-plugin': registry.npmmirror.com/@typescript-eslint/eslint-plugin/5.40.0_z4bbprzjrhnsfa24uvmcbu7f5q
   eslint: registry.npmmirror.com/eslint/8.25.0
   eslint-config-prettier: registry.npmmirror.com/eslint-config-prettier/8.5.0_eslint@8.25.0
@@ -202,6 +208,12 @@ packages:
       '@types/node': registry.npmmirror.com/@types/node/18.8.4
     dev: true
 
+  registry.npmmirror.com/@types/bcryptjs/2.4.2:
+    resolution: {integrity: sha512-LiMQ6EOPob/4yUL66SZzu6Yh77cbzJFYll+ZfaPiPPFswtIlA/Fs1MzdKYA7JApHU49zQTbJGX3PDmCpIdDBRQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@types/bcryptjs/-/bcryptjs-2.4.2.tgz}
+    name: '@types/bcryptjs'
+    version: 2.4.2
+    dev: true
+
   registry.npmmirror.com/@types/body-parser/1.19.2:
     resolution: {integrity: sha512-ALYone6pm6QmwZoAgeyNksccT9Q4AWZQ6PvfwR37GT6r6FWUPguq6sUmNGSMV2Wr761oQoBxwGGa6DR5o1DC9g==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@types/body-parser/-/body-parser-1.19.2.tgz}
     name: '@types/body-parser'
@@ -340,6 +352,14 @@ packages:
       '@types/keygrip': registry.npmmirror.com/@types/keygrip/1.0.2
       '@types/koa-compose': registry.npmmirror.com/@types/koa-compose/3.2.5
       '@types/node': registry.npmmirror.com/@types/node/18.8.4
+    dev: true
+
+  registry.npmmirror.com/@types/koa__cors/3.3.0:
+    resolution: {integrity: sha512-FUN8YxcBakIs+walVe3+HcNP+Bxd0SB8BJHBWkglZ5C1XQWljlKcEFDG/dPiCIqwVCUbc5X0nYDlH62uEhdHMA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@types/koa__cors/-/koa__cors-3.3.0.tgz}
+    name: '@types/koa__cors'
+    version: 3.3.0
+    dependencies:
+      '@types/koa': registry.npmmirror.com/@types/koa/2.13.5
     dev: true
 
   registry.npmmirror.com/@types/mime/3.0.1:
@@ -676,6 +696,12 @@ packages:
     name: balanced-match
     version: 1.0.2
     dev: true
+
+  registry.npmmirror.com/bcryptjs/2.4.3:
+    resolution: {integrity: sha512-V/Hy/X9Vt7f3BbPJEi8BdVFMByHi+jNXrYkW3huaybV/kQ0KJg0Y6PkEMbn+zeT+i+SiKZ/HMqJGIIt4LZDqNQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/bcryptjs/-/bcryptjs-2.4.3.tgz}
+    name: bcryptjs
+    version: 2.4.3
+    dev: false
 
   registry.npmmirror.com/binary-extensions/2.2.0:
     resolution: {integrity: sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/binary-extensions/-/binary-extensions-2.2.0.tgz}

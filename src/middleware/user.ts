@@ -2,11 +2,12 @@ import { Context } from 'koa'
 import { userType } from '../types'
 import { getUserInfo } from '../service/user'
 import errors from '../constants/err.type'
+import bcrypt from 'bcryptjs'
 
 const { userExisting, userFormatError } = errors
 
 // 判断用户名与密码是否为空
-const userValidator = async (ctx: Context, next: any) => {
+const userValidator = async (ctx: Context, next: () => Promise<void>) => {
   const { user_name, password } = ctx.request.body as userType
 
   // 判断传上来的值是否为空
@@ -20,7 +21,7 @@ const userValidator = async (ctx: Context, next: any) => {
 }
 
 // 判断用户名是否重复
-const verifyUser = async (ctx: Context, next: any) => {
+const verifyUser = async (ctx: Context, next: () => Promise<void>) => {
   const { user_name } = ctx.request.body as userType
 
   try {
@@ -37,4 +38,17 @@ const verifyUser = async (ctx: Context, next: any) => {
   await next()
 }
 
-export { userValidator, verifyUser }
+// 用户密码加密中间件
+const crptyPassword = async (ctx: Context, next: () => Promise<void>) => {
+  const { password } = ctx.request.body as userType
+
+  const salt = bcrypt.genSaltSync(10)
+
+  const hash = bcrypt.hashSync(password as string, salt)
+
+  ctx.request.body.password = hash
+
+  await next()
+}
+
+export { userValidator, verifyUser, crptyPassword }

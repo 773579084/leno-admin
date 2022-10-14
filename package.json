@@ -14,6 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "@koa/cors": "^4.0.0",
+    "bcryptjs": "^2.4.3",
     "dotenv": "^16.0.3",
     "koa": "^2.13.4",
     "koa-bodyparser": "^4.3.0",
@@ -23,10 +24,12 @@
     "sequelize": "^6.25.0"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
     "@types/koa": "^2.13.5",
     "@types/koa-bodyparser": "^4.3.8",
     "@types/koa-cors": "^0.0.2",
     "@types/koa-router": "^7.4.4",
+    "@types/koa__cors": "^3.3.0",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.5.0",
