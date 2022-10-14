@@ -1,0 +1,44 @@
+{
+  "name": "leno-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsnd --respawn src/main.ts",
+    "build": "npm-run-all resetFolder compile",
+    "compile": "tsc",
+    "resetFolder": "rimraf dist/*",
+    "lint": "npx eslint src/** --fix"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@koa/cors": "^4.0.0",
+    "dotenv": "^16.0.3",
+    "koa": "^2.13.4",
+    "koa-bodyparser": "^4.3.0",
+    "koa-cors": "^0.0.16",
+    "koa-router": "^12.0.0",
+    "mysql2": "^2.3.3",
+    "sequelize": "^6.25.0"
+  },
+  "devDependencies": {
+    "@types/koa": "^2.13.5",
+    "@types/koa-bodyparser": "^4.3.8",
+    "@types/koa-cors": "^0.0.2",
+    "@types/koa-router": "^7.4.4",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "eslint": "^8.0.1",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-standard-with-typescript": "^23.0.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-n": "^15.0.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-promise": "^6.0.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.7.1",
+    "rimraf": "^3.0.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "*"
+  }
+}

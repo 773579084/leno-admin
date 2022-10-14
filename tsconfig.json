@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "esnext", // 目标语言版本
+    "module": "commonjs", // 指定生成代码的模板标准
+    "sourceMap": true,
+    "outDir": "./dist", // 指定输出目录, 默认是dist文件夹
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "experimentalDecorators":true
+  },
+  // 需要编译的的文件和目录
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", "public"],
+
+}
