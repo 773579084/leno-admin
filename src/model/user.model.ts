@@ -1,6 +1,6 @@
 import { DataTypes } from 'sequelize'
 
-import seq from '../db/seq'
+import seq from '../db/seq.db'
 
 // 创建数据库模型
 const User = seq.define(

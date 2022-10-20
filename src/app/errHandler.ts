@@ -14,6 +14,7 @@ export default function errHandlerFn(err: any, ctx: Context) {
       status = 500
       break
   }
+
   ctx.status = status
   ctx.body = err
 }

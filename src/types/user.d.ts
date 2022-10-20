@@ -8,7 +8,7 @@ export interface userType {
   phonenumber?: number
   sex?: boolean | number
   avatar?: string
-  password?: string | number
+  password?: string
   status?: boolean | number
   del_flag?: boolean | number
   login_ip?: string
@@ -16,4 +16,17 @@ export interface userType {
   create_by?: string
   update_by?: string
   remark?: string
+  iat?: string
+  exp?: string
+}
+
+export interface pwdType {
+  oldPwd?: string
+  newPwd?: string
+}
+
+export interface imgType {
+  filepath?: string
+  mimetype?: string
+  size?: number
 }
