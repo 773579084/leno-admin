@@ -80,7 +80,7 @@ class UserService {
       }
     )
 
-    return res[0] > 0
+    return res
   }
 }
 

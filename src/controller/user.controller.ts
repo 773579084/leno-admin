@@ -131,13 +131,14 @@ class UserController {
     const { filepath } = avatar as imgType
     const basePath = path.basename(filepath) as string
     const { id } = ctx.state.user as userType
+
     if (avatar) {
       // 删除上一次的图片
       const { avatar } = await deletFrontAvatarSer({ id })
-
       if (avatar) {
-        removeSpecifyFile(avatar)
+        await removeSpecifyFile(avatar)
       }
+      console.log(141)
 
       // 把用户头像名称保存到数据库
       if (await updateAvatarSer({ id, basePath })) {

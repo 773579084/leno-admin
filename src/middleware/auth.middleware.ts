@@ -7,7 +7,6 @@ const { tokenExpiredError, invalidToken } = errors
 const auth = async (ctx: Context, next: () => Promise<void>) => {
   const { authorization = '' } = ctx.request.header
   const token = authorization.replace('Bearer ', '')
-  console.log(10, token)
 
   try {
     // user中包含了payload的信息(id, user_name)
