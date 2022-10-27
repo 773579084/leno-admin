@@ -30,14 +30,15 @@ export default {
     message: '密码不匹配',
     result: ''
   },
-  tokenExpiredError: {
+
+  invalidToken: {
     code: '10101',
-    message: 'token已过期',
+    message: '无效的token',
     result: ''
   },
-  invalidToken: {
+  invalidRefreshToken: {
     code: '10102',
-    message: '无效的token',
+    message: '无效的RefreshToken',
     result: ''
   },
   FormatWrongErr: {

@@ -6,7 +6,8 @@ import {
   updatePwd,
   updateUserInfo,
   updateAvatarCon,
-  getUserInfoCon
+  getUserInfoCon,
+  refreshTokenCon
 } from '../controller/user.controller'
 import {
   userInfoSchema,
@@ -18,6 +19,7 @@ import {
 } from '../middleware/user.middleware'
 import { contrastFileSizeSchema, judImgFormatSchema } from '../middleware/common.middleware'
 import auth from '../middleware/auth.middleware'
+import refreshAuth from '../middleware/refresh.middleware'
 
 const router = new Router({ prefix: '/user' })
 
@@ -44,5 +46,8 @@ router.post(
   judImgFormatSchema(),
   updateAvatarCon
 )
+
+// refresh token
+router.get('/refresh', refreshAuth, refreshTokenCon)
 
 module.exports = router

@@ -6,8 +6,11 @@ export default function errHandlerFn(err: any, ctx: Context) {
     case '10001':
       status = 400
       break
-    case '10002':
-      status = 409
+    case '10101':
+      status = 401
+      break
+    case '10102':
+      status = 403
       break
 
     default:

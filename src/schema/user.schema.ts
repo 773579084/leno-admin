@@ -14,6 +14,6 @@ export const resetPwdSchema = Joi.object({
 export const changeUserInfoSchema = Joi.object({
   email: Joi.string().email().required(),
   phonenumber: phone,
-  nick_name: Joi.string().min(1).max(6).required(),
+  nick_name: Joi.string().min(1).max(10).required(),
   sex: Joi.number()
 })

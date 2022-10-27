@@ -15,6 +15,7 @@ import bcrypt from 'bcryptjs'
 import errors from '../constants/err.type'
 import path from 'path'
 import { removeSpecifyFile } from '../utils'
+import dayjs from 'dayjs'
 
 const { enteredPasswordsDiffer, userDoesNotExist, reviseErr, updateAvatarErr, getUserInfoErr } =
   errors
@@ -51,7 +52,20 @@ class UserController {
         code: 200,
         message: '用户登录成功！',
         result: {
-          token: jwt.sign(res, env.JWT_SECRET, { expiresIn: '1d' })
+          token: jwt.sign(
+            {
+              ...res,
+              exp: dayjs().add(10, 's').valueOf()
+            },
+            env.JWT_SECRET
+          ),
+          refreshToken: jwt.sign(
+            {
+              ...res,
+              exp: dayjs().add(30, 's').valueOf()
+            },
+            env.JWT_REFRESH_SECRET
+          )
         }
       }
     } catch (error) {
@@ -109,6 +123,7 @@ class UserController {
     const { id } = ctx.state.user as userType
 
     const res = await getUserInfo({ id })
+
     if (res) {
       if (await updateUserInfoSer({ id, email, nick_name, phonenumber, sex })) {
         ctx.body = {
@@ -158,7 +173,33 @@ class UserController {
       return ctx.app.emit('error', updateAvatarErr, ctx)
     }
   }
+
+  // 重新返回新的 token 和 refreshToken
+  async refreshTokenCon(ctx: Context, next: () => Promise<void>) {
+    // user中包含了payload的信息(id, user_name)
+    const res = ctx.state.user
+    ctx.body = {
+      code: 200,
+      message: 'token状态刷新成功！',
+      result: {
+        token: jwt.sign(
+          {
+            ...res,
+            exp: dayjs().add(10, 's').valueOf()
+          },
+          env.JWT_SECRET
+        )
+      }
+    }
+  }
 }
 
-export const { login, register, updatePwd, updateUserInfo, updateAvatarCon, getUserInfoCon } =
-  new UserController()
+export const {
+  login,
+  register,
+  updatePwd,
+  updateUserInfo,
+  updateAvatarCon,
+  getUserInfoCon,
+  refreshTokenCon
+} = new UserController()
