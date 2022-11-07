@@ -55,14 +55,14 @@ class UserController {
           token: jwt.sign(
             {
               ...res,
-              exp: dayjs().add(10, 's').valueOf()
+              exp: dayjs().add(10, 'd').valueOf()
             },
             env.JWT_SECRET
           ),
           refreshToken: jwt.sign(
             {
               ...res,
-              exp: dayjs().add(30, 's').valueOf()
+              exp: dayjs().add(30, 'd').valueOf()
             },
             env.JWT_REFRESH_SECRET
           )
