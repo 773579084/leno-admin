@@ -148,12 +148,11 @@ class UserController {
     const { id } = ctx.state.user as userType
 
     if (avatar) {
-      // 删除上一次的图片
+      // 删除上一次存储的图片
       const { avatar } = await deletFrontAvatarSer({ id })
       if (avatar) {
         await removeSpecifyFile(avatar)
       }
-      console.log(141)
 
       // 把用户头像名称保存到数据库
       if (await updateAvatarSer({ id, basePath })) {
@@ -185,7 +184,7 @@ class UserController {
         token: jwt.sign(
           {
             ...res,
-            exp: dayjs().add(10, 's').valueOf()
+            exp: dayjs().add(10, 'd').valueOf()
           },
           env.JWT_SECRET
         )

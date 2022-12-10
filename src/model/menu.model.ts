@@ -55,7 +55,7 @@ const Menu = seq.define(
     menu_type: {
       type: DataTypes.CHAR(1),
       defaultValue: '',
-      comment: '菜单类型（M目录 C菜单 F按钮'
+      comment: '菜单类型（M目录 C菜单 F按钮)'
     },
     visible: {
       type: DataTypes.CHAR(1),
