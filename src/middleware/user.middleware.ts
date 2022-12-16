@@ -17,7 +17,6 @@ const {
 // 判断用户名与密码是否为空
 const userSchema = async (ctx: Context, next: () => Promise<void>) => {
   const { user_name, password } = ctx.request.body as userType
-  console.log(typeof user_name, typeof password)
 
   try {
     await loginSchema.validateAsync({ user_name, password })

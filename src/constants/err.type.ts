@@ -1,5 +1,6 @@
 // 此code为自己规定 1 = 项目 00 为大模块 01 为大模块里面的小功能点
 export default {
+  // 登录注册
   InvalidConnectionError: {
     code: '10001',
     message: '密码错误',
@@ -74,6 +75,12 @@ export default {
   getUserInfoErr: {
     code: '10108',
     message: '用户获取个人信息失败',
+    result: ''
+  },
+  // 用户管理
+  getRoutersErr: {
+    code: '10201',
+    message: '获取菜单路由失败',
     result: ''
   }
 }
