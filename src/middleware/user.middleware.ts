@@ -42,6 +42,7 @@ const verifyUser = async (ctx: Context, next: () => Promise<void>) => {
     console.error('获取用户信息错误', error)
     ctx.app.emit('error', userRegisterError, ctx)
   }
+
   await next()
 }
 

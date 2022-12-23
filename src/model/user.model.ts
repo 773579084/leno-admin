@@ -6,7 +6,14 @@ import seq from '../db/seq.db'
 const User = seq.define(
   'leno_user',
   {
-    // id squelize会自动创建
+    user_id: {
+      type: DataTypes.BIGINT,
+      allowNull: false, // 是否允许空
+      unique: true, // 是否为独一无二
+      autoIncrement: true,
+      primaryKey: true, // 是否设置为主键
+      comment: '用户id'
+    },
     dept_id: {
       type: DataTypes.BIGINT,
       comment: '部门ID'
@@ -85,7 +92,7 @@ const User = seq.define(
 )
 
 // 在数据库创建 数据表
-// force：true 如果存在相同名字的表，删除旧的表，新建新的表
+// force:true 如果存在相同名字的表，删除旧的表，新建新的表
 // User.sync({ force: true })
 
 export default User

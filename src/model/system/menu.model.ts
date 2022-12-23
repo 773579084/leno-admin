@@ -1,16 +1,15 @@
 import { DataTypes } from 'sequelize'
-
-import seq from '../db/seq.db'
+import seq from '../../db/seq.db'
 
 // 创建数据库模型
 const Menu = seq.define(
-  'leno_menu',
+  'sys_menu',
   {
-    // id squelize会自动创建
     menu_id: {
       type: DataTypes.BIGINT,
       allowNull: false, // 是否允许空
       unique: true, // 是否为独一无二的
+      autoIncrement: true, // id 自动增加
       primaryKey: true, // 是否设置为主键
       comment: '菜单ID'
     },
@@ -93,12 +92,12 @@ const Menu = seq.define(
     }
   },
   {
-    tableName: 'leno_menu' // 强制创建表名
+    tableName: 'sys_menu' // 强制创建表名
   }
 )
 
 // 在数据库创建 数据表
 // force: true 如果存在相同名字的表，删除旧的表，新建新的表
-// Menu.sync({ force: true })
+// Menu.sync()
 
 export default Menu

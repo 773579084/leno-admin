@@ -1,5 +1,5 @@
-import Menu from '../model/menu.model'
-import { menusType } from '../types'
+import Menu from '../../model/system/menu.model'
+import { menusType } from '../../types'
 import { Op } from 'sequelize'
 
 class MenuService {
@@ -11,7 +11,6 @@ class MenuService {
    */
   // 获取菜单
   async getRoutersSer(menu_id) {
-    // 先查询 parent_id = 0 的所有的一级菜单
     const firstRes = Menu.findAll({
       where: {
         parent_id: menu_id,

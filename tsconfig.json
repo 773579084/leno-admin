@@ -14,7 +14,7 @@
   },
   // 需要编译的的文件和目录
   "include": [
-    "src"
+    "src",
   ],
   "exclude": [
     "node_modules",

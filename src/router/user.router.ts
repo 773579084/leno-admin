@@ -20,7 +20,7 @@ import {
 import { contrastFileSizeSchema, judImgFormatSchema } from '../middleware/common.middleware'
 import auth from '../middleware/auth.middleware'
 import refreshAuth from '../middleware/refresh.middleware'
-
+import '../model/user.model'
 const router = new Router({ prefix: '/user' })
 
 // 登录
