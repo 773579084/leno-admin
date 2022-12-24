@@ -28,7 +28,6 @@ class UserController {
 
     // 2、操作数据库
     const res = await createdUser(user_name as string, password as string)
-    console.log(28, res)
     // 3、返回结果
     ctx.body = {
       code: 200,

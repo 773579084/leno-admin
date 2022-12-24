@@ -1,3 +1,5 @@
+import { deptType } from './system'
+
 export interface userType {
   user_id?: number
   dept_id?: number
@@ -18,6 +20,9 @@ export interface userType {
   remark?: string
   iat?: string
   exp?: string
+  createdAt?: string | null
+  updatedAt?: string | null
+  dept?: deptType
 }
 
 export interface pwdType {

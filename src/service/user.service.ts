@@ -4,11 +4,8 @@ import { userType } from '../types'
 class UserService {
   // 注册
   async createdUser(user_name: string, password: string) {
-    console.log(7, user_name, password)
-
     // 插入数据到数据库
     const res = (await User.create({ user_name, password })) as any
-    console.log(9, res.dataValues)
 
     return res.dataValues
   }
