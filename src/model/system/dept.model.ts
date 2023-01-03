@@ -13,11 +13,11 @@ const Dept = seq.define(
       primaryKey: true, // 是否设置为主键
       comment: '部门id'
     },
-    parent_id: {
-      type: DataTypes.BIGINT,
-      defaultValue: 0,
-      comment: '父部门id'
-    },
+    // parent_id: {
+    //   type: DataTypes.BIGINT,
+    //   defaultValue: 0,
+    //   comment: '父部门id'
+    // },
     ancestors: {
       type: DataTypes.CHAR(255),
       defaultValue: 0,
@@ -71,10 +71,10 @@ const Dept = seq.define(
   },
   {
     tableName: 'sys_dept', // 强制创建表名
+    freezeTableName: true, // 告诉sequelize不需要自动将表名变成复数
     timestamps: true
   }
 )
-
 // 在数据库创建 数据表
 // force: true 如果存在相同名字的表，删除旧的表，新建新的表
 // Dept.sync({ force: true })

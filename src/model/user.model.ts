@@ -1,6 +1,6 @@
 import { DataTypes } from 'sequelize'
-
 import seq from '../db/seq.db'
+import Dept from './system/dept.model'
 
 // 创建数据库模型
 const User = seq.define(
@@ -87,12 +87,16 @@ const User = seq.define(
     }
   },
   {
-    tableName: 'leno_user' // 强制创建表名
+    tableName: 'leno_user', // 强制创建表名
+    freezeTableName: true, // 告诉sequelize不需要自动将表名变成复数
+    timestamps: true // 需要自动创建createAt/updateAt这两个字段
   }
 )
-
 // 在数据库创建 数据表
 // force:true 如果存在相同名字的表，删除旧的表，新建新的表
-// User.sync({ force: true })
+// User.sync()
+// 一对一关联 (关联表的关联顺序为 hasOne =》belongsTo，并且需要写在一张表内)
+Dept.hasOne(User, { foreignKey: 'dept_id', sourceKey: 'dept_id' })
+User.belongsTo(Dept, { foreignKey: 'dept_id', targetKey: 'dept_id', as: 'dept' })
 
 export default User
