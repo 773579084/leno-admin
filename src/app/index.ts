@@ -25,13 +25,15 @@ app.use(
     parsedMethods: ['POST', 'PUT', 'PATCH', 'DELETE']
   })
 )
-// 请求体解析
 
 // 配置静态资源网址访问
 app.use(koaStatic(path.join(__dirname, '../upload')))
 
 // 路由
-app.use(router.routes()).use(router.allowedMethods()) // allowedMethods 对偏门的请求提示501
+app.use(router.routes()).use(router.allowedMethods())
+// allowedMethods 对偏门的请求提示501
+
+// 统一
 
 // 统一错误处理
 app.on('error', errHandlerFn)

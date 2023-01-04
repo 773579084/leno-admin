@@ -1,6 +1,5 @@
 import Dept from '../../model/system/dept.model'
 import User from '../../model/user.model'
-import { formatHumpLineTransfer } from '../../utils/index'
 
 class UserService {
   // 获取用户列表
@@ -16,10 +15,7 @@ class UserService {
       limit: Number(pageSize)
     })
 
-    const newRes = (await formatHumpLineTransfer((await res).rows)) as any
-    console.log(20, '----------')
-
-    return newRes || null
+    return (await res).rows || null
   }
 }
 
