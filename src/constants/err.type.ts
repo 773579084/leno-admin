@@ -78,6 +78,17 @@ export default {
     result: ''
   },
   // 用户管理
+  getUserListErr: {
+    code: '10201',
+    message: '获取用户列表失败',
+    result: ''
+  },
+  delUserErr: {
+    code: '10202',
+    message: '删除用户失败',
+    result: ''
+  },
+  // 菜单管理
   getRoutersErr: {
     code: '10201',
     message: '获取菜单路由失败',

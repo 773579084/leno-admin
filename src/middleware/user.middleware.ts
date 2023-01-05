@@ -16,10 +16,10 @@ const {
 
 // 判断用户名与密码是否为空
 const userSchema = async (ctx: Context, next: () => Promise<void>) => {
-  const { user_name, password } = ctx.request.body as userType
+  const { userName, password } = ctx.request.body as userType
 
   try {
-    await loginSchema.validateAsync({ user_name, password })
+    await loginSchema.validateAsync({ userName, password })
   } catch (error) {
     console.error('用户名或密码格式错误!', ctx.request.body)
     return ctx.app.emit('error', FormatWrongErr, ctx)
@@ -29,10 +29,10 @@ const userSchema = async (ctx: Context, next: () => Promise<void>) => {
 
 // 判断用户名是否重复
 const verifyUser = async (ctx: Context, next: () => Promise<void>) => {
-  const { user_name } = ctx.request.body as userType
+  const { userName } = ctx.request.body as userType
 
   try {
-    if (await getUserInfo({ user_name })) {
+    if (await getUserInfo({ userName })) {
       console.error('用户名已存在!', ctx.request.body)
 
       ctx.app.emit('error', userExisting, ctx)
@@ -61,14 +61,14 @@ const crptyPassword = async (ctx: Context, next: () => Promise<void>) => {
 
 // 判断用户是否存在，密码是否匹配
 const loginValidator = async (ctx: Context, next: () => Promise<void>) => {
-  const { user_name, password } = ctx.request.body as userType
+  const { userName, password } = ctx.request.body as userType
 
   try {
     // 检查是否有重复的用户名，如果有返回 查询到的数据
-    const res = await getUserInfo({ user_name })
+    const res = await getUserInfo({ userName })
 
     if (!res) {
-      console.error('用户名不存在', { user_name })
+      console.error('用户名不存在', { userName })
       ctx.app.emit('error', userDoesNotExist, ctx)
       return
     }
@@ -102,13 +102,13 @@ const pwdSchema = async (ctx: Context, next: () => Promise<void>) => {
 
 // 检查 用户昵称 手机号码 邮箱 是否为空
 const userInfoSchema = async (ctx: Context, next: () => Promise<void>) => {
-  const { email, phonenumber, nick_name, sex = 0 } = ctx.request.body as userType
+  const { email, phonenumber, nickName, sex = 0 } = ctx.request.body as userType
 
   try {
     await changeUserInfoSchema.validateAsync({
       email,
       phonenumber,
-      nick_name,
+      nickName,
       sex
     })
   } catch (error) {

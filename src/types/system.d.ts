@@ -23,18 +23,18 @@ export interface menusType {
 
 // 部门类型
 export interface deptType {
-  dept_id: string | null
-  parent_id: string | null
+  deptId: string | null
+  parentId: string | null
   ancestors: string | null
-  dept_name: string | null
-  order_num: string | null
+  deptName: string | null
+  orderNum: string | null
   leader: string | null
   phone: string | null
   email: string | null
   status: string | null
-  del_flag: string | null
-  create_by: string | null
-  update_by: string | null
+  delFlag: string | null
+  createBy: string | null
+  updateBy: string | null
   createdAt: string | null
   updatedAt: string | null
 }

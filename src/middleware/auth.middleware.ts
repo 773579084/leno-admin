@@ -10,7 +10,7 @@ const auth = async (ctx: Context, next: () => Promise<void>) => {
   const token = authorization.replace('Bearer ', '')
 
   try {
-    // user中包含了payload的信息(user_id, user_name)
+    // user中包含了payload的信息(userId, userName)
     const user = jwt.verify(token, env.JWT_SECRET)
 
     if (dayjs().isAfter(user.exp)) {

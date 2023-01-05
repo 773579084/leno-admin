@@ -3,7 +3,7 @@ import auth from '../middleware/auth.middleware'
 // 格式转换
 import formatHandle from '../middleware/formatHandle'
 // user
-import { getUserListCon } from '../controller/system/user.controller'
+import { getUserListCon, delUserCon } from '../controller/system/user.controller'
 import { getUserListMid } from '../middleware/system/user.middleware'
 // menu
 import { getRoutersCon } from '../controller/system/menu.controller'
@@ -13,6 +13,8 @@ const router = new Router({ prefix: '/system' })
 // #region 用户管理
 // 查询列表用户
 router.get('/user/list', auth, getUserListMid, formatHandle, getUserListCon)
+// 删除用户
+router.delete(`/user/:id`, auth, delUserCon)
 // #endregion
 
 // 获取路由

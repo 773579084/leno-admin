@@ -14,7 +14,7 @@ import env from '../config/config.default'
 import bcrypt from 'bcryptjs'
 import errors from '../constants/err.type'
 import path from 'path'
-import { removeSpecifyFile } from '../utils'
+import { removeSpecifyFile, formatHumpLineTransfer } from '../utils'
 import dayjs from 'dayjs'
 
 const { enteredPasswordsDiffer, userDoesNotExist, reviseErr, updateAvatarErr, getUserInfoErr } =
@@ -24,29 +24,30 @@ class UserController {
   // 注册
   async register(ctx: Context, next: () => Promise<void>) {
     // 1、获取数据
-    const { user_name, password } = ctx.request.body as userType
+    const { userName, password } = ctx.request.body as userType
 
     // 2、操作数据库
-    const res = await createdUser(user_name as string, password as string)
+    const res = await createdUser(userName as string, password as string)
 
     // 3、返回结果
     ctx.body = {
       code: 200,
       message: '用户注册成功',
       result: {
-        user_id: res.user_id,
-        user_name: res.user_name
+        userId: res.user_id,
+        userName: res.user_name
       }
     }
   }
 
   // 登录
   async login(ctx: Context, next: () => Promise<void>) {
-    const { user_name } = ctx.request.body as userType
+    const { userName } = ctx.request.body as userType
 
-    // 1、获取用户信息（token 中包含 user_id，user_name） expiresIn : token有效时间
+    // 1、获取用户信息（token 中包含 userId，userName） expiresIn : token有效时间
     try {
-      const { password, ...res } = await getUserInfo({ user_name })
+      const { password, ...res } = await getUserInfo({ userName })
+      const data = formatHumpLineTransfer(res)
 
       ctx.body = {
         code: 200,
@@ -54,14 +55,14 @@ class UserController {
         result: {
           token: jwt.sign(
             {
-              ...res,
+              ...data,
               exp: dayjs().add(10, 'd').valueOf()
             },
             env.JWT_SECRET
           ),
           refreshToken: jwt.sign(
             {
-              ...res,
+              ...data,
               exp: dayjs().add(30, 'd').valueOf()
             },
             env.JWT_REFRESH_SECRET
@@ -75,14 +76,15 @@ class UserController {
 
   // 获取用户
   async getUserInfoCon(ctx: Context, next: () => Promise<void>) {
-    const { user_id } = ctx.state.user as userType
+    const { userId } = ctx.state.user as userType
 
     try {
-      const { password, ...res } = await getAllUserInfoSer({ user_id })
+      const { password, ...res } = await getAllUserInfoSer({ userId })
+      const data = formatHumpLineTransfer(res)
       ctx.body = {
         code: 200,
         message: '用户获取个人信息成功！',
-        result: res
+        result: data
       }
     } catch (error) {
       console.error('用户获取个人信息失败', error)
@@ -93,9 +95,9 @@ class UserController {
   // 重置密码
   async updatePwd(ctx: Context, next: () => Promise<void>) {
     const { oldPwd, newPwd } = ctx.request.body as pwdType
-    const { user_id } = ctx.state.user as userType
+    const { userId } = ctx.state.user as userType
 
-    const res = await getUserInfo({ user_id })
+    const res = await getUserInfo({ userId })
     // 判断 旧密码 是否与数据库内的密码一致
     if (!bcrypt.compareSync(oldPwd as string, res.password)) {
       console.error('新旧密码不一致')
@@ -105,7 +107,7 @@ class UserController {
     const salt = bcrypt.genSaltSync(10)
     const hash = bcrypt.hashSync(newPwd as string, salt)
 
-    if (await updatePassword({ newPwd: hash, user_id })) {
+    if (await updatePassword({ newPwd: hash, userId })) {
       ctx.body = {
         code: 200,
         message: '密码修改成功！'
@@ -118,14 +120,14 @@ class UserController {
 
   // 修改个人基本信息
   async updateUserInfo(ctx: Context, next: () => Promise<void>) {
-    // 获得 user_id 将更新的数据插入到数据库
-    const { email, nick_name, phonenumber, sex } = ctx.request.body as userType
-    const { user_id } = ctx.state.user as userType
+    // 获得 userId 将更新的数据插入到数据库
+    const { email, nickName, phonenumber, sex } = ctx.request.body as userType
+    const { userId } = ctx.state.user as userType
 
-    const res = await getUserInfo({ user_id })
+    const res = await getUserInfo({ userId })
 
     if (res) {
-      if (await updateUserInfoSer({ user_id, email, nick_name, phonenumber, sex })) {
+      if (await updateUserInfoSer({ userId, email, nickName, phonenumber, sex })) {
         ctx.body = {
           code: 200,
           message: '个人信息修改成功！'
@@ -145,22 +147,22 @@ class UserController {
     const { avatar } = ctx.request?.files // files 是koa-body提供的文件地址位置
     const { filepath } = avatar as imgType
     const basePath = path.basename(filepath) as string
-    const { user_id } = ctx.state.user as userType
+    const { userId } = ctx.state.user as userType
 
     if (avatar) {
       // 删除上一次存储的图片
-      const { avatar } = await deletFrontAvatarSer({ user_id })
+      const { avatar } = await deletFrontAvatarSer({ userId })
       if (avatar) {
         await removeSpecifyFile(avatar)
       }
 
       // 把用户头像名称保存到数据库
-      if (await updateAvatarSer({ user_id, basePath })) {
+      if (await updateAvatarSer({ userId, basePath })) {
         ctx.body = {
           code: 200,
           message: '头像上传成功',
           result: {
-            avatar_img: basePath
+            avatarImg: basePath
           }
         }
       } else {
@@ -175,15 +177,15 @@ class UserController {
 
   // 重新返回新的 token 和 refreshToken
   async refreshTokenCon(ctx: Context, next: () => Promise<void>) {
-    // user中包含了payload的信息(user_id, user_name)
     const res = ctx.state.user
+    const data = formatHumpLineTransfer(res)
     ctx.body = {
       code: 200,
       message: 'token状态刷新成功！',
       result: {
         token: jwt.sign(
           {
-            ...res,
+            ...data,
             exp: dayjs().add(10, 'd').valueOf()
           },
           env.JWT_SECRET
