@@ -1,6 +1,6 @@
 import Joi from 'joi'
 
 // 验证id
-export const userIdSchema = Joi.object({
+export const userIdJudge = Joi.object({
   userId: Joi.number()
 })

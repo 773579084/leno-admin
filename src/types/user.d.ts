@@ -25,6 +25,11 @@ export interface userType {
   dept?: deptType
 }
 
+export interface userListType {
+  count: number
+  rows: userType[]
+}
+
 export interface pwdType {
   oldPwd?: string
   newPwd?: string

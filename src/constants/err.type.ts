@@ -88,6 +88,17 @@ export default {
     message: '删除用户失败',
     result: ''
   },
+  checkUserIdErr: {
+    code: '10203',
+    message: '用户名id格式错误',
+    result: ''
+  },
+  getDeptTreeErr: {
+    code: '10204',
+    message: '查询部门失败',
+    result: ''
+  },
+
   // 菜单管理
   getRoutersErr: {
     code: '10201',

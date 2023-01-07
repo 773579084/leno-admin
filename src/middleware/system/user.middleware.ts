@@ -1,9 +1,10 @@
 import { Context } from 'koa'
-import { getUserListSer } from '../../service/system/user.service'
-import { userType } from '../../types'
+import { getUserListSer, getdeptTreeSer } from '../../service/system/user.service'
+import { userListType } from '../../types'
 import errors from '../../constants/err.type'
-import { userIdSchema } from '../../schema/system/sys.user.schema'
-const { getUserListErr } = errors
+import { userIdJudge } from '../../schema/system/sys.user.schema'
+import Dept from '../../model/system/dept.model'
+const { getUserListErr, checkUserIdErr, getDeptTreeErr } = errors
 
 // 生成用户列表
 const getUserListMid = async (ctx: Context, next: () => Promise<void>) => {
@@ -12,7 +13,9 @@ const getUserListMid = async (ctx: Context, next: () => Promise<void>) => {
       pageNum: string
       pageSize: string
     }
-    ctx.state.formatData = (await getUserListSer(pageNum, pageSize)) as userType[]
+    const res = (await getUserListSer(pageNum, pageSize)) as userListType
+
+    ctx.state.formatData = res
     await next()
   } catch (error) {
     console.error('获取用户列表失败', error)
@@ -21,17 +24,30 @@ const getUserListMid = async (ctx: Context, next: () => Promise<void>) => {
 }
 
 // 判断用户名id是否正确
-// const userIdSchema = async (ctx: Context, next: () => Promise<void>) => {
-//   const list = ctx.request.path.split('/')
-//   const userId = list[list.length - 1]
+const userIdSchema = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    const list = ctx.request.path.split('/')
+    const userId = list[list.length - 1]
+    await userIdJudge.validateAsync({ userId })
+    ctx.state.userId = userId
+  } catch (error) {
+    console.error('用户名id格式错误!', ctx.request.body)
+    return ctx.app.emit('error', checkUserIdErr, ctx)
+  }
+  await next()
+}
 
-//   try {
-//     await userIdSchema.validateAsync({ userName, password })
-//   } catch (error) {
-//     console.error('用户名或密码格式错误!', ctx.request.body)
-//     return ctx.app.emit('error', FormatWrongErr, ctx)
-//   }
-//   await next()
-// }
+// 查询部门下拉树结构
+const deptTreeMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    const res = await getdeptTreeSer()
 
-export { getUserListMid }
+    ctx.state.formatData = res
+  } catch (error) {
+    console.error('查询部门失败!', ctx.request.body)
+    return ctx.app.emit('error', getDeptTreeErr, ctx)
+  }
+  await next()
+}
+
+export { getUserListMid, userIdSchema, deptTreeMid }
