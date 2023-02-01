@@ -13,15 +13,10 @@ const Dept = seq.define(
       primaryKey: true, // 是否设置为主键
       comment: '部门id'
     },
-    // parent_id: {
-    //   type: DataTypes.BIGINT,
-    //   defaultValue: 0,
-    //   comment: '父部门id'
-    // },
-    ancestors: {
-      type: DataTypes.CHAR(255),
+    parent_id: {
+      type: DataTypes.BIGINT,
       defaultValue: 0,
-      comment: '祖级列表'
+      comment: '父部门id'
     },
     dept_name: {
       type: DataTypes.CHAR(255),

@@ -1,7 +1,7 @@
 import Router from 'koa-router'
 import auth from '../middleware/auth.middleware'
 // 格式转换
-import formatHandle from '../middleware/formatHandle'
+import { formatHandle } from '../middleware/formatHandle'
 // user
 import { getUserListCon, delUserCon, getdeptTreeCon } from '../controller/system/user.controller'
 import { getUserListMid, userIdSchema, deptTreeMid } from '../middleware/system/user.middleware'

@@ -1,9 +1,8 @@
 import { Context } from 'koa'
 import { getUserListSer, getdeptTreeSer } from '../../service/system/user.service'
-import { userListType } from '../../types'
+import { userListType, deptType } from '../../types'
 import errors from '../../constants/err.type'
 import { userIdJudge } from '../../schema/system/sys.user.schema'
-import Dept from '../../model/system/dept.model'
 const { getUserListErr, checkUserIdErr, getDeptTreeErr } = errors
 
 // 生成用户列表
@@ -40,9 +39,44 @@ const userIdSchema = async (ctx: Context, next: () => Promise<void>) => {
 // 查询部门下拉树结构
 const deptTreeMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    const res = await getdeptTreeSer()
+    const res = (await getdeptTreeSer()) as unknown as deptType[]
+    // 将部门进行树状结构数据
+    const deptTree = []
 
-    ctx.state.formatData = res
+    for (let i = 0; i < res.length; i++) {
+      if (res[i].parent_id === 0) {
+        console.log(48)
+
+        const newObj = {
+          id: res[i].dept_id,
+          label: res[i].dept_name
+        }
+        // 此步骤减少递归次数，增加性能
+        res.splice(i, 1)
+        i ? (i = 0) : i--
+        // 递归查找子集结构
+        checkChild(newObj, newObj.id)
+        function checkChild(obj, parent_id) {
+          // 判断 子 父 结构的 parent_id 是否相等
+          for (let j = 0; j < res.length; j++) {
+            if (res[j].parent_id === parent_id) {
+              const newObj = {
+                id: res[j].dept_id,
+                label: res[j].dept_name
+              }
+              if (!(obj.children instanceof Array)) obj.children = []
+              obj.children.push(newObj)
+              res.splice(j, 1)
+              j ? (j = 0) : j--
+              checkChild(newObj, newObj.id)
+            }
+          }
+        }
+        deptTree.push(newObj)
+      }
+    }
+
+    ctx.state.formatData = deptTree
   } catch (error) {
     console.error('查询部门失败!', ctx.request.body)
     return ctx.app.emit('error', getDeptTreeErr, ctx)
