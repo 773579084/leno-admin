@@ -50,6 +50,19 @@ export const formatHumpLineTransfer = (data, type = 'hump') => {
             delete item[key]
             item[newKey.join('')] = newValue
           }
+          // const keyArr = key.split('_')
+          // keyArr.splice(0, 1)
+          // let str = ''
+          // keyArr.forEach((item, index) => {
+          //   if (item) {
+          //     const arr = item.split('')
+          //     arr[0].toLocaleUpperCase()
+          //     str += arr.join('')
+          //   }
+          // })
+          // const newValue = item[key]
+          // delete item[key]
+          // item[str] = newValue
         }
         // 驼峰 转 下划线
         if (type === 'line') {
@@ -85,6 +98,7 @@ export const formatHumpLineTransfer = (data, type = 'hump') => {
     return newData
   }
 }
+
 /** 返回数据时间命名修改
  * @param {data} 'obj或ary'
  * @param {type}

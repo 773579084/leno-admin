@@ -1,9 +1,14 @@
 import { Context } from 'koa'
-import { getUserListSer, getdeptTreeSer } from '../../service/system/user.service'
+import {
+  getUserListSer,
+  getdeptTreeSer,
+  getPostSer,
+  getRoleSer
+} from '../../service/system/user.service'
 import { userListType, deptType } from '../../types'
 import errors from '../../constants/err.type'
 import { userIdJudge } from '../../schema/system/sys.user.schema'
-const { getUserListErr, checkUserIdErr, getDeptTreeErr } = errors
+const { getUserListErr, checkUserIdErr, getDeptTreeErr, addUserErr } = errors
 
 // 生成用户列表
 const getUserListMid = async (ctx: Context, next: () => Promise<void>) => {
@@ -12,6 +17,7 @@ const getUserListMid = async (ctx: Context, next: () => Promise<void>) => {
       pageNum: string
       pageSize: string
     }
+
     const res = (await getUserListSer(pageNum, pageSize)) as userListType
 
     ctx.state.formatData = res
@@ -45,30 +51,28 @@ const deptTreeMid = async (ctx: Context, next: () => Promise<void>) => {
 
     for (let i = 0; i < res.length; i++) {
       if (res[i].parent_id === 0) {
-        console.log(48)
-
         const newObj = {
-          id: res[i].dept_id,
-          label: res[i].dept_name
+          key: res[i].dept_id,
+          title: res[i].dept_name
         }
         // 此步骤减少递归次数，增加性能
         res.splice(i, 1)
         i ? (i = 0) : i--
         // 递归查找子集结构
-        checkChild(newObj, newObj.id)
+        checkChild(newObj, newObj.key)
         function checkChild(obj, parent_id) {
           // 判断 子 父 结构的 parent_id 是否相等
           for (let j = 0; j < res.length; j++) {
             if (res[j].parent_id === parent_id) {
               const newObj = {
-                id: res[j].dept_id,
-                label: res[j].dept_name
+                key: res[j].dept_id,
+                title: res[j].dept_name
               }
               if (!(obj.children instanceof Array)) obj.children = []
               obj.children.push(newObj)
               res.splice(j, 1)
               j ? (j = 0) : j--
-              checkChild(newObj, newObj.id)
+              checkChild(newObj, newObj.key)
             }
           }
         }
@@ -84,4 +88,26 @@ const deptTreeMid = async (ctx: Context, next: () => Promise<void>) => {
   await next()
 }
 
-export { getUserListMid, userIdSchema, deptTreeMid }
+// 新增用户
+const addUserMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    const res = ctx.request.body
+    console.log(90, res)
+    if (JSON.stringify(res) === '{}') {
+      const postRes = await getPostSer()
+      const roleRes = await getRoleSer()
+      ctx.state.formatData = {
+        posts: postRes,
+        roles: roleRes
+      }
+    } else {
+    }
+
+    await next()
+  } catch (error) {
+    console.error('新增用户失败', error)
+    return ctx.app.emit('error', addUserErr, ctx)
+  }
+}
+
+export { getUserListMid, userIdSchema, deptTreeMid, addUserMid }
