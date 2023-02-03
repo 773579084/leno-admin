@@ -1,5 +1,5 @@
-import Menu from '../../model/system/menu.model'
-import { menusType } from '../../types'
+import Menu from '@/model/system/menu.model'
+import { menusType } from '@/types'
 import { Op } from 'sequelize'
 
 class MenuService {

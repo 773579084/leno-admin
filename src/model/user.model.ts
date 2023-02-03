@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize'
-import seq from '../db/seq.db'
+import seq from '@/db/seq.db'
 import Dept from './system/dept.model'
 
 // 创建数据库模型

@@ -8,7 +8,7 @@ import {
   updateAvatarCon,
   getUserInfoCon,
   refreshTokenCon
-} from '../controller/user.controller'
+} from '@/controller/user.controller'
 import {
   userInfoSchema,
   userSchema,
@@ -16,10 +16,10 @@ import {
   verifyUser,
   crptyPassword,
   pwdSchema
-} from '../middleware/user.middleware'
-import { contrastFileSizeSchema, judImgFormatSchema } from '../middleware/common.middleware'
-import auth from '../middleware/auth.middleware'
-import refreshAuth from '../middleware/refresh.middleware'
+} from '@/middleware/user.middleware'
+import { contrastFileSizeSchema, judImgFormatSchema } from '@/middleware/common.middleware'
+import auth from '@/middleware/auth.middleware'
+import refreshAuth from '@/middleware/refresh.middleware'
 
 // 新增 table
 // import UserDept from '../model/system/user_dept.model'

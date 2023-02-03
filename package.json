@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "tsnd --respawn src/main.ts",
-    "build": "npm-run-all resetFolder compile",
+    "dev": "tsnd -r tsconfig-paths/register --respawn src/main.ts",
+    "build": "npm-run-all resetFolder compile && tsc-alias",
     "compile": "tsc",
     "resetFolder": "rimraf dist/*",
     "lint": "npx eslint src/** --fix"
@@ -25,7 +25,9 @@
     "koa-router": "^12.0.0",
     "koa-static": "^5.0.0",
     "mysql2": "^2.3.3",
-    "sequelize": "^6.25.0"
+    "sequelize": "^6.25.0",
+    "tsc-alias": "^1.8.2",
+    "tsconfig-paths": "^4.1.2"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
@@ -34,15 +36,12 @@
     "@types/koa-router": "^7.4.4",
     "@types/koa__cors": "^3.3.0",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
-    "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.5.0",
     "eslint-config-standard-with-typescript": "^23.0.0",
-    "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-n": "^15.0.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-promise": "^6.0.0",
     "npm-run-all": "^4.1.5",
-    "prettier": "^2.7.1",
     "rimraf": "^3.0.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "*"

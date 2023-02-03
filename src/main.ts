@@ -1,7 +1,5 @@
-// 调用 .env
-import env from './config/config.default'
-
-import app from './app/index'
+import env from '@/config/config.default'
+import app from '@/app/index'
 const { APP_PORT, APP_HOST } = env
 
 app.listen(APP_PORT, () => {

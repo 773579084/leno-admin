@@ -1,5 +1,5 @@
-import User from '../model/user.model'
-import { userType } from '../types'
+import User from '@/model/user.model'
+import { userType } from '@/types'
 
 class UserService {
   // 注册
@@ -33,7 +33,6 @@ class UserService {
     const res = (await User.findOne({
       where: { user_id: userId }
     })) as any
-
     return res ? res.dataValues : null
   }
 

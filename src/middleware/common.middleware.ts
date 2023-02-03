@@ -1,7 +1,7 @@
 import { Context } from 'koa'
-import { imgType } from '../types'
-import errors from '../constants/err.type'
-import { removeSpecifyFile } from '../utils'
+import { imgType } from '@/types'
+import errors from '@/constants/err.type'
+import { removeSpecifyFile } from '@/utils'
 import path from 'path'
 const { unAvatarSizeErr, unSupportedFileErr } = errors
 

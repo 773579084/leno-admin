@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize'
-import seq from '../../db/seq.db'
+import seq from '@/db/seq.db'
 
 // 创建数据库模型
 const Role = seq.define(

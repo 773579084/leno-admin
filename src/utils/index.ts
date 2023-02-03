@@ -31,41 +31,40 @@ export const formatHumpLineTransfer = (data, type = 'hump') => {
   function toggleFn(list) {
     list.forEach((item) => {
       for (const key in item) {
+        // 如果值为对象
+        if (Object.prototype.toString.call(item[key]) === '[object Object]') {
+          toggleFn([item[key]])
+        }
+        // 如果值为数组
+        else if (Object.prototype.toString.call(item[key]) === '[object Array]') {
+          toggleFn(item[key])
+        }
         // 下划线 转 驼峰
-        if (type === 'hump') {
-          const keyIndex = key.indexOf('_')
-          // 如果等于0，说明在key最前面有_，此时直接去掉即可
-          if (keyIndex === 0) {
-            const newKey = key.split('')
+        else if (type === 'hump') {
+          const keyArr = key.split('_')
+          let str = ''
+          if (keyArr.length > 1) {
+            keyArr.forEach((item, index) => {
+              if (item) {
+                if (index) {
+                  const arr = item.split('')
+                  arr[0] = arr[0].toUpperCase()
+                  str += arr.join('')
+                } else {
+                  str += item
+                }
+              }
+              if (!item) {
+                keyArr.splice(0, 1)
+              }
+            })
             const newValue = item[key]
-            newKey.splice(keyIndex, 1)
             delete item[key]
-            item[newKey.join('')] = newValue
+            item[str] = newValue
           }
-          if (keyIndex !== -1 && keyIndex !== 0) {
-            const letter = key[keyIndex + 1].toUpperCase()
-            const newKey = key.split('')
-            const newValue = item[key]
-            newKey.splice(keyIndex, 2, letter)
-            delete item[key]
-            item[newKey.join('')] = newValue
-          }
-          // const keyArr = key.split('_')
-          // keyArr.splice(0, 1)
-          // let str = ''
-          // keyArr.forEach((item, index) => {
-          //   if (item) {
-          //     const arr = item.split('')
-          //     arr[0].toLocaleUpperCase()
-          //     str += arr.join('')
-          //   }
-          // })
-          // const newValue = item[key]
-          // delete item[key]
-          // item[str] = newValue
         }
         // 驼峰 转 下划线
-        if (type === 'line') {
+        else if (type === 'line') {
           const regexp = /^[A-Z]+$/
           const newKey = key.split('')
           const newValue = item[key]
@@ -76,14 +75,6 @@ export const formatHumpLineTransfer = (data, type = 'hump') => {
           })
           delete item[key]
           item[newKey.join('')] = newValue
-        }
-        // 如果值为对象
-        if (Object.prototype.toString.call(item[key]) === '[object Object]') {
-          toggleFn([item[key]])
-        }
-        // 如果值为数组
-        if (Object.prototype.toString.call(item[key]) === '[object Array]') {
-          toggleFn(item[key])
         }
       }
     })

@@ -4,10 +4,10 @@ import {
   getdeptTreeSer,
   getPostSer,
   getRoleSer
-} from '../../service/system/user.service'
-import { userListType, deptType } from '../../types'
-import errors from '../../constants/err.type'
-import { userIdJudge } from '../../schema/system/sys.user.schema'
+} from '@/service/system/user.service'
+import { userListType, deptType } from '@/types'
+import errors from '@/constants/err.type'
+import { userIdJudge } from '@/schema/system/sys.user.schema'
 const { getUserListErr, checkUserIdErr, getDeptTreeErr, addUserErr } = errors
 
 // 生成用户列表

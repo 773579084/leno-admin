@@ -1,7 +1,7 @@
 import { Context } from 'koa'
 import jwt from 'jsonwebtoken'
-import env from '../config/config.default'
-import errors from '../constants/err.type'
+import env from '@/config/config.default'
+import errors from '@/constants/err.type'
 import dayjs from 'dayjs'
 const { invalidRefreshToken } = errors
 

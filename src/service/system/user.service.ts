@@ -1,7 +1,7 @@
-import Dept from '../../model/system/dept.model'
-import User from '../../model/user.model'
-import Post from '../../model/system/post.model'
-import Role from '../../model/system/role.model'
+import Dept from '@/model/system/dept.model'
+import User from '@/model/user.model'
+import Post from '@/model/system/post.model'
+import Role from '@/model/system/role.model'
 
 class UserService {
   // 获取用户列表
@@ -56,7 +56,6 @@ class UserService {
   // 获取角色信息
   async getRoleSer() {
     const res = Role.findAll()
-
     return res || null
   }
 }

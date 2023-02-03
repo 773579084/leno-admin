@@ -7,14 +7,14 @@ import {
   updateAvatarSer,
   deletFrontAvatarSer,
   getAllUserInfoSer
-} from '../service/user.service'
-import { pwdType, userType, imgType } from '../types'
+} from '@/service/user.service'
+import { pwdType, userType, imgType } from '@/types'
 import jwt from 'jsonwebtoken'
-import env from '../config/config.default'
+import env from '@/config/config.default'
 import bcrypt from 'bcryptjs'
-import errors from '../constants/err.type'
+import errors from '@/constants/err.type'
 import path from 'path'
-import { removeSpecifyFile, formatHumpLineTransfer } from '../utils'
+import { removeSpecifyFile, formatHumpLineTransfer } from '@/utils'
 import dayjs from 'dayjs'
 
 const { enteredPasswordsDiffer, userDoesNotExist, reviseErr, updateAvatarErr, getUserInfoErr } =

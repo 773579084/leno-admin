@@ -1,5 +1,5 @@
 import { Context } from 'koa'
-import { delUserSer } from '../../service/system/user.service'
+import { delUserSer } from '@/service/system/user.service'
 
 class UserController {
   // 生成用户列表

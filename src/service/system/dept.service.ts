@@ -1,4 +1,4 @@
-import Dept from '../../model/system/dept.model'
+import Dept from '@/model/system/dept.model'
 
 class DeptService {
   /**

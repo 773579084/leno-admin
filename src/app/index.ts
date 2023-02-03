@@ -1,12 +1,12 @@
 import Koa, { DefaultContext, DefaultState } from 'koa'
 import cors from '@koa/cors'
 import KoaBody from 'koa-body'
-import errHandlerFn from '../app/errHandler'
+import errHandlerFn from './errHandler'
 import path from 'path'
 import koaStatic from 'koa-static'
 
 // 引入路由
-import router from '../router'
+import router from '@/router'
 // 初始化 Koa 应用实例
 const app: Koa<DefaultState, DefaultContext> = new Koa()
 

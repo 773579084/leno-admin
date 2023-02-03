@@ -1,9 +1,9 @@
 import { Context } from 'koa'
-import { userType, pwdType } from '../types'
-import { getUserInfo } from '../service/user.service'
-import errors from '../constants/err.type'
+import { userType, pwdType } from '@/types'
+import { getUserInfo } from '@/service/user.service'
+import errors from '@/constants/err.type'
 import bcrypt from 'bcryptjs'
-import { loginSchema, resetPwdSchema, changeUserInfoSchema } from '../schema/user.schema'
+import { loginSchema, resetPwdSchema, changeUserInfoSchema } from '@/schema/user.schema'
 
 const {
   userExisting,

@@ -1,23 +1,23 @@
 import Router from 'koa-router'
-import auth from '../middleware/auth.middleware'
+import auth from '@/middleware/auth.middleware'
 // 格式转换
-import { formatHandle } from '../middleware/formatHandle'
+import { formatHandle } from '@/middleware/formatHandle'
 // user
 import {
   getUserListCon,
   delUserCon,
   getdeptTreeCon,
   addUserCon
-} from '../controller/system/user.controller'
+} from '@/controller/system/user.controller'
 import {
   getUserListMid,
   userIdSchema,
   deptTreeMid,
   addUserMid
-} from '../middleware/system/user.middleware'
+} from '@/middleware/system/user.middleware'
 // menu
-import { getRoutersCon } from '../controller/system/menu.controller'
-import { getRouterMid } from '../middleware/system/menu.middleware'
+import { getRoutersCon } from '@/controller/system/menu.controller'
+import { getRouterMid } from '@/middleware/system/menu.middleware'
 const router = new Router({ prefix: '/system' })
 
 // #region 用户管理
