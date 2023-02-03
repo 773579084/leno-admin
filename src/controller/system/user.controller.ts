@@ -33,8 +33,8 @@ class UserController {
     }
   }
 
-  // 新增用户
-  async addUserCon(ctx: Context, next: () => Promise<void>) {
+  // 新增用户弹窗内岗位及角色数据获取
+  async getAddUserCon(ctx: Context, next: () => Promise<void>) {
     // 3、返回结果
     ctx.body = {
       code: 200,
@@ -44,4 +44,4 @@ class UserController {
   }
 }
 
-export const { getUserListCon, delUserCon, getdeptTreeCon, addUserCon } = new UserController()
+export const { getUserListCon, delUserCon, getdeptTreeCon, getAddUserCon } = new UserController()

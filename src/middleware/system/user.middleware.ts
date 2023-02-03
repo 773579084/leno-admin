@@ -88,21 +88,15 @@ const deptTreeMid = async (ctx: Context, next: () => Promise<void>) => {
   await next()
 }
 
-// 新增用户
-const addUserMid = async (ctx: Context, next: () => Promise<void>) => {
+// 新增用户弹窗内岗位及角色数据获取
+const getAddUserMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    const res = ctx.request.body
-    console.log(90, res)
-    if (JSON.stringify(res) === '{}') {
-      const postRes = await getPostSer()
-      const roleRes = await getRoleSer()
-      ctx.state.formatData = {
-        posts: postRes,
-        roles: roleRes
-      }
-    } else {
+    const postRes = await getPostSer()
+    const roleRes = await getRoleSer()
+    ctx.state.formatData = {
+      posts: postRes,
+      roles: roleRes
     }
-
     await next()
   } catch (error) {
     console.error('新增用户失败', error)
@@ -110,4 +104,4 @@ const addUserMid = async (ctx: Context, next: () => Promise<void>) => {
   }
 }
 
-export { getUserListMid, userIdSchema, deptTreeMid, addUserMid }
+export { getUserListMid, userIdSchema, deptTreeMid, getAddUserMid }

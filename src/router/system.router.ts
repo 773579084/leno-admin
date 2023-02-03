@@ -7,13 +7,13 @@ import {
   getUserListCon,
   delUserCon,
   getdeptTreeCon,
-  addUserCon
+  getAddUserCon
 } from '@/controller/system/user.controller'
 import {
   getUserListMid,
   userIdSchema,
   deptTreeMid,
-  addUserMid
+  getAddUserMid
 } from '@/middleware/system/user.middleware'
 // menu
 import { getRoutersCon } from '@/controller/system/menu.controller'
@@ -31,10 +31,10 @@ router.delete(`/user/:id`, auth, userIdSchema, delUserCon)
 router.get('/dept/treeselect', auth, deptTreeMid, formatHandle, getdeptTreeCon)
 
 // 新增用户
-router.post('/user', auth, addUserMid, formatHandle, addUserCon)
+router.get('/user', auth, getAddUserMid, formatHandle, getAddUserCon)
 // #endregion
 
-// 获取路由
+// 新增用户弹窗内岗位及角色数据获取
 router.get('/menu/getRouters', auth, getRouterMid, getRoutersCon)
 
 module.exports = router
