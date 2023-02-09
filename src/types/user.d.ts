@@ -23,6 +23,8 @@ export interface userType {
   createdAt?: string | null
   updatedAt?: string | null
   dept?: deptType
+  postIds?: number[]
+  roleIds?: number[]
 }
 
 export interface userListType {

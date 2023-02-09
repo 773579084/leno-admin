@@ -30,8 +30,8 @@ router.delete(`/user/:id`, auth, userIdSchema, delUserCon)
 // 查询部门下拉树结构
 router.get('/dept/treeselect', auth, deptTreeMid, formatHandle, getdeptTreeCon)
 
-// 新增用户
-router.get('/user', auth, getAddUserMid, formatHandle, getAddUserCon)
+// 新增用户&&获取用户的角色与部门关联信息
+router.post('/user', auth, getAddUserMid, formatHandle, getAddUserCon)
 // #endregion
 
 // 新增用户弹窗内岗位及角色数据获取

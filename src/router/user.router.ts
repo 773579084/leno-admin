@@ -21,9 +21,9 @@ import { contrastFileSizeSchema, judImgFormatSchema } from '@/middleware/common.
 import auth from '@/middleware/auth.middleware'
 import refreshAuth from '@/middleware/refresh.middleware'
 
-// 新增 table
-// import UserDept from '../model/system/user_dept.model'
-// UserDept.sync()
+// 新增 sql表
+// import post from '@/model/system/sys_user_post.model'
+// post.sync()
 
 const router = new Router({ prefix: '/user' })
 

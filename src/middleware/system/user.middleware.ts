@@ -3,11 +3,14 @@ import {
   getUserListSer,
   getdeptTreeSer,
   getPostSer,
-  getRoleSer
+  getRoleSer,
+  addUserRole,
+  addUserPost
 } from '@/service/system/user.service'
-import { userListType, deptType } from '@/types'
+import { userListType, deptType, userType } from '@/types'
+import { userIdJudge, addUserJudg } from '@/schema/system/sys.user.schema'
+import { formatHumpLineTransfer } from '@/utils'
 import errors from '@/constants/err.type'
-import { userIdJudge } from '@/schema/system/sys.user.schema'
 const { getUserListErr, checkUserIdErr, getDeptTreeErr, addUserErr } = errors
 
 // 生成用户列表
@@ -90,17 +93,47 @@ const deptTreeMid = async (ctx: Context, next: () => Promise<void>) => {
 
 // 新增用户弹窗内岗位及角色数据获取
 const getAddUserMid = async (ctx: Context, next: () => Promise<void>) => {
-  try {
-    const postRes = await getPostSer()
-    const roleRes = await getRoleSer()
-    ctx.state.formatData = {
-      posts: postRes,
-      roles: roleRes
+  console.log(93, ctx.request.body)
+  if (JSON.stringify(ctx.request.body) === '{}') {
+    try {
+      const postRes = await getPostSer()
+      const roleRes = await getRoleSer()
+      ctx.state.formatData = {
+        posts: postRes,
+        roles: roleRes
+      }
+      await next()
+    } catch (error) {
+      console.error('获取部门和角色信息失败', error)
+      return ctx.app.emit('error', addUserErr, ctx)
     }
-    await next()
-  } catch (error) {
-    console.error('新增用户失败', error)
-    return ctx.app.emit('error', addUserErr, ctx)
+  } else {
+    const userList = ctx.request.body
+    const { userId } = ctx.state.user as userType
+    try {
+      await addUserJudg.validateAsync(userList)
+      const newUserList = formatHumpLineTransfer(userList, 'line') as userType
+      // 新增 用户 绑定角色岗位关系
+      const createRole = [],
+        createPost = []
+      newUserList.roleIds?.forEach((item) => {
+        createRole.push({
+          user_id: userId,
+          role_id: item
+        })
+      })
+      await addUserRole(createRole)
+      newUserList.postIds?.forEach((item) => {
+        createPost.push({
+          user_id: userId,
+          post_id: item
+        })
+      })
+      await addUserPost(createPost)
+    } catch (error) {
+      console.error('新增用户失败', error)
+      return ctx.app.emit('error', addUserErr, ctx)
+    }
   }
 }
 

@@ -2,6 +2,8 @@ import Dept from '@/model/system/dept.model'
 import User from '@/model/user.model'
 import Post from '@/model/system/post.model'
 import Role from '@/model/system/role.model'
+import UserRole from '@/model/system/sys_user_role.model'
+import UserPost from '@/model/system/sys_user_post.model'
 
 class UserService {
   // 获取用户列表
@@ -58,7 +60,23 @@ class UserService {
     const res = Role.findAll()
     return res || null
   }
+
+  // 新增 用户与角色关系
+  async addUserRole(list) {
+    UserRole.bulkCreate(list)
+  }
+  // 新增 用户与岗位关系
+  async addUserPost(list) {
+    UserPost.bulkCreate(list)
+  }
 }
 
-export const { getUserListSer, delUserSer, getdeptTreeSer, getPostSer, getRoleSer } =
-  new UserService()
+export const {
+  getUserListSer,
+  delUserSer,
+  getdeptTreeSer,
+  getPostSer,
+  getRoleSer,
+  addUserRole,
+  addUserPost
+} = new UserService()
