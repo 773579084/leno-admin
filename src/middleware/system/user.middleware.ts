@@ -4,16 +4,15 @@ import {
   getdeptTreeSer,
   getPostSer,
   getRoleSer,
-  addUserRole,
-  addUserPost
+  addUserRoleSer,
+  addUserPostSer,
+  addUserSer
 } from '@/service/system/user.service'
-import bcrypt from 'bcryptjs'
 import { userListType, deptType, userType } from '@/types'
-import { createdUser } from '@/service/user.service'
 import { userIdJudge, addUserJudg } from '@/schema/system/sys.user.schema'
-import { getUserInfo } from '@/service/user.service'
 import errors from '@/constants/err.type'
-const { getUserListErr, checkUserIdErr, getDeptTreeErr, addUserErr, userExisting, sqlErr } = errors
+import { formatHumpLineTransfer } from '@/utils'
+const { checkUserIdErr, getDeptTreeErr, addUserErr, getPostRoleErr } = errors
 
 // 生成用户列表
 const getUserListMid = async (ctx: Context, next: () => Promise<void>) => {
@@ -28,8 +27,8 @@ const getUserListMid = async (ctx: Context, next: () => Promise<void>) => {
     ctx.state.formatData = res
     await next()
   } catch (error) {
-    console.error('获取用户列表失败', error)
-    return ctx.app.emit('error', getUserListErr, ctx)
+    console.error('查询部门角色失败', error)
+    return ctx.app.emit('error', getPostRoleErr, ctx)
   }
 }
 
@@ -92,64 +91,66 @@ const deptTreeMid = async (ctx: Context, next: () => Promise<void>) => {
   }
   await next()
 }
-
-// 新增用户弹窗内岗位及角色数据获取
-const getAddUserMid = async (ctx: Context, next: () => Promise<void>) => {
-  console.log(93, ctx.request.body)
-  if (JSON.stringify(ctx.request.body) === '{}') {
-    try {
-      const postRes = await getPostSer()
-      const roleRes = await getRoleSer()
-      ctx.state.formatData = {
-        posts: postRes,
-        roles: roleRes
-      }
-      ctx.state.message = '获取岗位、角色成功！'
-      await next()
-    } catch (error) {
-      console.error('获取部门和角色信息失败', error)
-      return ctx.app.emit('error', addUserErr, ctx)
+// 岗位及角色数据获取
+const getPostRoleMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    const postRes = await getPostSer()
+    const roleRes = await getRoleSer()
+    ctx.state.formatData = {
+      posts: postRes,
+      roles: roleRes
     }
-  } else {
-    const userList = ctx.request.body as userType
-    try {
-      await addUserJudg.validateAsync(userList)
-      // 获取新增用户id
-      if (await getUserInfo({ userName: userList.userName })) {
-        console.error('用户名已存在!', ctx.request.body)
-        ctx.app.emit('error', userExisting, ctx)
-        return
-      } else {
-        // 密码加密
-        const salt = bcrypt.genSaltSync(10)
-        const hash = bcrypt.hashSync(userList.password as string, salt)
-        const { user_id } = await createdUser(userList.userName, hash)
-
-        //绑定角色岗位关系
-        const createRole = [],
-          createPost = []
-        userList.roleIds?.forEach((item) => {
-          createRole.push({
-            user_id: user_id,
-            role_id: item
-          })
-        })
-        await addUserRole(createRole)
-        userList.postIds?.forEach((item) => {
-          createPost.push({
-            user_id: user_id,
-            post_id: item
-          })
-        })
-        await addUserPost(createPost)
-        ctx.state.message = '新增用户成功！'
-        await next()
-      }
-    } catch (error) {
-      console.error('新增用户失败', error)
-      return ctx.app.emit('error', addUserErr, ctx)
-    }
+    await next()
+  } catch (error) {
+    console.error('获取部门和角色信息失败', error)
+    return ctx.app.emit('error', addUserErr, ctx)
   }
 }
 
-export { getUserListMid, userIdSchema, deptTreeMid, getAddUserMid }
+// 检查新增用户上传参数
+const addUserSchema = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    const userList = ctx.request.body as userType
+    await addUserJudg.validateAsync(userList)
+  } catch (error) {
+    console.error('新增用户上传参数出错', error)
+    return ctx.app.emit('error', addUserErr, ctx)
+  }
+  await next()
+}
+
+// 新增用户
+const getAddUserMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    const { postIds, roleIds, ...user } = ctx.request.body as userType
+    const newUser = formatHumpLineTransfer(user, 'line')
+    const { user_id } = await addUserSer(newUser)
+    // //绑定角色岗位关系
+    if (roleIds?.length > 0) {
+      const createRole = []
+
+      roleIds?.forEach((item) => {
+        createRole.push({
+          user_id: user_id,
+          role_id: item
+        })
+      })
+      await addUserRoleSer(createRole)
+    } else if (postIds?.length > 0) {
+      const createPost = []
+      postIds?.forEach((item) => {
+        createPost.push({
+          user_id: user_id,
+          post_id: item
+        })
+      })
+      await addUserPostSer(createPost)
+    }
+    await next()
+  } catch (error) {
+    console.error('新增用户失败', error)
+    return ctx.app.emit('error', addUserErr, ctx)
+  }
+}
+
+export { getUserListMid, userIdSchema, deptTreeMid, getAddUserMid, getPostRoleMid, addUserSchema }

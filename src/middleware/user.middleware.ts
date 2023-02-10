@@ -34,7 +34,6 @@ const verifyUser = async (ctx: Context, next: () => Promise<void>) => {
   try {
     if (await getUserInfo({ userName })) {
       console.error('用户名已存在!', ctx.request.body)
-
       ctx.app.emit('error', userExisting, ctx)
       return
     }

@@ -101,12 +101,11 @@ export default {
     message: '请检查新增用户传参',
     result: ''
   },
-  sqlErr: {
-    code: '403',
-    message: '服务器查询出错',
+  getPostRoleErr: {
+    code: '500',
+    message: '查询部门角色失败',
     result: ''
   },
-
   // 菜单管理
   getRoutersErr: {
     code: '400',

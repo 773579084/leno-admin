@@ -7,14 +7,18 @@ import {
   getUserListCon,
   delUserCon,
   getdeptTreeCon,
-  getAddUserCon
+  getAddUserCon,
+  getPostRoleCon
 } from '@/controller/system/user.controller'
 import {
   getUserListMid,
   userIdSchema,
   deptTreeMid,
-  getAddUserMid
+  getAddUserMid,
+  getPostRoleMid,
+  addUserSchema
 } from '@/middleware/system/user.middleware'
+import { verifyUser, crptyPassword } from '@/middleware/user.middleware'
 // menu
 import { getRoutersCon } from '@/controller/system/menu.controller'
 import { getRouterMid } from '@/middleware/system/menu.middleware'
@@ -30,8 +34,11 @@ router.delete(`/user/:id`, auth, userIdSchema, delUserCon)
 // 查询部门下拉树结构
 router.get('/dept/treeselect', auth, deptTreeMid, formatHandle, getdeptTreeCon)
 
-// 新增用户&&获取用户的角色与部门关联信息
-router.post('/user', auth, getAddUserMid, formatHandle, getAddUserCon)
+// 获取用户的角色与部门关联信息
+router.get('/user', auth, getPostRoleMid, formatHandle, getPostRoleCon)
+
+// 新增用户
+router.post('/user', auth, addUserSchema, verifyUser, crptyPassword, getAddUserMid, getAddUserCon)
 // #endregion
 
 // 新增用户弹窗内岗位及角色数据获取

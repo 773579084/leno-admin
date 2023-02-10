@@ -61,13 +61,21 @@ class UserService {
     return res || null
   }
 
-  // 新增 用户与角色关系
-  async addUserRole(list) {
-    UserRole.bulkCreate(list, { validate: true })
+  // 新增用户
+  async addUserSer(user) {
+    const res = (await User.create(user)) as any
+
+    return res || {}
   }
+
+  // 新增 用户与角色关系
+  async addUserRoleSer(list) {
+    UserRole.bulkCreate(list)
+  }
+
   // 新增 用户与岗位关系
-  async addUserPost(list) {
-    UserPost.bulkCreate(list, { validate: true })
+  async addUserPostSer(list) {
+    UserPost.bulkCreate(list)
   }
 }
 
@@ -77,6 +85,7 @@ export const {
   getdeptTreeSer,
   getPostSer,
   getRoleSer,
-  addUserRole,
-  addUserPost
+  addUserRoleSer,
+  addUserPostSer,
+  addUserSer
 } = new UserService()

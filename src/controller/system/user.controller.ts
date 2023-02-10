@@ -32,16 +32,26 @@ class UserController {
       result: ctx.state.formatData
     }
   }
+  // 岗位及角色数据获取
+  async getPostRoleCon(ctx: Context, next: () => Promise<void>) {
+    // 3、返回结果
+    ctx.body = {
+      code: 200,
+      message: '获取岗位、角色成功！',
+      result: ctx.state.formatData
+    }
+  }
 
-  // 新增用户弹窗内岗位及角色数据获取
+  // 新增用户
   async getAddUserCon(ctx: Context, next: () => Promise<void>) {
     // 3、返回结果
     ctx.body = {
       code: 200,
-      message: ctx.state.message,
+      message: '新增用户成功！',
       result: ctx.state.formatData
     }
   }
 }
 
-export const { getUserListCon, delUserCon, getdeptTreeCon, getAddUserCon } = new UserController()
+export const { getUserListCon, delUserCon, getdeptTreeCon, getAddUserCon, getPostRoleCon } =
+  new UserController()
