@@ -7,11 +7,13 @@ import {
   addUserRole,
   addUserPost
 } from '@/service/system/user.service'
+import bcrypt from 'bcryptjs'
 import { userListType, deptType, userType } from '@/types'
+import { createdUser } from '@/service/user.service'
 import { userIdJudge, addUserJudg } from '@/schema/system/sys.user.schema'
-import { formatHumpLineTransfer } from '@/utils'
+import { getUserInfo } from '@/service/user.service'
 import errors from '@/constants/err.type'
-const { getUserListErr, checkUserIdErr, getDeptTreeErr, addUserErr } = errors
+const { getUserListErr, checkUserIdErr, getDeptTreeErr, addUserErr, userExisting, sqlErr } = errors
 
 // 生成用户列表
 const getUserListMid = async (ctx: Context, next: () => Promise<void>) => {
@@ -102,34 +104,47 @@ const getAddUserMid = async (ctx: Context, next: () => Promise<void>) => {
         posts: postRes,
         roles: roleRes
       }
+      ctx.state.message = '获取岗位、角色成功！'
       await next()
     } catch (error) {
       console.error('获取部门和角色信息失败', error)
       return ctx.app.emit('error', addUserErr, ctx)
     }
   } else {
-    const userList = ctx.request.body
-    const { userId } = ctx.state.user as userType
+    const userList = ctx.request.body as userType
     try {
       await addUserJudg.validateAsync(userList)
-      const newUserList = formatHumpLineTransfer(userList, 'line') as userType
-      // 新增 用户 绑定角色岗位关系
-      const createRole = [],
-        createPost = []
-      newUserList.roleIds?.forEach((item) => {
-        createRole.push({
-          user_id: userId,
-          role_id: item
+      // 获取新增用户id
+      if (await getUserInfo({ userName: userList.userName })) {
+        console.error('用户名已存在!', ctx.request.body)
+        ctx.app.emit('error', userExisting, ctx)
+        return
+      } else {
+        // 密码加密
+        const salt = bcrypt.genSaltSync(10)
+        const hash = bcrypt.hashSync(userList.password as string, salt)
+        const { user_id } = await createdUser(userList.userName, hash)
+
+        //绑定角色岗位关系
+        const createRole = [],
+          createPost = []
+        userList.roleIds?.forEach((item) => {
+          createRole.push({
+            user_id: user_id,
+            role_id: item
+          })
         })
-      })
-      await addUserRole(createRole)
-      newUserList.postIds?.forEach((item) => {
-        createPost.push({
-          user_id: userId,
-          post_id: item
+        await addUserRole(createRole)
+        userList.postIds?.forEach((item) => {
+          createPost.push({
+            user_id: user_id,
+            post_id: item
+          })
         })
-      })
-      await addUserPost(createPost)
+        await addUserPost(createPost)
+        ctx.state.message = '新增用户成功！'
+        await next()
+      }
     } catch (error) {
       console.error('新增用户失败', error)
       return ctx.app.emit('error', addUserErr, ctx)

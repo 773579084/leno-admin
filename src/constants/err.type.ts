@@ -101,6 +101,12 @@ export default {
     message: '请检查新增用户传参',
     result: ''
   },
+  sqlErr: {
+    code: '403',
+    message: '服务器查询出错',
+    result: ''
+  },
+
   // 菜单管理
   getRoutersErr: {
     code: '400',

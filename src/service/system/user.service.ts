@@ -63,11 +63,11 @@ class UserService {
 
   // 新增 用户与角色关系
   async addUserRole(list) {
-    UserRole.bulkCreate(list)
+    UserRole.bulkCreate(list, { validate: true })
   }
   // 新增 用户与岗位关系
   async addUserPost(list) {
-    UserPost.bulkCreate(list)
+    UserPost.bulkCreate(list, { validate: true })
   }
 }
 

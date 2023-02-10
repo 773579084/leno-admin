@@ -38,7 +38,7 @@ class UserController {
     // 3、返回结果
     ctx.body = {
       code: 200,
-      message: '操作成功！',
+      message: ctx.state.message,
       result: ctx.state.formatData
     }
   }
