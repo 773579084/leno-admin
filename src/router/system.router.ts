@@ -8,7 +8,9 @@ import {
   delUserCon,
   getdeptTreeCon,
   getAddUserCon,
-  getPostRoleCon
+  getPostRoleCon,
+  updatePwdCon,
+  userInfoCon
 } from '@/controller/system/user.controller'
 import {
   getUserListMid,
@@ -16,7 +18,9 @@ import {
   deptTreeMid,
   getAddUserMid,
   getPostRoleMid,
-  addUserSchema
+  addUserSchema,
+  userInfoMid,
+  updatePwdMid
 } from '@/middleware/system/user.middleware'
 import { verifyUser, crptyPassword } from '@/middleware/user.middleware'
 // menu
@@ -39,6 +43,12 @@ router.get('/user', auth, getPostRoleMid, formatHandle, getPostRoleCon)
 
 // 新增用户
 router.post('/user', auth, addUserSchema, verifyUser, crptyPassword, getAddUserMid, getAddUserCon)
+
+// 修改用户密码
+router.patch('/user/updatePwd', auth, updatePwdMid, updatePwdCon)
+
+// 获取用户个人详细数据
+router.get(`/userInfo/:id`, auth, userInfoMid, formatHandle, userInfoCon)
 // #endregion
 
 // 新增用户弹窗内岗位及角色数据获取

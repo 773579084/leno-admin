@@ -9,10 +9,11 @@ import {
   addUserSer
 } from '@/service/system/user.service'
 import { userListType, deptType, userType } from '@/types'
-import { userIdJudge, addUserJudg } from '@/schema/system/sys.user.schema'
+import { userIdJudge, addUserJudg, checkPwdJudg } from '@/schema/system/sys.user.schema'
+import { updatePassword, getAllUserInfoSer } from '@/service/user.service'
 import errors from '@/constants/err.type'
 import { formatHumpLineTransfer } from '@/utils'
-const { checkUserIdErr, getDeptTreeErr, addUserErr, getPostRoleErr } = errors
+const { checkUserIdErr, getDeptTreeErr, addUserErr, getPostRoleErr, checkPwdErr, sqlErr } = errors
 
 // 生成用户列表
 const getUserListMid = async (ctx: Context, next: () => Promise<void>) => {
@@ -153,4 +154,64 @@ const getAddUserMid = async (ctx: Context, next: () => Promise<void>) => {
   }
 }
 
-export { getUserListMid, userIdSchema, deptTreeMid, getAddUserMid, getPostRoleMid, addUserSchema }
+// 修改密码
+const updatePwdMid = async (ctx: Context, next: () => Promise<void>) => {
+  const { password, userId } = ctx.request.body
+  try {
+    await checkPwdJudg.validateAsync({ password })
+  } catch (error) {
+    console.error('密码参数错误', error)
+    return ctx.app.emit('error', checkPwdErr, ctx)
+  }
+
+  try {
+    await updatePassword({ newPwd: password, userId })
+  } catch (error) {
+    console.error('服务器错误', error)
+    return ctx.app.emit('error', sqlErr, ctx)
+  }
+
+  await next()
+}
+
+// 获取用户个人详细数据
+const userInfoMid = async (ctx: Context, next: () => Promise<void>) => {
+  const path = ctx.request.path
+  const userId = path.split('/')[path.split('/').length - 1]
+
+  try {
+    await userIdJudge.validateAsync({ userId })
+  } catch (error) {
+    console.error('用户上传id错误', error)
+    return ctx.app.emit('error', checkUserIdErr, ctx)
+  }
+
+  try {
+    const { password, ...res } = await getAllUserInfoSer({ userId })
+    ctx.state.formatData = res
+  } catch (error) {
+    console.error('用户个人信息查询错误', error)
+    return ctx.app.emit('error', sqlErr, ctx)
+  }
+
+  try {
+    const { password, ...res } = await getAllUserInfoSer({ userId })
+    ctx.state.formatData = res
+  } catch (error) {
+    console.error('查询用户岗位与角色信息错误', error)
+    return ctx.app.emit('error', sqlErr, ctx)
+  }
+
+  await next()
+}
+
+export {
+  getUserListMid,
+  userIdSchema,
+  deptTreeMid,
+  getAddUserMid,
+  getPostRoleMid,
+  addUserSchema,
+  updatePwdMid,
+  userInfoMid
+}

@@ -4,6 +4,11 @@
  * 403 => 服务器拒绝请求
  */
 export default {
+  sqlErr: {
+    code: '500',
+    message: '服务器内部错误',
+    result: ''
+  },
   // 登录注册
   InvalidConnectionError: {
     code: '400',
@@ -104,6 +109,11 @@ export default {
   getPostRoleErr: {
     code: '500',
     message: '查询部门角色失败',
+    result: ''
+  },
+  checkPwdErr: {
+    code: '400',
+    message: '请检查密码传参',
     result: ''
   },
   // 菜单管理

@@ -30,3 +30,8 @@ export const addUserJudg = Joi.object({
   roleIds: checkNumArr,
   remark
 })
+
+// 验证用户密码
+export const checkPwdJudg = Joi.object({
+  password
+})

@@ -28,7 +28,7 @@ class UserService {
     return res ? res.dataValues : null
   }
 
-  // 获取 所有个人信息
+  // 获取 个人信息
   async getAllUserInfoSer({ userId }) {
     const res = (await User.findOne({
       where: { user_id: userId }
@@ -79,7 +79,7 @@ class UserService {
       }
     )
 
-    return res
+    return res || ''
   }
 }
 

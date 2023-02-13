@@ -51,7 +51,34 @@ class UserController {
       result: ctx.state.formatData
     }
   }
+
+  // 新增用户
+  async updatePwdCon(ctx: Context, next: () => Promise<void>) {
+    // 3、返回结果
+    ctx.body = {
+      code: 200,
+      message: '用户密码修改成功！',
+      result: ''
+    }
+  }
+
+  // 获取用户个人详细数据
+  async userInfoCon(ctx: Context, next: () => Promise<void>) {
+    // 3、返回结果
+    ctx.body = {
+      code: 200,
+      message: '用户个人信息获取成功！',
+      result: ctx.state.formatData
+    }
+  }
 }
 
-export const { getUserListCon, delUserCon, getdeptTreeCon, getAddUserCon, getPostRoleCon } =
-  new UserController()
+export const {
+  getUserListCon,
+  delUserCon,
+  getdeptTreeCon,
+  getAddUserCon,
+  getPostRoleCon,
+  updatePwdCon,
+  userInfoCon
+} = new UserController()

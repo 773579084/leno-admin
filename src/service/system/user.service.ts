@@ -77,6 +77,8 @@ class UserService {
   async addUserPostSer(list) {
     UserPost.bulkCreate(list)
   }
+
+  // 查询用户
 }
 
 export const {
