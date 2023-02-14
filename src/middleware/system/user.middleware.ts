@@ -6,9 +6,13 @@ import {
   getRoleSer,
   addUserRoleSer,
   addUserPostSer,
-  addUserSer
+  addUserSer,
+  getUserPostSer,
+  checkPostSer,
+  getUserRoleSer,
+  checkRoleSer
 } from '@/service/system/user.service'
-import { userListType, deptType, userType } from '@/types'
+import { userListType, deptType, userType, IUserDetail } from '@/types'
 import { userIdJudge, addUserJudg, checkPwdJudg } from '@/schema/system/sys.user.schema'
 import { updatePassword, getAllUserInfoSer } from '@/service/user.service'
 import errors from '@/constants/err.type'
@@ -41,7 +45,7 @@ const userIdSchema = async (ctx: Context, next: () => Promise<void>) => {
     await userIdJudge.validateAsync({ userId })
     ctx.state.userId = userId
   } catch (error) {
-    console.error('用户名id格式错误!', ctx.request.body)
+    console.error('用户名id格式错误!', ctx.request['body'])
     return ctx.app.emit('error', checkUserIdErr, ctx)
   }
   await next()
@@ -87,7 +91,7 @@ const deptTreeMid = async (ctx: Context, next: () => Promise<void>) => {
 
     ctx.state.formatData = deptTree
   } catch (error) {
-    console.error('查询部门失败!', ctx.request.body)
+    console.error('查询部门失败!', ctx.request['body'])
     return ctx.app.emit('error', getDeptTreeErr, ctx)
   }
   await next()
@@ -111,7 +115,7 @@ const getPostRoleMid = async (ctx: Context, next: () => Promise<void>) => {
 // 检查新增用户上传参数
 const addUserSchema = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    const userList = ctx.request.body as userType
+    const userList = ctx.request['body'] as userType
     await addUserJudg.validateAsync(userList)
   } catch (error) {
     console.error('新增用户上传参数出错', error)
@@ -123,7 +127,7 @@ const addUserSchema = async (ctx: Context, next: () => Promise<void>) => {
 // 新增用户
 const getAddUserMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    const { postIds, roleIds, ...user } = ctx.request.body as userType
+    const { postIds, roleIds, ...user } = ctx.request['body'] as userType
     const newUser = formatHumpLineTransfer(user, 'line')
     const { user_id } = await addUserSer(newUser)
     // //绑定角色岗位关系
@@ -137,7 +141,8 @@ const getAddUserMid = async (ctx: Context, next: () => Promise<void>) => {
         })
       })
       await addUserRoleSer(createRole)
-    } else if (postIds?.length > 0) {
+    }
+    if (postIds?.length > 0) {
       const createPost = []
       postIds?.forEach((item) => {
         createPost.push({
@@ -156,7 +161,7 @@ const getAddUserMid = async (ctx: Context, next: () => Promise<void>) => {
 
 // 修改密码
 const updatePwdMid = async (ctx: Context, next: () => Promise<void>) => {
-  const { password, userId } = ctx.request.body
+  const { password, userId } = ctx.request['body']
   try {
     await checkPwdJudg.validateAsync({ password })
   } catch (error) {
@@ -178,6 +183,7 @@ const updatePwdMid = async (ctx: Context, next: () => Promise<void>) => {
 const userInfoMid = async (ctx: Context, next: () => Promise<void>) => {
   const path = ctx.request.path
   const userId = path.split('/')[path.split('/').length - 1]
+  let finRes = {} as IUserDetail
 
   try {
     await userIdJudge.validateAsync({ userId })
@@ -188,20 +194,31 @@ const userInfoMid = async (ctx: Context, next: () => Promise<void>) => {
 
   try {
     const { password, ...res } = await getAllUserInfoSer({ userId })
-    ctx.state.formatData = res
+    finRes = { ...res }
   } catch (error) {
     console.error('用户个人信息查询错误', error)
     return ctx.app.emit('error', sqlErr, ctx)
   }
 
   try {
-    const { password, ...res } = await getAllUserInfoSer({ userId })
-    ctx.state.formatData = res
+    const res = await getUserPostSer(userId)
+    const postIds = [],
+      roleIds = []
+    res.forEach((item) => postIds.push(item.dataValues.post_id))
+    finRes.postIds = postIds
+    const res2 = await checkPostSer(postIds)
+    finRes.posts = res2 as any
+    const roleRes = await getUserRoleSer(userId)
+    roleRes.forEach((item) => roleIds.push(item.dataValues.role_id))
+    finRes.roleIds = roleIds as number[]
+    const roleRes2 = await checkRoleSer(roleIds)
+    finRes.roles = roleRes2 as any
   } catch (error) {
     console.error('查询用户岗位与角色信息错误', error)
     return ctx.app.emit('error', sqlErr, ctx)
   }
 
+  ctx.state.formatData = finRes
   await next()
 }
 

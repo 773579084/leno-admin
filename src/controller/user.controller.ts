@@ -24,7 +24,7 @@ class UserController {
   // 注册
   async register(ctx: Context, next: () => Promise<void>) {
     // 1、获取数据
-    const { userName, password } = ctx.request.body as userType
+    const { userName, password } = ctx.request['body'] as userType
 
     // 2、操作数据库
     const res = await createdUser(userName as string, password as string)
@@ -42,7 +42,7 @@ class UserController {
 
   // 登录
   async login(ctx: Context, next: () => Promise<void>) {
-    const { userName } = ctx.request.body as userType
+    const { userName } = ctx.request['body'] as userType
 
     // 1、获取用户信息（token 中包含 userId，userName） expiresIn : token有效时间
     try {
@@ -94,7 +94,7 @@ class UserController {
 
   // 重置密码
   async updatePwd(ctx: Context, next: () => Promise<void>) {
-    const { oldPwd, newPwd } = ctx.request.body as pwdType
+    const { oldPwd, newPwd } = ctx.request['body'] as pwdType
     const { userId } = ctx.state.user as userType
 
     const res = await getUserInfo({ userId })
@@ -121,7 +121,7 @@ class UserController {
   // 修改个人基本信息
   async updateUserInfo(ctx: Context, next: () => Promise<void>) {
     // 获得 userId 将更新的数据插入到数据库
-    const { email, nickName, phonenumber, sex } = ctx.request.body as userType
+    const { email, nickName, phonenumber, sex } = ctx.request['body'] as userType
     const { userId } = ctx.state.user as userType
 
     const res = await getUserInfo({ userId })

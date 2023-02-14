@@ -37,3 +37,59 @@ export interface deptType {
   createdAt: string
   updatedAt: string
 }
+
+export interface Post {
+  status: string
+  remark?: any
+  createdAt: string
+  updatedAt: string
+  postId: number
+  postCode: string
+  postName: string
+  postSort: number
+  delFlag: string
+  createBy: string
+  updateBy?: any
+}
+
+export interface Role {
+  status: string
+  remark: string
+  createdAt: string
+  updatedAt: string
+  roleId: number
+  roleName: string
+  roleKey: string
+  roleSort: number
+  dataScope: string
+  menuCheckStrictly: number
+  deptCheckStrictly: number
+  delFlag: string
+  createBy: string
+  updateBy?: any
+}
+
+export interface IUserDetail {
+  email?: any
+  phonenumber?: any
+  sex: number
+  avatar?: any
+  status: number
+  remark?: any
+  createdAt: string
+  updatedAt: string
+  postIds: number[]
+  posts: Post[]
+  roleIds: number[]
+  roles: Role[]
+  userId: number
+  deptId?: any
+  userName: string
+  nickName: string
+  userType: number
+  delFlag: number
+  loginIp?: any
+  loginDate?: any
+  createBy?: any
+  updateBy?: any
+}

@@ -29,7 +29,7 @@ const User = seq.define(
       comment: '用户昵称'
     },
     user_type: {
-      type: DataTypes.BOOLEAN,
+      type: DataTypes.BIGINT,
       defaultValue: 0,
       comment: '用户类型 0 管理员 , 1 非管理员 '
     },
@@ -42,7 +42,7 @@ const User = seq.define(
       comment: '手机号码'
     },
     sex: {
-      type: DataTypes.BOOLEAN,
+      type: DataTypes.BIGINT,
       defaultValue: 0,
       comment: '用户性别，0男，1女'
     },
@@ -56,12 +56,12 @@ const User = seq.define(
       comment: '用户密码'
     },
     status: {
-      type: DataTypes.BOOLEAN,
+      type: DataTypes.BIGINT,
       defaultValue: 0,
       comment: '账号状态: 0 正常，1 停用'
     },
     del_flag: {
-      type: DataTypes.BOOLEAN,
+      type: DataTypes.BIGINT,
       defaultValue: 0,
       comment: '账号状态: 0 存在，1 删除'
     },
