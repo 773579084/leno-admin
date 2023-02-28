@@ -37,10 +37,10 @@ router.post('/register', userSchema, verifyUser, crptyPassword, register)
 router.get('/profile/userInfo', auth, getUserInfoCon)
 
 // 修改用户密码
-router.patch('/profile/updatePwd', auth, pwdSchema, updatePwd)
+router.put('/profile/updatePwd', auth, pwdSchema, updatePwd)
 
 // 修改用户个人信息
-router.patch('/profile', auth, userInfoSchema, updateUserInfo)
+router.put('/profile', auth, userInfoSchema, updateUserInfo)
 
 // 用户头像上传
 router.post(

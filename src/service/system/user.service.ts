@@ -40,7 +40,7 @@ class UserService {
 
   // 查询部门下拉树结构
   async getdeptTreeSer() {
-    const res = Dept.findAll()
+    const res = Dept.findAll({})
 
     return res || null
   }
@@ -84,16 +84,6 @@ class UserService {
     return res || []
   }
 
-  // 根据ids查询岗位信息
-  async checkPostSer(list: number[]) {
-    const res = Post.findAll({
-      where: {
-        post_id: [...list]
-      }
-    })
-    return res || null
-  }
-
   // 查询角色岗位关联表
   async getUserRoleSer(userId) {
     const res = UserRole.findAll({
@@ -105,12 +95,30 @@ class UserService {
     return res || []
   }
 
-  // 根据ids查询角色信息
-  async checkRoleSer(list: number[]) {
-    const res = Role.findAll({
-      where: {
-        role_id: [...list]
-      }
+  async putUserSer(user) {
+    const { nickName, deptId, ...data } = user
+    const res = await User.update(
+      {
+        nick_name: nickName,
+        dept_id: deptId,
+        ...data
+      },
+      { where: { user_id: user.userId } }
+    )
+
+    return res[0] > 0
+  }
+
+  async delUserPost(userId) {
+    const res = UserPost.destroy({
+      where: { user_id: userId }
+    })
+    return res || null
+  }
+
+  async delUserRole(userId) {
+    const res = UserRole.destroy({
+      where: { user_id: userId }
     })
     return res || null
   }
@@ -126,7 +134,8 @@ export const {
   addUserPostSer,
   addUserSer,
   getUserPostSer,
-  checkPostSer,
   getUserRoleSer,
-  checkRoleSer
+  putUserSer,
+  delUserPost,
+  delUserRole
 } = new UserService()

@@ -92,7 +92,8 @@ const Menu = seq.define(
     }
   },
   {
-    tableName: 'sys_menu' // 强制创建表名
+    tableName: 'sys_menu', // 强制创建表名
+    freezeTableName: true // 告诉sequelize不需要自动将表名变成复数
   }
 )
 

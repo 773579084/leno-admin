@@ -52,7 +52,7 @@ class UserController {
     }
   }
 
-  // 新增用户
+  // 修改用户密码
   async updatePwdCon(ctx: Context, next: () => Promise<void>) {
     // 3、返回结果
     ctx.body = {
@@ -71,6 +71,16 @@ class UserController {
       result: ctx.state.formatData
     }
   }
+
+  // 修改用户信息
+  async putUserCon(ctx: Context, next: () => Promise<void>) {
+    // 3、返回结果
+    ctx.body = {
+      code: 200,
+      message: '修改用户成功！',
+      result: ctx.state.formatData
+    }
+  }
 }
 
 export const {
@@ -80,5 +90,6 @@ export const {
   getAddUserCon,
   getPostRoleCon,
   updatePwdCon,
-  userInfoCon
+  userInfoCon,
+  putUserCon
 } = new UserController()

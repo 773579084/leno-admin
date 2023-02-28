@@ -8,16 +8,30 @@ import {
   addUserPostSer,
   addUserSer,
   getUserPostSer,
-  checkPostSer,
   getUserRoleSer,
-  checkRoleSer
+  putUserSer,
+  delUserRole,
+  delUserPost
 } from '@/service/system/user.service'
 import { userListType, deptType, userType, IUserDetail } from '@/types'
-import { userIdJudge, addUserJudg, checkPwdJudg } from '@/schema/system/sys.user.schema'
+import {
+  userIdJudge,
+  addUserJudg,
+  checkPwdJudg,
+  putUserJudg
+} from '@/schema/system/sys.user.schema'
 import { updatePassword, getAllUserInfoSer } from '@/service/user.service'
 import errors from '@/constants/err.type'
 import { formatHumpLineTransfer } from '@/utils'
-const { checkUserIdErr, getDeptTreeErr, addUserErr, getPostRoleErr, checkPwdErr, sqlErr } = errors
+const {
+  checkUserIdErr,
+  getDeptTreeErr,
+  addUserErr,
+  getPostRoleErr,
+  checkPwdErr,
+  sqlErr,
+  putUserErr
+} = errors
 
 // 生成用户列表
 const getUserListMid = async (ctx: Context, next: () => Promise<void>) => {
@@ -55,6 +69,8 @@ const userIdSchema = async (ctx: Context, next: () => Promise<void>) => {
 const deptTreeMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const res = (await getdeptTreeSer()) as unknown as deptType[]
+    console.log(58, res)
+
     // 将部门进行树状结构数据
     const deptTree = []
 
@@ -120,6 +136,18 @@ const addUserSchema = async (ctx: Context, next: () => Promise<void>) => {
   } catch (error) {
     console.error('新增用户上传参数出错', error)
     return ctx.app.emit('error', addUserErr, ctx)
+  }
+  await next()
+}
+
+// 检查新增用户上传参数
+const putUserSchema = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    const userList = ctx.request['body'] as userType
+    await putUserJudg.validateAsync(userList)
+  } catch (error) {
+    console.error('修改用户上传参数出错', error)
+    return ctx.app.emit('error', putUserErr, ctx)
   }
   await next()
 }
@@ -206,12 +234,12 @@ const userInfoMid = async (ctx: Context, next: () => Promise<void>) => {
       roleIds = []
     res.forEach((item) => postIds.push(item.dataValues.post_id))
     finRes.postIds = postIds
-    const res2 = await checkPostSer(postIds)
+    const res2 = await getPostSer()
     finRes.posts = res2 as any
     const roleRes = await getUserRoleSer(userId)
     roleRes.forEach((item) => roleIds.push(item.dataValues.role_id))
     finRes.roleIds = roleIds as number[]
-    const roleRes2 = await checkRoleSer(roleIds)
+    const roleRes2 = await getRoleSer()
     finRes.roles = roleRes2 as any
   } catch (error) {
     console.error('查询用户岗位与角色信息错误', error)
@@ -222,6 +250,42 @@ const userInfoMid = async (ctx: Context, next: () => Promise<void>) => {
   await next()
 }
 
+// 修改用户
+const putUserMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    const { postIds, roleIds, ...user } = ctx.request['body'] as userType
+    await putUserSer(user)
+    // 重新绑定 用户与岗位&角色关系
+    if (roleIds?.length > 0) {
+      await delUserRole(user.userId)
+      const createRole = []
+      roleIds?.forEach((item) => {
+        createRole.push({
+          user_id: user.userId,
+          role_id: item
+        })
+      })
+      await addUserRoleSer(createRole)
+    }
+    if (postIds?.length > 0) {
+      await delUserPost(user.userId)
+      const createPost = []
+      postIds?.forEach((item) => {
+        createPost.push({
+          user_id: user.userId,
+          post_id: item
+        })
+      })
+      await addUserPostSer(createPost)
+    }
+
+    await next()
+  } catch (error) {
+    console.error('修改用户失败', error)
+    return ctx.app.emit('error', putUserErr, ctx)
+  }
+}
+
 export {
   getUserListMid,
   userIdSchema,
@@ -230,5 +294,7 @@ export {
   getPostRoleMid,
   addUserSchema,
   updatePwdMid,
-  userInfoMid
+  userInfoMid,
+  putUserSchema,
+  putUserMid
 }

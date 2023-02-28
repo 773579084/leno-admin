@@ -66,8 +66,7 @@ const Dept = seq.define(
   },
   {
     tableName: 'sys_dept', // 强制创建表名
-    freezeTableName: true, // 告诉sequelize不需要自动将表名变成复数
-    timestamps: true
+    freezeTableName: true // 告诉sequelize不需要自动将表名变成复数
   }
 )
 // 在数据库创建 数据表

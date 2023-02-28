@@ -106,6 +106,11 @@ export default {
     message: '请检查新增用户传参',
     result: ''
   },
+  putUserErr: {
+    code: '400',
+    message: '请检查新增用户传参',
+    result: ''
+  },
   getPostRoleErr: {
     code: '500',
     message: '查询部门角色失败',

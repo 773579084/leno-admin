@@ -31,6 +31,20 @@ export const addUserJudg = Joi.object({
   remark
 })
 
+// 验证修改用户信息
+export const putUserJudg = Joi.object({
+  nickName,
+  deptId: checkNum,
+  phonenumber,
+  email,
+  sex,
+  status: checkNum,
+  postIds: checkNumArr,
+  roleIds: checkNumArr,
+  remark,
+  userId: Joi.number()
+})
+
 // 验证用户密码
 export const checkPwdJudg = Joi.object({
   password

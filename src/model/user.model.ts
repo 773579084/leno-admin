@@ -88,8 +88,7 @@ const User = seq.define(
   },
   {
     tableName: 'leno_user', // 强制创建表名
-    freezeTableName: true, // 告诉sequelize不需要自动将表名变成复数
-    timestamps: true // 需要自动创建createAt/updateAt这两个字段
+    freezeTableName: true // 告诉sequelize不需要自动将表名变成复数
   }
 )
 // 在数据库创建 数据表

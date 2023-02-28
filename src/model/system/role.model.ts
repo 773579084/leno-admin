@@ -71,7 +71,7 @@ const Role = seq.define(
   },
   {
     tableName: 'sys_role', // 强制创建表名
-    timestamps: true
+    freezeTableName: true // 告诉sequelize不需要自动将表名变成复数
   }
 )
 
