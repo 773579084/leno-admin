@@ -29,8 +29,8 @@ const User = seq.define(
       comment: '用户昵称'
     },
     user_type: {
-      type: DataTypes.BIGINT,
-      defaultValue: 0,
+      type: DataTypes.CHAR(1),
+      defaultValue: '0',
       comment: '用户类型 0 管理员 , 1 非管理员 '
     },
     email: {
@@ -42,8 +42,8 @@ const User = seq.define(
       comment: '手机号码'
     },
     sex: {
-      type: DataTypes.BIGINT,
-      defaultValue: 0,
+      type: DataTypes.CHAR(1),
+      defaultValue: '0',
       comment: '用户性别，0男，1女'
     },
     avatar: {
@@ -56,8 +56,8 @@ const User = seq.define(
       comment: '用户密码'
     },
     status: {
-      type: DataTypes.BIGINT,
-      defaultValue: 0,
+      type: DataTypes.CHAR(1),
+      defaultValue: '0',
       comment: '账号状态: 0 正常，1 停用'
     },
     del_flag: {
@@ -93,7 +93,7 @@ const User = seq.define(
 )
 // 在数据库创建 数据表
 // force:true 如果存在相同名字的表，删除旧的表，新建新的表
-User.sync()
+User.sync({ force: true })
 // 一对一关联 (关联表的关联顺序为 hasOne =》belongsTo，并且需要写在一张表内)
 Dept.hasOne(User, { foreignKey: 'dept_id', sourceKey: 'dept_id' })
 User.belongsTo(Dept, { foreignKey: 'dept_id', targetKey: 'dept_id', as: 'dept' })

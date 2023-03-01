@@ -24,7 +24,7 @@ const Post = seq.define(
       comment: '岗位名称'
     },
     post_sort: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.INET,
       defaultValue: 0,
       comment: '显示顺序'
     },

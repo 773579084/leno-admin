@@ -24,7 +24,7 @@ const Menu = seq.define(
       comment: '父菜单ID'
     },
     order_num: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.INET,
       defaultValue: 0,
       comment: '显示顺序'
     },
@@ -42,13 +42,13 @@ const Menu = seq.define(
       comment: '路由参数'
     },
     is_frame: {
-      type: DataTypes.BIGINT,
-      defaultValue: 1,
+      type: DataTypes.CHAR(1),
+      defaultValue: '1',
       comment: '是否为外链（0是 1否）'
     },
     is_cache: {
-      type: DataTypes.BIGINT,
-      defaultValue: 0,
+      type: DataTypes.CHAR(1),
+      defaultValue: '0',
       comment: '是否缓存（0缓存 1不缓存）'
     },
     menu_type: {
@@ -58,12 +58,12 @@ const Menu = seq.define(
     },
     visible: {
       type: DataTypes.CHAR(1),
-      defaultValue: 0,
+      defaultValue: '0',
       comment: '菜单状态（0显示 1隐藏）'
     },
     status: {
       type: DataTypes.CHAR(1),
-      defaultValue: 0,
+      defaultValue: '0',
       comment: '菜单状态（0正常 1停用）'
     },
     perms: {

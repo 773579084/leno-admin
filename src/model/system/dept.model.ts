@@ -24,7 +24,7 @@ const Dept = seq.define(
       comment: '部门名称'
     },
     order_num: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.INET,
       defaultValue: 0,
       comment: '显示顺序'
     },

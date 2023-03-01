@@ -24,23 +24,23 @@ const Role = seq.define(
       comment: '角色权限字符串'
     },
     role_sort: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.INET,
       defaultValue: 0,
       comment: '显示顺序'
     },
     data_scope: {
       type: DataTypes.CHAR(255),
-      defaultValue: 1,
+      defaultValue: '1',
       comment:
         '数据范围（1：全部数据权限 2：自定数据权限 3：本部门数据权限 4：本部门及以下数据权限）'
     },
     menu_check_strictly: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.TINYINT,
       defaultValue: 1,
       comment: '菜单树选择项是否关联显示'
     },
     dept_check_strictly: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.TINYINT,
       defaultValue: 1,
       comment: '部门树选择项是否关联显示'
     },
@@ -51,7 +51,7 @@ const Role = seq.define(
     },
     del_flag: {
       type: DataTypes.CHAR(1),
-      defaultValue: 0,
+      defaultValue: '0',
       comment: '删除标志（0代表存在 1代表删除）'
     },
     create_by: {
