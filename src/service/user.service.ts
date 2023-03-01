@@ -37,9 +37,17 @@ class UserService {
   }
 
   // 更新密码数据
-  async updatePassword({ newPwd, userId }: { newPwd: string; userId: number }) {
+  async updatePassword({
+    newPwd,
+    userId,
+    update_by
+  }: {
+    newPwd: string
+    userId: number
+    update_by: string
+  }) {
     const res = await User.update(
-      { password: newPwd },
+      { password: newPwd, update_by },
       {
         where: { user_id: userId }
       }
@@ -49,9 +57,9 @@ class UserService {
   }
 
   // 更新个人信息
-  async updateUserInfoSer({ userId, email, nickName, phonenumber, sex }) {
+  async updateUserInfoSer({ userId, email, nickName, phonenumber, sex, update_by }) {
     const res = await User.update(
-      { email, nick_name: nickName, phonenumber, sex },
+      { email, nick_name: nickName, phonenumber, sex, update_by },
       {
         where: { user_id: userId }
       }
@@ -71,9 +79,9 @@ class UserService {
   }
 
   // 上传个人头像地址
-  async updateAvatarSer({ userId, basePath }) {
+  async updateAvatarSer({ userId, basePath, update_by }) {
     const res = await User.update(
-      { avatar: basePath },
+      { avatar: basePath, update_by },
       {
         where: { user_id: userId }
       }

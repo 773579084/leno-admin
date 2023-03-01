@@ -15,6 +15,10 @@ import {
 export const userIdJudge = Joi.object({
   userId: Joi.number()
 })
+// 验证 ids
+export const userIdsJudge = Joi.object({
+  userId: checkNumArr
+})
 
 // 验证新增用户信息
 export const addUserJudg = Joi.object({

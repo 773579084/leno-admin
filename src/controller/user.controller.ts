@@ -95,7 +95,7 @@ class UserController {
   // 重置密码
   async updatePwd(ctx: Context, next: () => Promise<void>) {
     const { oldPwd, newPwd } = ctx.request['body'] as pwdType
-    const { userId } = ctx.state.user as userType
+    const { userId, userName } = ctx.state.user as userType
 
     const res = await getUserInfo({ userId })
     // 判断 旧密码 是否与数据库内的密码一致
@@ -107,7 +107,7 @@ class UserController {
     const salt = bcrypt.genSaltSync(10)
     const hash = bcrypt.hashSync(newPwd as string, salt)
 
-    if (await updatePassword({ newPwd: hash, userId })) {
+    if (await updatePassword({ newPwd: hash, userId, update_by: userName })) {
       ctx.body = {
         code: 200,
         message: '密码修改成功！'
@@ -122,12 +122,14 @@ class UserController {
   async updateUserInfo(ctx: Context, next: () => Promise<void>) {
     // 获得 userId 将更新的数据插入到数据库
     const { email, nickName, phonenumber, sex } = ctx.request['body'] as userType
-    const { userId } = ctx.state.user as userType
+    const { userId, userName } = ctx.state.user as userType
 
     const res = await getUserInfo({ userId })
 
     if (res) {
-      if (await updateUserInfoSer({ userId, email, nickName, phonenumber, sex })) {
+      if (
+        await updateUserInfoSer({ userId, email, nickName, phonenumber, sex, update_by: userName })
+      ) {
         ctx.body = {
           code: 200,
           message: '个人信息修改成功！'
@@ -147,7 +149,7 @@ class UserController {
     const { avatar } = ctx.request?.files // files 是koa-body提供的文件地址位置
     const { filepath } = avatar as imgType
     const basePath = path.basename(filepath) as string
-    const { userId } = ctx.state.user as userType
+    const { userId, userName } = ctx.state.user as userType
 
     if (avatar) {
       // 删除上一次存储的图片
@@ -157,7 +159,7 @@ class UserController {
       }
 
       // 把用户头像名称保存到数据库
-      if (await updateAvatarSer({ userId, basePath })) {
+      if (await updateAvatarSer({ userId, basePath, update_by: userName })) {
         ctx.body = {
           code: 200,
           message: '头像上传成功',

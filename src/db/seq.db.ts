@@ -12,11 +12,11 @@ const seq = new Sequelize(MYSQL_DB as string, MYSQL_USER as string, MYSQL_PWD as
   define: {
     // create_time && update_time
     timestamps: true,
-    // delete_time
-    paranoid: true,
-    // createdAt: 'created_at', //自定义时间戳
+    createdAt: 'created_at', //自定义时间戳
     updatedAt: 'updated_at',
-    deletedAt: 'deleted_at',
+    // delete_time
+    // paranoid: true,
+    // deletedAt: 'deleted_at',
     // 把驼峰命名转换为下划线
     underscored: true,
     pool: {

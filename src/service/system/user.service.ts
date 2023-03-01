@@ -4,7 +4,6 @@ import Post from '@/model/system/post.model'
 import Role from '@/model/system/role.model'
 import UserRole from '@/model/system/sys_user_role.model'
 import UserPost from '@/model/system/sys_user_post.model'
-import { userType } from '@/types'
 
 class UserService {
   // 获取用户列表
@@ -18,7 +17,8 @@ class UserService {
         }
       ],
       offset: (Number(pageNum) - 1) * Number(pageSize),
-      limit: Number(pageSize)
+      limit: Number(pageSize),
+      where: { del_flag: '0' }
     })
 
     const count = await User.count()
@@ -31,9 +31,12 @@ class UserService {
 
   // 删除用户
   async delUserSer(userId) {
-    const res = User.destroy({
-      where: { user_id: userId }
-    })
+    const res = await User.update(
+      {
+        del_flag: '2'
+      },
+      { where: { user_id: userId } }
+    )
 
     return res || null
   }

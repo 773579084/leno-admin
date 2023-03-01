@@ -29,9 +29,8 @@ const userSchema = async (ctx: Context, next: () => Promise<void>) => {
 
 // 判断用户名是否重复
 const verifyUser = async (ctx: Context, next: () => Promise<void>) => {
-  const { userName } = ctx.request['body'] as userType
-
   try {
+    const { userName } = ctx.request['body'] as userType
     if (await getUserInfo({ userName })) {
       console.error('用户名已存在!', ctx.request['body'])
       ctx.app.emit('error', userExisting, ctx)

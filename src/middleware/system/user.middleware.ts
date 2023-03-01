@@ -16,6 +16,7 @@ import {
 import { userListType, deptType, userType, IUserDetail } from '@/types'
 import {
   userIdJudge,
+  userIdsJudge,
   addUserJudg,
   checkPwdJudg,
   putUserJudg
@@ -56,8 +57,9 @@ const userIdSchema = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const list = ctx.request.path.split('/')
     const userId = list[list.length - 1]
-    await userIdJudge.validateAsync({ userId })
-    ctx.state.userId = userId
+    const userIdList = userId.split(',')
+    await userIdsJudge.validateAsync({ userId: userIdList })
+    ctx.state.userId = userIdList
   } catch (error) {
     console.error('用户名id格式错误!', ctx.request['body'])
     return ctx.app.emit('error', checkUserIdErr, ctx)
@@ -69,7 +71,6 @@ const userIdSchema = async (ctx: Context, next: () => Promise<void>) => {
 const deptTreeMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const res = (await getdeptTreeSer()) as unknown as deptType[]
-    console.log(58, res)
 
     // 将部门进行树状结构数据
     const deptTree = []
@@ -155,8 +156,10 @@ const putUserSchema = async (ctx: Context, next: () => Promise<void>) => {
 // 新增用户
 const getAddUserMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
+    const { userName } = ctx.state.user as userType
     const { postIds, roleIds, ...user } = ctx.request['body'] as userType
-    const newUser = formatHumpLineTransfer(user, 'line')
+    const user2 = { ...user, createBy: userName }
+    const newUser = formatHumpLineTransfer(user2, 'line')
     const { user_id } = await addUserSer(newUser)
     // //绑定角色岗位关系
     if (roleIds?.length > 0) {
@@ -190,6 +193,7 @@ const getAddUserMid = async (ctx: Context, next: () => Promise<void>) => {
 // 修改密码
 const updatePwdMid = async (ctx: Context, next: () => Promise<void>) => {
   const { password, userId } = ctx.request['body']
+  const { userName } = ctx.state.user as userType
   try {
     await checkPwdJudg.validateAsync({ password })
   } catch (error) {
@@ -198,7 +202,7 @@ const updatePwdMid = async (ctx: Context, next: () => Promise<void>) => {
   }
 
   try {
-    await updatePassword({ newPwd: password, userId })
+    await updatePassword({ newPwd: password, userId, update_by: userName })
   } catch (error) {
     console.error('服务器错误', error)
     return ctx.app.emit('error', sqlErr, ctx)
@@ -253,8 +257,9 @@ const userInfoMid = async (ctx: Context, next: () => Promise<void>) => {
 // 修改用户
 const putUserMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
+    const { userName } = ctx.state.user as userType
     const { postIds, roleIds, ...user } = ctx.request['body'] as userType
-    await putUserSer(user)
+    await putUserSer({ ...user, update_by: userName })
     // 重新绑定 用户与岗位&角色关系
     if (roleIds?.length > 0) {
       await delUserRole(user.userId)
