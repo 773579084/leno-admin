@@ -81,6 +81,16 @@ class UserController {
       result: ctx.state.formatData
     }
   }
+
+  // 修改用户信息
+  async putUserStatusCon(ctx: Context, next: () => Promise<void>) {
+    // 3、返回结果
+    ctx.body = {
+      code: 200,
+      message: ctx.state.status === '0' ? '用户启用成功！' : '用户停用成功！',
+      result: ''
+    }
+  }
 }
 
 export const {
@@ -91,5 +101,6 @@ export const {
   getPostRoleCon,
   updatePwdCon,
   userInfoCon,
-  putUserCon
+  putUserCon,
+  putUserStatusCon
 } = new UserController()

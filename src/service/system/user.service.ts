@@ -4,10 +4,12 @@ import Post from '@/model/system/post.model'
 import Role from '@/model/system/role.model'
 import UserRole from '@/model/system/sys_user_role.model'
 import UserPost from '@/model/system/sys_user_post.model'
+import { userQueryType } from '@/types'
 
 class UserService {
   // 获取用户列表
-  async getUserListSer(pageNum: string = '1', pageSize: string = '10') {
+  async getUserListSer(queryParams: userQueryType) {
+    const { pageNum, pageSize, ...params } = queryParams
     const res = User.findAndCountAll({
       attributes: { exclude: ['password'] },
       include: [
@@ -18,7 +20,7 @@ class UserService {
       ],
       offset: (Number(pageNum) - 1) * Number(pageSize),
       limit: Number(pageSize),
-      where: { del_flag: '0' }
+      where: { del_flag: '0', ...params }
     })
 
     const count = await User.count()
@@ -125,9 +127,17 @@ class UserService {
     })
     return res || null
   }
+
+  async putUserStatusSer(user) {
+    const { userId, ...data } = user
+    const res = await User.update(data, { where: { user_id: userId } })
+
+    return res[0] > 0
+  }
 }
 
 export const {
+  putUserStatusSer,
   getUserListSer,
   delUserSer,
   getdeptTreeSer,

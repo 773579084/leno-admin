@@ -18,13 +18,18 @@ const Dept = seq.define(
       defaultValue: 0,
       comment: '父部门id'
     },
+    ancestors: {
+      type: DataTypes.CHAR(50),
+      defaultValue: '',
+      comment: '祖级列表'
+    },
     dept_name: {
       type: DataTypes.CHAR(255),
       defaultValue: null,
       comment: '部门名称'
     },
     order_num: {
-      type: DataTypes.INET,
+      type: DataTypes.BIGINT,
       defaultValue: 0,
       comment: '显示顺序'
     },

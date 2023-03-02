@@ -11,7 +11,8 @@ import {
   getPostRoleCon,
   updatePwdCon,
   userInfoCon,
-  putUserCon
+  putUserCon,
+  putUserStatusCon
 } from '@/controller/system/user.controller'
 import {
   getUserListMid,
@@ -23,7 +24,8 @@ import {
   userInfoMid,
   updatePwdMid,
   putUserSchema,
-  putUserMid
+  putUserMid,
+  putUserStatusMid
 } from '@/middleware/system/user.middleware'
 import { verifyUser, crptyPassword } from '@/middleware/user.middleware'
 // menu
@@ -55,9 +57,12 @@ router.get(`/userInfo/:id`, auth, userInfoMid, formatHandle, userInfoCon)
 
 // 修改用户
 router.put('/user', auth, putUserSchema, putUserMid, putUserCon)
+
+// 修改用户状态
+router.put('/user/profile', auth, putUserStatusMid, putUserStatusCon)
 // #endregion
 
 // 新增用户弹窗内岗位及角色数据获取
-router.get('/menu/getRouters', auth, getRouterMid, getRoutersCon)
+router.get('/menu/getRouters', auth, putUserStatusMid, getRoutersCon)
 
 module.exports = router

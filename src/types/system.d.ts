@@ -23,8 +23,10 @@ export interface menusType {
 
 // 部门类型
 export interface deptType {
+  [x: string]: any
   dept_id: number
   parent_id: number
+  ancestors: string
   dept_name: string
   order_num: number
   leader: string
@@ -72,10 +74,10 @@ export interface Role {
 export interface IUserDetail {
   email?: any
   phonenumber?: any
-  sex: number
+  sex: string
   avatar?: any
-  status: number
-  remark?: any
+  status: string
+  remark?: string
   createdAt: string
   updatedAt: string
   postIds: number[]
@@ -83,7 +85,7 @@ export interface IUserDetail {
   roleIds: number[]
   roles: Role[]
   userId: number
-  deptId?: any
+  deptId?: number
   userName: string
   nickName: string
   userType: number
@@ -92,4 +94,24 @@ export interface IUserDetail {
   loginDate?: any
   createBy?: any
   updateBy?: any
+}
+
+// sys_user query
+export interface userQueryType {
+  pageNum: number
+  pageSize: number
+  deptId?: number
+  userName?: string
+  phonenumber?: string
+  status?: string
+  createdAt?: string
+}
+export interface userQuerySerType {
+  pageNum: number
+  pageSize: number
+  dept_id?: number[]
+  user_name?: string
+  phonenumber?: string
+  status?: string
+  created_at?: string
 }

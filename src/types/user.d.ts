@@ -5,14 +5,14 @@ export interface userType {
   deptId?: number
   userName?: string
   nickName?: string
-  userType?: boolean | number
+  userType?: string
   email?: string
   phonenumber?: number
-  sex?: boolean | number
+  sex?: string
   avatar?: string
   password?: string
-  status?: boolean | number
-  delFlag?: boolean | number
+  status?: string
+  delFlag?: string
   loginIp?: string
   loginDate?: string | number
   createBy?: string

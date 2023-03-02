@@ -11,9 +11,17 @@ import {
   getUserRoleSer,
   putUserSer,
   delUserRole,
-  delUserPost
+  delUserPost,
+  putUserStatusSer
 } from '@/service/system/user.service'
-import { userListType, deptType, userType, IUserDetail } from '@/types'
+import {
+  userListType,
+  deptType,
+  userType,
+  IUserDetail,
+  userQueryType,
+  userQuerySerType
+} from '@/types'
 import {
   userIdJudge,
   userIdsJudge,
@@ -37,12 +45,26 @@ const {
 // 生成用户列表
 const getUserListMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    const { pageNum, pageSize } = ctx.query as {
-      pageNum: string
-      pageSize: string
+    const { pageNum, pageSize, ...params } = ctx.query as unknown as userQueryType
+    let newParams = { pageNum, pageSize } as userQuerySerType
+    if (params.deptId) {
+      try {
+        const depts = (await getdeptTreeSer()) as any
+        let deptIds = []
+        depts.forEach((item) => {
+          if (item.dataValues.ancestors.indexOf(`${params.deptId}`) !== -1) {
+            deptIds.push(item.dept_id)
+          }
+        })
+        newParams.dept_id = [params.deptId, ...deptIds]
+      } catch (error) {
+        console.error('查询部门失败!', ctx.request['body'])
+      }
     }
+    params.createdAt ? (newParams.created_at = params.createdAt) : null
+    params.userName ? (newParams.user_name = params.userName) : null
 
-    const res = (await getUserListSer(pageNum, pageSize)) as userListType
+    const res = (await getUserListSer(newParams)) as userListType
 
     ctx.state.formatData = res
     await next()
@@ -291,6 +313,20 @@ const putUserMid = async (ctx: Context, next: () => Promise<void>) => {
   }
 }
 
+const putUserStatusMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    const { userName } = ctx.state.user as userType
+    let { userId, status } = ctx.request['body'] as userType
+    ctx.state.status = status
+    await putUserStatusSer({ userId, status, update_by: userName })
+
+    await next()
+  } catch (error) {
+    console.error('修改用户状态失败', error)
+    return ctx.app.emit('error', putUserErr, ctx)
+  }
+}
+
 export {
   getUserListMid,
   userIdSchema,
@@ -301,5 +337,6 @@ export {
   updatePwdMid,
   userInfoMid,
   putUserSchema,
-  putUserMid
+  putUserMid,
+  putUserStatusMid
 }
