@@ -63,6 +63,8 @@ const getUserListMid = async (ctx: Context, next: () => Promise<void>) => {
     }
     params.createdAt ? (newParams.created_at = params.createdAt) : null
     params.userName ? (newParams.user_name = params.userName) : null
+    params.phonenumber ? (newParams.phonenumber = params.phonenumber) : null
+    params.status ? (newParams.status = params.status) : null
 
     const res = (await getUserListSer(newParams)) as userListType
 

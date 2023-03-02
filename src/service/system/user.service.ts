@@ -9,6 +9,8 @@ import { userQueryType } from '@/types'
 class UserService {
   // 获取用户列表
   async getUserListSer(queryParams: userQueryType) {
+    console.log(12, queryParams)
+
     const { pageNum, pageSize, ...params } = queryParams
     const res = User.findAndCountAll({
       attributes: { exclude: ['password'] },
@@ -23,7 +25,9 @@ class UserService {
       where: { del_flag: '0', ...params }
     })
 
-    const count = await User.count()
+    const count = await User.count({
+      where: { del_flag: '0', ...params }
+    })
     const list = {
       count,
       rows: (await res).rows || {}
