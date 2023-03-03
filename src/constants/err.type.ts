@@ -121,6 +121,16 @@ export default {
     message: '请检查密码传参',
     result: ''
   },
+  delUserErr: {
+    code: '500',
+    message: '删除用户失败',
+    result: ''
+  },
+  delSuperUserErr: {
+    code: '500',
+    message: '超级管理员不可删除！',
+    result: ''
+  },
   // 菜单管理
   getRoutersErr: {
     code: '400',

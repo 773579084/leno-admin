@@ -1,5 +1,7 @@
 import { Context } from 'koa'
 import { delUserSer } from '@/service/system/user.service'
+import errors from '@/constants/err.type'
+const { delUserErr, delSuperUserErr } = errors
 
 class UserController {
   // 生成用户列表
@@ -14,12 +16,22 @@ class UserController {
 
   // 删除用户
   async delUserCon(ctx: Context, next: () => Promise<void>) {
-    await delUserSer(ctx.state.userId)
-    // 3、返回结果
-    ctx.body = {
-      code: 200,
-      message: '删除用户成功！',
-      result: ''
+    if (ctx.state.userId.some((value) => value === '1')) {
+      console.log(20, ctx.state.userId)
+      ctx.app.emit('error', delSuperUserErr, ctx)
+    } else {
+      try {
+        await delUserSer(ctx.state.userId)
+      } catch (error) {
+        console.error('删除用户失败', error)
+        return ctx.app.emit('error', delUserErr, ctx)
+      }
+      // 3、返回结果
+      ctx.body = {
+        code: 200,
+        message: '删除用户成功！',
+        result: ''
+      }
     }
   }
 
