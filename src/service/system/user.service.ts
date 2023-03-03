@@ -4,14 +4,18 @@ import Post from '@/model/system/post.model'
 import Role from '@/model/system/role.model'
 import UserRole from '@/model/system/sys_user_role.model'
 import UserPost from '@/model/system/sys_user_post.model'
-import { userQueryType } from '@/types'
+import { userQuerySerType } from '@/types'
+import { Op } from 'sequelize'
 
 class UserService {
   // 获取用户列表
-  async getUserListSer(queryParams: userQueryType) {
-    console.log(12, queryParams)
+  async getUserListSer(queryParams: userQuerySerType) {
+    const { pageNum, pageSize, beginTime, endTime, ...params } = queryParams
+    if (beginTime)
+      params.created_at = {
+        [Op.between]: [beginTime, endTime]
+      }
 
-    const { pageNum, pageSize, ...params } = queryParams
     const res = User.findAndCountAll({
       attributes: { exclude: ['password'] },
       include: [
@@ -22,11 +26,17 @@ class UserService {
       ],
       offset: (Number(pageNum) - 1) * Number(pageSize),
       limit: Number(pageSize),
-      where: { del_flag: '0', ...params }
+      where: {
+        del_flag: '0',
+        ...params
+      }
     })
 
     const count = await User.count({
-      where: { del_flag: '0', ...params }
+      where: {
+        del_flag: '0',
+        ...params
+      }
     })
     const list = {
       count,

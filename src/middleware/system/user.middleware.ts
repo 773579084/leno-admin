@@ -61,7 +61,10 @@ const getUserListMid = async (ctx: Context, next: () => Promise<void>) => {
         console.error('查询部门失败!', ctx.request['body'])
       }
     }
-    params.createdAt ? (newParams.created_at = params.createdAt) : null
+    if (params.beginTime) {
+      newParams.beginTime = params.beginTime
+      newParams.endTime = params.endTime
+    }
     params.userName ? (newParams.user_name = params.userName) : null
     params.phonenumber ? (newParams.phonenumber = params.phonenumber) : null
     params.status ? (newParams.status = params.status) : null

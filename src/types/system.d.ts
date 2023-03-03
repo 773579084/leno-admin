@@ -104,7 +104,8 @@ export interface userQueryType {
   userName?: string
   phonenumber?: string
   status?: string
-  createdAt?: string
+  beginTime?: string
+  endTime?: string
 }
 export interface userQuerySerType {
   pageNum: number
@@ -113,5 +114,7 @@ export interface userQuerySerType {
   user_name?: string
   phonenumber?: string
   status?: string
-  created_at?: string
+  beginTime?: string
+  endTime?: string
+  created_at?: any
 }
