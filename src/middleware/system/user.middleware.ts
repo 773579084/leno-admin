@@ -12,7 +12,8 @@ import {
   putUserSer,
   delUserRole,
   delUserPost,
-  putUserStatusSer
+  putUserStatusSer,
+  exportUserListSer
 } from '@/service/system/user.service'
 import {
   userListType,
@@ -39,7 +40,8 @@ const {
   getPostRoleErr,
   checkPwdErr,
   sqlErr,
-  putUserErr
+  putUserErr,
+  exportUserListErr
 } = errors
 
 // 生成用户列表
@@ -77,6 +79,18 @@ const getUserListMid = async (ctx: Context, next: () => Promise<void>) => {
     console.error('查询部门角色失败', error)
     return ctx.app.emit('error', getPostRoleErr, ctx)
   }
+}
+
+// 导出用户列表
+const exportUserListMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    const res = await exportUserListSer()
+    ctx.state.formatData = res
+  } catch (error) {
+    console.error('导出用户列表错误!', ctx.request['body'])
+    return ctx.app.emit('error', exportUserListErr, ctx)
+  }
+  await next()
 }
 
 // 判断用户名id是否正确
@@ -343,5 +357,6 @@ export {
   userInfoMid,
   putUserSchema,
   putUserMid,
-  putUserStatusMid
+  putUserStatusMid,
+  exportUserListMid
 }

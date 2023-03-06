@@ -148,6 +148,21 @@ class UserService {
 
     return res[0] > 0
   }
+
+  // 导出用户列表
+  async exportUserListSer() {
+    const res = User.findAndCountAll({
+      attributes: { exclude: ['password'] },
+      include: [
+        {
+          model: Dept,
+          as: 'dept'
+        }
+      ]
+    })
+
+    return (await res).rows || {}
+  }
 }
 
 export const {
@@ -164,5 +179,6 @@ export const {
   getUserRoleSer,
   putUserSer,
   delUserPost,
-  delUserRole
+  delUserRole,
+  exportUserListSer
 } = new UserService()

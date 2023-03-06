@@ -103,6 +103,16 @@ class UserController {
       result: ''
     }
   }
+
+  // 导出用户列表
+  async exportUserListCon(ctx: Context, next: () => Promise<void>) {
+    // 3、返回结果
+    ctx.body = {
+      code: 200,
+      message: '查询用户成功！',
+      result: ctx.state.formatData
+    }
+  }
 }
 
 export const {
@@ -114,5 +124,6 @@ export const {
   updatePwdCon,
   userInfoCon,
   putUserCon,
-  putUserStatusCon
+  putUserStatusCon,
+  exportUserListCon
 } = new UserController()

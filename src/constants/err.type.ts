@@ -131,6 +131,11 @@ export default {
     message: '超级管理员不可删除！',
     result: ''
   },
+  exportUserListErr: {
+    code: '500',
+    message: '导出用户列表',
+    result: ''
+  },
   // 菜单管理
   getRoutersErr: {
     code: '400',
