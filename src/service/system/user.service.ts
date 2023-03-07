@@ -32,14 +32,8 @@ class UserService {
       }
     })
 
-    const count = await User.count({
-      where: {
-        del_flag: '0',
-        ...params
-      }
-    })
     const list = {
-      count,
+      count: (await res).count,
       rows: (await res).rows || {}
     }
     return list
@@ -156,7 +150,8 @@ class UserService {
       include: [
         {
           model: Dept,
-          as: 'dept'
+          as: 'dept',
+          attributes: ['dept_name', 'leader']
         }
       ]
     })

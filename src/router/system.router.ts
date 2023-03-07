@@ -2,6 +2,7 @@ import Router from 'koa-router'
 import auth from '@/middleware/auth.middleware'
 // 格式转换
 import { formatHandle } from '@/middleware/formatHandle'
+import { importUsersMid } from '@/middleware/common.middleware'
 // user
 import {
   getUserListCon,
@@ -68,6 +69,9 @@ router.put('/user/profile', auth, putUserStatusMid, putUserStatusCon)
 router.get('/menu/getRouters', auth, putUserStatusMid, getRoutersCon)
 
 // 导出用户列表
-router.get('/user/export', auth, exportUserListMid, formatHandle, exportUserListCon)
+router.post('/user/export', auth, exportUserListMid, formatHandle, exportUserListCon)
+
+// 导入用户列表
+router.post('/user/importExcel', auth, importUsersMid())
 
 module.exports = router

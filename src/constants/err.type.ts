@@ -133,7 +133,12 @@ export default {
   },
   exportUserListErr: {
     code: '500',
-    message: '导出用户列表',
+    message: '导出用户列表错误',
+    result: ''
+  },
+  importUserListErr: {
+    code: '500',
+    message: '导入用户excel解析错误',
     result: ''
   },
   // 菜单管理

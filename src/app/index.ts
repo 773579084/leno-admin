@@ -20,6 +20,7 @@ app.use(
       // 在配制选项option里, 不推荐使用相对路径
       // 在option里的相对路径, 不是相对的当前文件. 相对process.cwd()
       uploadDir: path.join(__dirname, '../upload'), // 上传的文件放置到哪个路径下
+      maxFileSize: 1000 * 1024 * 1024, // 设置上传文件大小最大限制
       keepExtensions: true // 是否保留文件的扩展名
     },
     parsedMethods: ['POST', 'PUT', 'PATCH', 'DELETE']

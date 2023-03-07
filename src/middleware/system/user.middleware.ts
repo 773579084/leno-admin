@@ -32,7 +32,7 @@ import {
 } from '@/schema/system/sys.user.schema'
 import { updatePassword, getAllUserInfoSer } from '@/service/user.service'
 import errors from '@/constants/err.type'
-import { formatHumpLineTransfer } from '@/utils'
+import { formatHumpLineTransfer, timeChange } from '@/utils'
 const {
   checkUserIdErr,
   getDeptTreeErr,
@@ -92,7 +92,6 @@ const exportUserListMid = async (ctx: Context, next: () => Promise<void>) => {
   }
   await next()
 }
-
 // 判断用户名id是否正确
 const userIdSchema = async (ctx: Context, next: () => Promise<void>) => {
   try {

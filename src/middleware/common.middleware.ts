@@ -3,7 +3,9 @@ import { imgType } from '@/types'
 import errors from '@/constants/err.type'
 import { removeSpecifyFile } from '@/utils'
 import path from 'path'
-const { unAvatarSizeErr, unSupportedFileErr } = errors
+const { unAvatarSizeErr, unSupportedFileErr, importUserListErr } = errors
+import xlsx from 'node-xlsx'
+let fs = require('fs')
 
 // 判断 上传图片的 大小是否合适
 export const contrastFileSizeSchema = (limitSize = 1024 * 1024) => {
@@ -29,6 +31,19 @@ export const judImgFormatSchema = (imgFormat = ['image/jpeg', 'image/png']) => {
       removeSpecifyFile(basePath)
       console.error('图片上传格式错误,请上传jpeg/png格式')
       return ctx.app.emit('error', unSupportedFileErr, ctx)
+    }
+    await next()
+  }
+}
+
+// 导入用户excel解析
+export const importUsersMid = () => {
+  return async (ctx: Context, next: () => Promise<void>) => {
+    try {
+      const { excel } = ctx.request?.files
+    } catch (error) {
+      console.error('导入用户excel解析误!', ctx.request['body'])
+      return ctx.app.emit('error', importUserListErr, ctx)
     }
     await next()
   }
