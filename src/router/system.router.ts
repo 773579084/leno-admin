@@ -2,7 +2,7 @@ import Router from 'koa-router'
 import auth from '@/middleware/auth.middleware'
 // 格式转换
 import { formatHandle } from '@/middleware/formatHandle'
-import { importUsersMid } from '@/middleware/common.middleware'
+import { importUsersMid, judegImportMid } from '@/middleware/common.middleware'
 // user
 import {
   getUserListCon,
@@ -34,6 +34,7 @@ import { verifyUser, crptyPassword } from '@/middleware/user.middleware'
 // menu
 import { getRoutersCon } from '@/controller/system/menu.controller'
 import { getRouterMid } from '@/middleware/system/menu.middleware'
+import User from '@/model/user.model'
 const router = new Router({ prefix: '/system' })
 
 // #region 用户管理
@@ -72,6 +73,6 @@ router.get('/menu/getRouters', auth, putUserStatusMid, getRoutersCon)
 router.post('/user/export', auth, exportUserListMid, formatHandle, exportUserListCon)
 
 // 导入用户列表
-router.post('/user/importExcel', auth, importUsersMid())
+router.post('/user/importExcel', auth, importUsersMid('user'), judegImportMid(User))
 
 module.exports = router

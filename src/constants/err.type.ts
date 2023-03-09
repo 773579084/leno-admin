@@ -137,8 +137,8 @@ export default {
     result: ''
   },
   importUserListErr: {
-    code: '500',
-    message: '导入用户excel解析错误',
+    code: '400',
+    message: '用户excel上传表头格式不正确',
     result: ''
   },
   // 菜单管理

@@ -7,7 +7,7 @@ const seq = new Sequelize(MYSQL_DB as string, MYSQL_USER as string, MYSQL_PWD as
   host: MYSQL_HOST,
   dialect: 'mysql',
   // 设置北京时间
-  timezone: '+8:00',
+  timezone: '+08:00',
   logging: true, // logging: true, 打印sql到控制台
   define: {
     // create_time && update_time
