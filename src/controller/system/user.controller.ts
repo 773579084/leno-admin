@@ -1,9 +1,9 @@
 import { Context } from 'koa'
 import { delUserSer } from '@/service/system/user.service'
-import xlsx from 'node-xlsx'
 import errors from '@/constants/err.type'
-import { flatten } from '@/utils'
 const { delUserErr, delSuperUserErr } = errors
+import { excelExportMap } from '@/public/map'
+import { excelExport } from '@/utils'
 
 class UserController {
   // 生成用户列表
@@ -109,45 +109,26 @@ class UserController {
   // 导出用户列表
   async exportUserListCon(ctx: Context, next: () => Promise<void>) {
     const users = ctx.state.formatData
-    // 处理数据返回excel
-    // 设置表头
-    const header = [
-      '用户序号',
-      '用户名称',
-      '用户邮箱',
-      '手机号码',
-      '用户性别',
-      '帐号状态',
-      '最后登录IP',
-      '最后登录时间',
-      '部门名称',
-      '部门负责人'
-    ]
-    const headerKeys = [
-      'userId',
-      'userName',
-      'email',
-      'phonenumber',
-      'sex',
-      'status',
-      'loginIp',
-      'loginDate',
-      'dept.deptName',
-      'dept.leader'
-    ]
     // 表格数据
-    const data = []
-    users.forEach((item) => {
-      let arr = []
-      const item2 = flatten(item)
-      headerKeys.forEach((key) => {
-        arr.push(item2[key])
-      })
-      data.push(arr)
-    })
-    data.unshift(header)
-    const buffer = xlsx.build([{ options: {}, name: `user_${new Date().valueOf()}`, data: data }])
+    const buffer = excelExport(
+      users,
+      excelExportMap.userHeader,
+      excelExportMap.userHeaderKeys,
+      'user'
+    )
+    // 3、返回结果
+    ctx.body = buffer
+  }
 
+  // 导出用户excel模板
+  async exportTemlateCon(ctx: Context, next: () => Promise<void>) {
+    // 表格数据
+    const buffer = excelExport(
+      [],
+      excelExportMap.userHeader,
+      excelExportMap.userHeaderKeys,
+      'user_template'
+    )
     // 3、返回结果
     ctx.body = buffer
   }
@@ -163,5 +144,6 @@ export const {
   userInfoCon,
   putUserCon,
   putUserStatusCon,
-  exportUserListCon
+  exportUserListCon,
+  exportTemlateCon
 } = new UserController()

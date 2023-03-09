@@ -14,7 +14,8 @@ import {
   userInfoCon,
   putUserCon,
   putUserStatusCon,
-  exportUserListCon
+  exportUserListCon,
+  exportTemlateCon
 } from '@/controller/system/user.controller'
 import {
   getUserListMid,
@@ -73,6 +74,22 @@ router.get('/menu/getRouters', auth, putUserStatusMid, getRoutersCon)
 router.post('/user/export', auth, exportUserListMid, formatHandle, exportUserListCon)
 
 // 导入用户列表
-router.post('/user/importExcel', auth, importUsersMid('user'), judegImportMid(User))
+router.post(
+  '/user/importExcel',
+  auth,
+  importUsersMid('user'),
+  judegImportMid(User, [
+    'dept_id',
+    'user_name',
+    'nick_name',
+    'email',
+    'phonenumber',
+    'sex',
+    'status'
+  ])
+)
+
+// 导出用户列表
+router.post('/user/importTemplate', auth, exportTemlateCon)
 
 module.exports = router

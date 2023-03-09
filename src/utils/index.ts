@@ -1,6 +1,8 @@
 import fs from 'fs'
 import path from 'path'
 import dayjs from 'dayjs'
+import xlsx from 'node-xlsx'
+import { excelMap } from '@/public/map'
 
 /** 删除文件
  * @param {string} filename
@@ -167,4 +169,43 @@ export const flatten = (obj) => {
   }
   process('', obj)
   return result
+}
+
+/**
+ * excel 导出
+ * list:[{}]
+ * headers:表头中文名
+ * headerKeys:与表头中文名一一对应的数据区key
+ * tableName：导出的表名称以什么开头
+ */
+export const excelExport = (list, headers, headerKeys, tableName = 'excel') => {
+  // excel 通用样式
+  const sheetOptions = { '!cols': [] }
+  headers.forEach(() => {
+    sheetOptions['!cols'].push({
+      wch: 20
+    })
+  })
+
+  const data = []
+  list.forEach((item) => {
+    let arr = []
+    const item2 = flatten(item)
+    headerKeys.forEach((key) => {
+      if (excelMap.changDictExport[key]) {
+        arr.push(excelMap.changDictExport[key][item[key]])
+      } else {
+        arr.push(item2[key])
+      }
+    })
+    data.push(arr)
+  })
+  data.unshift(headers)
+  console.log(187, data)
+
+  const buffer = xlsx.build(
+    [{ options: {}, name: `${tableName}_${new Date().valueOf()}`, data: data }],
+    { sheetOptions }
+  )
+  return buffer
 }

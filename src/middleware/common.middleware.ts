@@ -7,7 +7,7 @@ const { unAvatarSizeErr, unSupportedFileErr, importUserListErr } = errors
 import xlsx from 'node-xlsx'
 let fs = require('fs')
 import { excelMap } from '@/public/map'
-import { password } from '@/schema/common.schema'
+import bcrypt from 'bcryptjs'
 
 // 判断 上传图片的 大小是否合适
 export const contrastFileSizeSchema = (limitSize = 1024 * 1024) => {
@@ -25,7 +25,7 @@ export const contrastFileSizeSchema = (limitSize = 1024 * 1024) => {
 // 判断 上传图片的格式
 export const judImgFormatSchema = (imgFormat = ['image/jpeg', 'image/png']) => {
   return async (ctx: Context, next: () => Promise<void>) => {
-    const { avatar } = ctx.request?.files // files 是koa-body提供的文件地址位置
+    const { avatar } = ctx.request.files // files 是koa-body提供的文件地址位置
     const { mimetype, filepath } = avatar as imgType
     const basePath = path.basename(filepath) as string
 
@@ -38,12 +38,10 @@ export const judImgFormatSchema = (imgFormat = ['image/jpeg', 'image/png']) => {
   }
 }
 
-// 导入用户excel解析
+// 导入excel--解析
 export const importUsersMid = (tableName: string) => {
   return async (ctx: Context, next: () => Promise<void>) => {
     try {
-      const { excel } = ctx.request?.files
-
       const fileExistPath = path.resolve() + '\\src\\upload'
       let fileName = [] // 多个excel文件保存地
       fs.readdirSync(path.format({ dir: fileExistPath })).forEach((excel) => {
@@ -57,8 +55,9 @@ export const importUsersMid = (tableName: string) => {
         const absoluteFilePath = fileExistPath + '\\' + item //整个文件的绝对路径
         workSheetsFromBuffer.push(xlsx.parse(fs.readFileSync(absoluteFilePath))) //这种方式是解析buffer
       })
-      console.log(45, workSheetsFromBuffer)
-
+      // 生成默认用户密码
+      const salt = bcrypt.genSaltSync(10)
+      const hash = bcrypt.hashSync('123456', salt)
       const arr = [] // 存储sql批量创建的信息 object[]
       workSheetsFromBuffer.forEach((element) => {
         element.forEach((item: any) => {
@@ -66,15 +65,22 @@ export const importUsersMid = (tableName: string) => {
           const data = item.data
           for (let j = 1; j < data.length; j++) {
             // 此层是加入每行数据
-            const obj = {}
+            const obj = {
+              password: hash
+            }
             for (let i = 0; i < data[0].length; i++) {
-              obj[excelMap[tableName][data[0][i]]] = data[j][i]
+              let key = excelMap[tableName][data[0][i]]
+              if (excelMap.changDict[key]) {
+                obj[key] = excelMap.changDict[key][data[j][i]]
+              } else {
+                obj[key] = data[j][i]
+              }
             }
             arr.push(obj)
           }
         })
       })
-      console.log(69, arr)
+      console.log(88, arr)
       // 获取数据后删除excel文件
       fileName.forEach((path) => {
         removeSpecifyFile(path)
@@ -89,23 +95,30 @@ export const importUsersMid = (tableName: string) => {
   }
 }
 
-// 导入用户excel解析
-export const judegImportMid = (table) => {
+// 导入excel--修改sql
+export const judegImportMid = (table, updates) => {
   return async (ctx: Context, next: () => Promise<void>) => {
+    const { updateSupport } = ctx.query
     try {
-      console.log(96, ctx.state.excelData, table)
-      table
-        .bulkCreate([{ password: '123456', ...ctx.state.excelData[0] }])
-        .then((item) => {
-          console.log(99, item)
-          ctx.body = item
+      if (updateSupport === '1') {
+        console.log(104, updateSupport)
+
+        // 新增 且 修改
+        await table.bulkCreate(ctx.state.excelData, {
+          updateOnDuplicate: updates
         })
-        .catch((err) => {
-          console.log(102, err)
-        })
+      } else {
+        console.log(119, updateSupport)
+        // 不更改 只新增
+        await table.bulkCreate(ctx.state.excelData)
+      }
+      ctx.body = {
+        code: 200,
+        message: '用户信息上传成功！'
+      }
     } catch (error) {
-      console.error('sss!', ctx.request['body'])
-      return ctx.app.emit('error', importUserListErr, ctx)
+      console.error('user excel新增与修改错误', ctx.request['body'])
+      return ctx.app.emit('error', { code: '400', message: error.errors[0].message }, ctx)
     }
   }
 }
