@@ -39,7 +39,7 @@ export const judImgFormatSchema = (imgFormat = ['image/jpeg', 'image/png']) => {
 }
 
 // 导入excel--解析
-export const importUsersMid = (tableName: string) => {
+export const importExcelsMid = (tableMap: string) => {
   return async (ctx: Context, next: () => Promise<void>) => {
     try {
       const fileExistPath = path.resolve() + '\\src\\upload'
@@ -69,7 +69,7 @@ export const importUsersMid = (tableName: string) => {
               password: hash
             }
             for (let i = 0; i < data[0].length; i++) {
-              let key = excelMap[tableName][data[0][i]]
+              let key = excelMap[tableMap][data[0][i]]
               if (excelMap.changDict[key]) {
                 obj[key] = excelMap.changDict[key][data[j][i]]
               } else {
@@ -102,7 +102,6 @@ export const judegImportMid = (table, updates) => {
     try {
       if (updateSupport === '1') {
         console.log(104, updateSupport)
-
         // 新增 且 修改
         await table.bulkCreate(ctx.state.excelData, {
           updateOnDuplicate: updates

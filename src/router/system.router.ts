@@ -2,7 +2,7 @@ import Router from 'koa-router'
 import auth from '@/middleware/auth.middleware'
 // 格式转换
 import { formatHandle } from '@/middleware/formatHandle'
-import { importUsersMid, judegImportMid } from '@/middleware/common.middleware'
+import { importExcelsMid, judegImportMid } from '@/middleware/common.middleware'
 // user
 import {
   getUserListCon,
@@ -77,7 +77,7 @@ router.post('/user/export', auth, exportUserListMid, formatHandle, exportUserLis
 router.post(
   '/user/importExcel',
   auth,
-  importUsersMid('user'),
+  importExcelsMid('user'),
   judegImportMid(User, [
     'dept_id',
     'user_name',
