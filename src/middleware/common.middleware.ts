@@ -5,6 +5,7 @@ import { removeSpecifyFile } from '@/utils'
 import path from 'path'
 const { unAvatarSizeErr, unSupportedFileErr, importUserListErr } = errors
 import xlsx from 'node-xlsx'
+import XLSX from 'exceljs'
 let fs = require('fs')
 import { excelMap } from '@/public/map'
 import bcrypt from 'bcryptjs'
