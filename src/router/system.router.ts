@@ -89,7 +89,7 @@ router.post(
   ])
 )
 
-// 导出用户列表
+// 导出用户excel模板
 router.post('/user/importTemplate', auth, exportTemlateCon)
 
 module.exports = router
