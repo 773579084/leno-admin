@@ -33,33 +33,6 @@ export const excelMap = {
   }
 }
 
-export const excelExportMap = {
-  userHeader: [
-    '用户序号',
-    '登录名称',
-    '用户邮箱',
-    '手机号码',
-    '用户性别',
-    '帐号状态',
-    '最后登录IP',
-    '最后登录时间',
-    '部门名称',
-    '部门负责人'
-  ],
-  userHeaderKeys: [
-    'userId',
-    'userName',
-    'email',
-    'phonenumber',
-    'sex',
-    'status',
-    'loginIp',
-    'loginDate',
-    'dept.deptName',
-    'dept.leader'
-  ]
-}
-
 export const excelBaseStyle = {
   font: {
     size: 10,
@@ -80,10 +53,11 @@ export const excelBaseStyle = {
   }
 }
 
-export const templateHeader = [
+export const userExcelHeader = [
   {
     title: '用户序号',
-    dataIndex: 'userId'
+    dataIndex: 'userId',
+    width: 80
   },
   {
     title: '登录名称',
@@ -91,7 +65,8 @@ export const templateHeader = [
   },
   {
     title: '用户邮箱',
-    dataIndex: 'email'
+    dataIndex: 'email',
+    width: 240
   },
   {
     title: '手机号码',

@@ -175,51 +175,10 @@ export const flatten = (obj) => {
 
 /**
  * excel 导出
- * list:[{}]
- * headers:表头中文名
- * headerKeys:与表头中文名一一对应的数据区key
- * tableName：导出的表名称以什么开头
- */
-export const excelExport = (list, headers, headerKeys, tableName = 'excel') => {
-  // excel 通用样式
-  const sheetOptions = { '!cols': [] }
-  headers.forEach(() => {
-    sheetOptions['!cols'].push({
-      wch: 20
-    })
-  })
-
-  const data = []
-  list.forEach((item) => {
-    let arr = []
-    const item2 = flatten(item)
-    headerKeys.forEach((key) => {
-      if (excelMap.changDictExport[key]) {
-        arr.push(excelMap.changDictExport[key][item[key]])
-      } else {
-        arr.push(item2[key])
-      }
-    })
-    data.push(arr)
-  })
-  data.unshift(headers)
-  console.log(187, data)
-
-  const buffer = xlsx.build(
-    [{ options: {}, name: `${tableName}_${new Date().valueOf()}`, data: data }],
-    { sheetOptions }
-  )
-  console.log(213, buffer)
-
-  return buffer
-}
-
-/**
- * excel 导出
- * list:[{}]
- * headers:表头中文名
- * headerKeys:与表头中文名一一对应的数据区key
- * tableName：导出的表名称以什么开头
+ * style:excel表的样式配置
+ * tableData:表的数据内容
+ * headerColumns:表头配置
+ * sheetName：工作表名
  */
 export const excelJsExport = async (options: excelParamsType) => {
   const { sheetName, style, headerColumns, tableData } = options
@@ -250,16 +209,33 @@ export const excelJsExport = async (options: excelParamsType) => {
   }
   // 设置行数据
   if (tableData.length > 0) {
-    if (tableData) worksheet.addRows(tableData)
+    // 将传入的数据格式化为exceljs可使用的数据格式
+    const data = []
+    tableData.forEach((table) => {
+      let obj = {}
+      const tableFlat = flatten(table)
+      headerColumns.forEach((header) => {
+        if (excelMap.changDictExport[header.dataIndex]) {
+          obj[header.dataIndex] =
+            excelMap.changDictExport[header.dataIndex][table[header.dataIndex]]
+        } else {
+          obj[header.dataIndex] = tableFlat[header.dataIndex]
+        }
+      })
+      data.push(obj)
+    })
+
+    // 添加行
+    if (data) worksheet.addRows(data)
     // 获取每列数据，依次对齐
     worksheet.columns.forEach((column) => {
       column.alignment = style.alignment as Partial<XLSX.Alignment>
     })
     // 设置每行的边框
-    const dataLength = tableData.length as number
+    const dataLength = data.length as number
     const tabeRows = worksheet.getRows(2, dataLength + 1)
     tabeRows.forEach((row) => {
-      row.eachCell((cell) => {
+      row.eachCell({ includeEmpty: true }, (cell) => {
         cell.border = style.border as Partial<XLSX.Borders>
       })
     })

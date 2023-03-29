@@ -2,8 +2,8 @@ import { Context } from 'koa'
 import { delUserSer } from '@/service/system/user.service'
 import errors from '@/constants/err.type'
 const { delUserErr, delSuperUserErr } = errors
-import { excelExportMap, excelBaseStyle, templateHeader } from '@/public/map'
-import { excelExport, excelJsExport } from '@/utils'
+import { excelBaseStyle, userExcelHeader } from '@/public/map'
+import { excelJsExport } from '@/utils'
 
 class UserController {
   // 生成用户列表
@@ -110,12 +110,12 @@ class UserController {
   async exportUserListCon(ctx: Context, next: () => Promise<void>) {
     const users = ctx.state.formatData
     // 表格数据
-    const buffer = excelExport(
-      users,
-      excelExportMap.userHeader,
-      excelExportMap.userHeaderKeys,
-      'user'
-    )
+    const buffer = await excelJsExport({
+      sheetName: '用户数据',
+      style: excelBaseStyle,
+      headerColumns: userExcelHeader,
+      tableData: users
+    })
     // 3、返回结果
     ctx.body = buffer
   }
@@ -126,10 +126,9 @@ class UserController {
     const buffer = await excelJsExport({
       sheetName: '用户数据',
       style: excelBaseStyle,
-      headerColumns: templateHeader,
+      headerColumns: userExcelHeader,
       tableData: []
     })
-    console.log(133, buffer)
 
     // 3、返回结果
     ctx.body = buffer
