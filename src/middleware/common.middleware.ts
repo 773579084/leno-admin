@@ -1,19 +1,16 @@
 import { Context } from 'koa'
 import { imgType } from '@/types'
 import errors from '@/constants/err.type'
-import { removeSpecifyFile } from '@/utils'
+import { removeSpecifyFile, getExcelAddress, parsingExcel } from '@/utils'
 import path from 'path'
 const { unAvatarSizeErr, unSupportedFileErr, importUserListErr } = errors
-import xlsx from 'node-xlsx'
-import XLSX from 'exceljs'
-let fs = require('fs')
-import { excelMap } from '@/public/map'
+import { excelMap, userExcelHeader } from '@/public/map'
 import bcrypt from 'bcryptjs'
 
 // 判断 上传图片的 大小是否合适
 export const contrastFileSizeSchema = (limitSize = 1024 * 1024) => {
   return async (ctx: Context, next: () => Promise<void>) => {
-    const { avatar } = ctx.request.files
+    const { avatar } = ctx.request?.files
     const { size } = avatar as imgType
 
     if (size > limitSize) {
@@ -40,54 +37,76 @@ export const judImgFormatSchema = (imgFormat = ['image/jpeg', 'image/png']) => {
 }
 
 // 导入excel--解析
-export const importExcelsMid = (tableMap: string) => {
+export const importExcelsMid = (option: { password: boolean }) => {
   return async (ctx: Context, next: () => Promise<void>) => {
     try {
+      const { password } = option
       const fileExistPath = path.resolve() + '\\src\\upload'
-      let fileName = [] // 多个excel文件保存地
-      fs.readdirSync(path.format({ dir: fileExistPath })).forEach((excel) => {
-        if (excel.split('.')[excel.split('.').length - 1] === 'xlsx' && 'xls') {
-          fileName.push(excel)
-        }
-      })
-      // 拿去多个excel文件
-      const workSheetsFromBuffer = []
-      fileName.forEach((item) => {
-        const absoluteFilePath = fileExistPath + '\\' + item //整个文件的绝对路径
-        workSheetsFromBuffer.push(xlsx.parse(fs.readFileSync(absoluteFilePath))) //这种方式是解析buffer
-      })
+      const fileNames = await getExcelAddress(fileExistPath)
+      // 存储多个excel文件
+      const workbooksFromBuffer = []
+      for (let i = 0; i < fileNames.length; i++) {
+        const res = await parsingExcel(fileNames[i], fileExistPath)
+        workbooksFromBuffer.push(res)
+      }
+
+      // console.log(63, workbooksFromBuffer[0].getWorksheet(1).getSheetValues())
+
       // 生成默认用户密码
-      const salt = bcrypt.genSaltSync(10)
-      const hash = bcrypt.hashSync('123456', salt)
-      const arr = [] // 存储sql批量创建的信息 object[]
-      workSheetsFromBuffer.forEach((element) => {
-        element.forEach((item: any) => {
-          // 此层是遍历表数量(单表数据提取)
-          const data = item.data
-          for (let j = 1; j < data.length; j++) {
-            // 此层是加入每行数据
-            const obj = {
-              password: hash
-            }
-            for (let i = 0; i < data[0].length; i++) {
-              let key = excelMap[tableMap][data[0][i]]
-              if (excelMap.changDict[key]) {
-                obj[key] = excelMap.changDict[key][data[j][i]]
+      const dataSource = [] // 存储excel表提取的excel数据
+
+      // 第一遍遍历处每个excel文件
+      workbooksFromBuffer.forEach((workbook) => {
+        // 第二遍遍历操作每个excel文件夹里的每个excel表
+        workbook._worksheets.forEach((sheet, index) => {
+          // 删除sheet开头的空行
+          const sheetValues = workbook.getWorksheet(index).getSheetValues()
+          console.log(66, sheetValues)
+          sheetValues.shift()
+          console.log(69, sheetValues)
+
+          // 拿取字段头数据转成key
+          const headerKeys = []
+          sheetValues[0].shift()
+          sheetValues[0].forEach((value: string, index: number) => {
+            headerKeys.push(userExcelHeader[index].dataIndex)
+          })
+          console.log(79, headerKeys)
+          sheetValues.shift()
+          // 第三遍遍历，解析组合数据
+          sheetValues.forEach((value: (string | number | null)[]) => {
+            value.shift()
+            const obj = {}
+            value.forEach((item, index: number) => {
+              // 如果值为字典内有的值，则需要转换
+              const dictKey = excelMap.changDictExport[headerKeys[index]]
+              if (dictKey) {
+                for (const key in dictKey) {
+                  if (item === dictKey[key]) {
+                    obj[headerKeys[index]] = key
+                  }
+                }
               } else {
-                obj[key] = data[j][i]
+                obj[headerKeys[index]] = item
               }
-            }
-            arr.push(obj)
-          }
+              if (password) {
+                const salt = bcrypt.genSaltSync(10)
+                const hash = bcrypt.hashSync('123456', salt)
+                obj['password'] = hash
+              }
+            })
+            dataSource.push(obj)
+          })
         })
+        console.log(90, dataSource)
       })
-      console.log(88, arr)
+
       // 获取数据后删除excel文件
-      fileName.forEach((path) => {
+      fileNames.forEach((path) => {
         removeSpecifyFile(path)
       })
 
-      ctx.state.excelData = arr
+      // ctx.state.excelData = res
     } catch (error) {
       console.error('用户excel上传表头格式不正确!', ctx.request['body'])
       return ctx.app.emit('error', importUserListErr, ctx)

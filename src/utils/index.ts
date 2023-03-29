@@ -1,7 +1,6 @@
 import fs from 'fs'
 import path from 'path'
 import dayjs from 'dayjs'
-import xlsx from 'node-xlsx'
 import XLSX from 'exceljs'
 import { excelMap } from '@/public/map'
 import { excelParamsType } from '@/types'
@@ -242,4 +241,30 @@ export const excelJsExport = async (options: excelParamsType) => {
   }
 
   return await workbook.xlsx.writeBuffer()
+}
+
+/**
+ * EXCEL 获取文件上传地址
+ */
+export const getExcelAddress = async (fileExistPath: string) => {
+  // 多个excel文件保存路径
+
+  let fileNames = []
+  fs.readdirSync(path.format({ dir: fileExistPath })).forEach((excel) => {
+    if (excel.split('.')[excel.split('.').length - 1] === 'xlsx' && 'xls') {
+      fileNames.push(excel)
+    }
+  })
+  return fileNames
+}
+
+/**
+ * EXCEL 解析上传文件
+ */
+export const parsingExcel = async (fileName: string, fileExistPath: string) => {
+  const workbook = new XLSX.Workbook()
+  //整个文件的绝对路径
+  const absoluteFilePath = fileExistPath + '\\' + fileName
+  //这种方式是解析buffer
+  return await workbook.xlsx.load(fs.readFileSync(absoluteFilePath))
 }

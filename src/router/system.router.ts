@@ -74,20 +74,16 @@ router.get('/menu/getRouters', auth, putUserStatusMid, getRoutersCon)
 router.post('/user/export', auth, exportUserListMid, formatHandle, exportUserListCon)
 
 // 导入用户列表
-router.post(
-  '/user/importExcel',
-  auth,
-  importExcelsMid('user'),
-  judegImportMid(User, [
-    'dept_id',
-    'user_name',
-    'nick_name',
-    'email',
-    'phonenumber',
-    'sex',
-    'status'
-  ])
-)
+router.post('/user/importExcel', auth, importExcelsMid({ password: true }))
+// judegImportMid(User, [
+//   'dept_id',
+//   'user_name',
+//   'nick_name',
+//   'email',
+//   'phonenumber',
+//   'sex',
+//   'status'
+// ])
 
 // 导出用户excel模板
 router.post('/user/importTemplate', auth, exportTemlateCon)

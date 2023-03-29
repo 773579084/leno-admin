@@ -1,25 +1,5 @@
 export const excelMap = {
-  user: {
-    用户编号: 'user_id',
-    部门编号: 'dept_id',
-    登录名称: 'user_name',
-    用户昵称: 'nick_name',
-    用户邮箱: 'email',
-    手机号码: 'phonenumber',
-    用户性别: 'sex',
-    帐号状态: 'status'
-  },
-  changDict: {
-    sex: {
-      男: '0',
-      女: '1',
-      未知: '2'
-    },
-    status: {
-      正常: '0',
-      停用: '1'
-    }
-  },
+  // 备注 后期使用字典动态替换
   changDictExport: {
     sex: {
       '0': '男',
