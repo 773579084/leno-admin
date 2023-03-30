@@ -181,6 +181,7 @@ export const flatten = (obj) => {
  */
 export const excelJsExport = async (options: excelParamsType) => {
   const { sheetName, style, headerColumns, tableData } = options
+
   // 创建工作簿
   const workbook = new XLSX.Workbook()
   workbook.creator = '我隔这敲代码呢'
@@ -213,6 +214,7 @@ export const excelJsExport = async (options: excelParamsType) => {
     tableData.forEach((table) => {
       let obj = {}
       const tableFlat = flatten(table)
+
       headerColumns.forEach((header) => {
         if (excelMap.changDictExport[header.dataIndex]) {
           obj[header.dataIndex] =

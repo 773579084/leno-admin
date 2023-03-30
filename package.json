@@ -30,8 +30,7 @@
     "mysql2": "^2.3.3",
     "sequelize": "^6.25.0",
     "tsc-alias": "^1.8.2",
-    "tsconfig-paths": "^4.1.2",
-    "xlsx-style": "^0.8.13"
+    "tsconfig-paths": "^4.1.2"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",

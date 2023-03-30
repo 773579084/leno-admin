@@ -16,7 +16,7 @@ class UserService {
         [Op.between]: [beginTime, endTime]
       }
 
-    const res = User.findAndCountAll({
+    const res = await User.findAndCountAll({
       attributes: { exclude: ['password'] },
       include: [
         {
@@ -53,20 +53,20 @@ class UserService {
 
   // 查询部门下拉树结构
   async getdeptTreeSer() {
-    const res = Dept.findAll({})
+    const res = await Dept.findAll({})
 
     return res || null
   }
 
   // 获取岗位信息
   async getPostSer() {
-    const res = Post.findAll({})
+    const res = await Post.findAll({})
     return res || null
   }
 
   // 获取角色信息
   async getRoleSer() {
-    const res = Role.findAll()
+    const res = await Role.findAll()
     return res || null
   }
 
@@ -78,17 +78,18 @@ class UserService {
 
   // 新增 用户与角色关系
   async addUserRoleSer(list) {
-    UserRole.bulkCreate(list)
+    await UserRole.bulkCreate(list)
   }
 
   // 新增 用户与岗位关系
   async addUserPostSer(list) {
-    UserPost.bulkCreate(list)
+    await UserPost.bulkCreate(list)
   }
 
   // 查询用户岗位关联表
   async getUserPostSer(userId) {
-    const res = UserPost.findAll({
+    const res = await UserPost.findAll({
+      raw: true,
       attributes: ['post_id'],
       where: {
         user_id: userId
@@ -99,7 +100,8 @@ class UserService {
 
   // 查询角色岗位关联表
   async getUserRoleSer(userId) {
-    const res = UserRole.findAll({
+    const res = await UserRole.findAll({
+      raw: true,
       attributes: ['role_id'],
       where: {
         user_id: userId
@@ -123,14 +125,14 @@ class UserService {
   }
 
   async delUserPost(userId) {
-    const res = UserPost.destroy({
+    const res = await UserPost.destroy({
       where: { user_id: userId }
     })
     return res || null
   }
 
   async delUserRole(userId) {
-    const res = UserRole.destroy({
+    const res = await UserRole.destroy({
       where: { user_id: userId }
     })
     return res || null
@@ -145,7 +147,8 @@ class UserService {
 
   // 导出用户列表
   async exportUserListSer() {
-    const res = User.findAndCountAll({
+    const res = await User.findAndCountAll({
+      raw: true, // 设置为 true，即可返回源数据
       attributes: { exclude: ['password'] },
       include: [
         {
@@ -155,6 +158,7 @@ class UserService {
         }
       ]
     })
+    console.log(159, res)
 
     return (await res).rows || {}
   }

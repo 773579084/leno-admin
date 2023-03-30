@@ -3,6 +3,8 @@ import { delUserSer } from '@/service/system/user.service'
 import errors from '@/constants/err.type'
 const { delUserErr, delSuperUserErr } = errors
 import { excelBaseStyle, userExcelHeader } from '@/public/map'
+import { judegImportMid } from '@/middleware/common.middleware'
+import Dept from '@/model/system/dept.model'
 import { excelJsExport } from '@/utils'
 
 class UserController {
@@ -133,6 +135,29 @@ class UserController {
     // 3、返回结果
     ctx.body = buffer
   }
+
+  // 导入 用户excel
+  async importExcelCon(ctx: Context, next: () => Promise<void>) {
+    const excelData = ctx.state.excelData
+    // 将导入用户的部门名称替换成部门id
+    for (let i = 0; i < excelData.length; i++) {
+      for (let key in excelData[i]) {
+        if (key === 'dept.dept_name') {
+          const deptArr = (await Dept.findAll({
+            raw: true,
+            attributes: ['dept_id'],
+            where: {
+              dept_name: excelData[i][key]
+            }
+          })) as unknown as { dept_id: number }[]
+          excelData[i]['dept_id'] = deptArr[0].dept_id
+        }
+      }
+    }
+    console.log(159, excelData)
+    ctx.state.excelData = excelData
+    await next()
+  }
 }
 
 export const {
@@ -146,5 +171,6 @@ export const {
   putUserCon,
   putUserStatusCon,
   exportUserListCon,
-  exportTemlateCon
+  exportTemlateCon,
+  importExcelCon
 } = new UserController()

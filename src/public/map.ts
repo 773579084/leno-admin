@@ -36,12 +36,12 @@ export const excelBaseStyle = {
 export const userExcelHeader = [
   {
     title: '用户序号',
-    dataIndex: 'userId',
+    dataIndex: 'user_id',
     width: 80
   },
   {
     title: '登录名称',
-    dataIndex: 'userName'
+    dataIndex: 'user_name'
   },
   {
     title: '用户邮箱',
@@ -62,15 +62,15 @@ export const userExcelHeader = [
   },
   {
     title: '最后登录IP',
-    dataIndex: 'loginIp'
+    dataIndex: 'login_ip'
   },
   {
     title: '最后登录时间',
-    dataIndex: 'loginDate'
+    dataIndex: 'login_date'
   },
   {
     title: '部门名称',
-    dataIndex: 'dept.deptName'
+    dataIndex: 'dept.dept_name'
   },
   {
     title: '部门负责人',

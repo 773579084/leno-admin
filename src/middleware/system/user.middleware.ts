@@ -274,15 +274,15 @@ const userInfoMid = async (ctx: Context, next: () => Promise<void>) => {
   }
 
   try {
-    const res = await getUserPostSer(userId)
+    const res = (await getUserPostSer(userId)) as any
     const postIds = [],
       roleIds = []
-    res.forEach((item) => postIds.push(item.dataValues.post_id))
+    res.forEach((item) => postIds.push(item.post_id))
     finRes.postIds = postIds
     const res2 = await getPostSer()
     finRes.posts = res2 as any
-    const roleRes = await getUserRoleSer(userId)
-    roleRes.forEach((item) => roleIds.push(item.dataValues.role_id))
+    const roleRes = (await getUserRoleSer(userId)) as any
+    roleRes.forEach((item) => roleIds.push(item.role_id))
     finRes.roleIds = roleIds as number[]
     const roleRes2 = await getRoleSer()
     finRes.roles = roleRes2 as any

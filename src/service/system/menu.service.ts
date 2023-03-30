@@ -11,12 +11,12 @@ class MenuService {
    */
   // 获取菜单
   async getRoutersSer(menu_id) {
-    const firstRes = Menu.findAll({
+    const firstRes = (await Menu.findAll({
       where: {
         parent_id: menu_id,
         [Op.or]: [{ menu_type: 'M' }, { menu_type: 'C' }]
       }
-    }) as unknown as menusType[]
+    })) as unknown as menusType[]
 
     return firstRes
   }

@@ -6,6 +6,7 @@ import path from 'path'
 const { unAvatarSizeErr, unSupportedFileErr, importUserListErr } = errors
 import { excelMap, userExcelHeader } from '@/public/map'
 import bcrypt from 'bcryptjs'
+import XLSX from 'exceljs'
 
 // 判断 上传图片的 大小是否合适
 export const contrastFileSizeSchema = (limitSize = 1024 * 1024) => {
@@ -50,28 +51,23 @@ export const importExcelsMid = (option: { password: boolean }) => {
         workbooksFromBuffer.push(res)
       }
 
-      // console.log(63, workbooksFromBuffer[0].getWorksheet(1).getSheetValues())
-
-      // 生成默认用户密码
-      const dataSource = [] // 存储excel表提取的excel数据
+      // 存储excel表提取的excel数据
+      const dataSource = []
 
       // 第一遍遍历处每个excel文件
       workbooksFromBuffer.forEach((workbook) => {
         // 第二遍遍历操作每个excel文件夹里的每个excel表
-        workbook._worksheets.forEach((sheet, index) => {
+        workbook._worksheets.forEach((sheet: XLSX.Worksheet) => {
           // 删除sheet开头的空行
-          const sheetValues = workbook.getWorksheet(index).getSheetValues()
-          console.log(66, sheetValues)
+          const sheetValues = workbook.getWorksheet(sheet.id).getSheetValues()
           sheetValues.shift()
-          console.log(69, sheetValues)
 
           // 拿取字段头数据转成key
           const headerKeys = []
           sheetValues[0].shift()
-          sheetValues[0].forEach((value: string, index: number) => {
+          sheetValues[0].forEach((header: string, index: number) => {
             headerKeys.push(userExcelHeader[index].dataIndex)
           })
-          console.log(79, headerKeys)
           sheetValues.shift()
           // 第三遍遍历，解析组合数据
           sheetValues.forEach((value: (string | number | null)[]) => {
@@ -98,7 +94,6 @@ export const importExcelsMid = (option: { password: boolean }) => {
             dataSource.push(obj)
           })
         })
-        console.log(90, dataSource)
       })
 
       // 获取数据后删除excel文件
@@ -106,7 +101,7 @@ export const importExcelsMid = (option: { password: boolean }) => {
         removeSpecifyFile(path)
       })
 
-      // ctx.state.excelData = res
+      ctx.state.excelData = dataSource
     } catch (error) {
       console.error('用户excel上传表头格式不正确!', ctx.request['body'])
       return ctx.app.emit('error', importUserListErr, ctx)
@@ -118,26 +113,29 @@ export const importExcelsMid = (option: { password: boolean }) => {
 // 导入excel--修改sql
 export const judegImportMid = (table, updates) => {
   return async (ctx: Context, next: () => Promise<void>) => {
-    const { updateSupport } = ctx.query
+    const { updateSupport } = ctx.request['body'] as {
+      updateSupport: string
+    }
+
     try {
       if (updateSupport === '1') {
-        console.log(104, updateSupport)
         // 新增 且 修改
         await table.bulkCreate(ctx.state.excelData, {
           updateOnDuplicate: updates
         })
       } else {
-        console.log(119, updateSupport)
         // 不更改 只新增
         await table.bulkCreate(ctx.state.excelData)
-      }
-      ctx.body = {
-        code: 200,
-        message: '用户信息上传成功！'
       }
     } catch (error) {
       console.error('user excel新增与修改错误', ctx.request['body'])
       return ctx.app.emit('error', { code: '400', message: error.errors[0].message }, ctx)
+    }
+
+    // 3、返回结果
+    ctx.body = {
+      code: 200,
+      message: '用户信息上传成功！'
     }
   }
 }
