@@ -3,7 +3,6 @@ import { delUserSer } from '@/service/system/user.service'
 import errors from '@/constants/err.type'
 const { delUserErr, delSuperUserErr } = errors
 import { excelBaseStyle, userExcelHeader } from '@/public/map'
-import { judegImportMid } from '@/middleware/common.middleware'
 import Dept from '@/model/system/dept.model'
 import { excelJsExport } from '@/utils'
 
@@ -154,7 +153,7 @@ class UserController {
         }
       }
     }
-    console.log(159, excelData)
+
     ctx.state.excelData = excelData
     await next()
   }

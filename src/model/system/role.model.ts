@@ -24,8 +24,8 @@ const Role = seq.define(
       comment: '角色权限字符串'
     },
     role_sort: {
-      type: DataTypes.INET,
-      defaultValue: 0,
+      type: DataTypes.BIGINT,
+      defaultValue: null,
       comment: '显示顺序'
     },
     data_scope: {
@@ -74,9 +74,5 @@ const Role = seq.define(
     freezeTableName: true // 告诉sequelize不需要自动将表名变成复数
   }
 )
-
-// 在数据库创建 数据表
-// force: true 如果存在相同名字的表，删除旧的表，新建新的表
-Role.sync()
 
 export default Role

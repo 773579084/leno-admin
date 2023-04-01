@@ -91,9 +91,6 @@ const User = seq.define(
     freezeTableName: true // 告诉sequelize不需要自动将表名变成复数
   }
 )
-// 在数据库创建 数据表
-// force:true 如果存在相同名字的表，删除旧的表，新建新的表
-User.sync({})
 // 一对一关联 (关联表的关联顺序为 hasOne =》belongsTo，并且需要写在一张表内)
 Dept.hasOne(User, { foreignKey: 'dept_id', sourceKey: 'dept_id' })
 User.belongsTo(Dept, { foreignKey: 'dept_id', targetKey: 'dept_id', as: 'dept' })

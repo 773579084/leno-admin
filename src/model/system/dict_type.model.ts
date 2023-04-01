@@ -1,42 +1,32 @@
 import { DataTypes } from 'sequelize'
 import seq from '@/db/seq.db'
 
-// 创建数据库模型
-const Post = seq.define(
-  'sys_post',
+// 创建数据库模型 字典类型表
+const DictType = seq.define(
+  'sys_dict_type',
   {
-    post_id: {
+    dict_id: {
       type: DataTypes.BIGINT,
       allowNull: false, // 是否允许空
       unique: true, // 是否为独一无二的
       autoIncrement: true, // id 自动增加
       primaryKey: true, // 是否设置为主键
-      comment: '部门id'
+      comment: '字典主键'
     },
-    post_code: {
+    dict_name: {
       type: DataTypes.CHAR(255),
-      defaultValue: null,
-      comment: '岗位编码'
+      defaultValue: '',
+      comment: '字典名称'
     },
-    post_name: {
+    dict_type: {
       type: DataTypes.CHAR(255),
-      defaultValue: null,
-      comment: '岗位名称'
-    },
-    post_sort: {
-      type: DataTypes.BIGINT,
-      defaultValue: null,
-      comment: '显示顺序'
+      defaultValue: '',
+      comment: '字典类型'
     },
     status: {
       type: DataTypes.CHAR(1),
       defaultValue: '0',
-      comment: '岗位状态（0正常 1停用）'
-    },
-    del_flag: {
-      type: DataTypes.CHAR(1),
-      defaultValue: '0',
-      comment: '删除标志（0代表存在 2代表删除）'
+      comment: '状态（0正常 1停用）'
     },
     create_by: {
       type: DataTypes.CHAR(64),
@@ -54,9 +44,9 @@ const Post = seq.define(
     }
   },
   {
-    tableName: 'sys_post', // 强制创建表名
+    tableName: 'sys_dict_type', // 强制创建表名
     freezeTableName: true // 告诉sequelize不需要自动将表名变成复数
   }
 )
 
-export default Post
+export default DictType

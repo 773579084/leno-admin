@@ -33,9 +33,7 @@ import {
   exportUserListMid
 } from '@/middleware/system/user.middleware'
 import { verifyUser, crptyPassword } from '@/middleware/user.middleware'
-// menu
 import { getRoutersCon } from '@/controller/system/menu.controller'
-import { getRouterMid } from '@/middleware/system/menu.middleware'
 import User from '@/model/user.model'
 const router = new Router({ prefix: '/system' })
 

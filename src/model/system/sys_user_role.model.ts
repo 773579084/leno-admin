@@ -20,8 +20,4 @@ const UserRole = seq.define(
   }
 )
 
-// 在数据库创建 数据表
-// force: true 如果存在相同名字的表，删除旧的表，新建新的表
-UserRole.sync()
-
 export default UserRole

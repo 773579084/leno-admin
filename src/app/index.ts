@@ -12,6 +12,7 @@ const app: Koa<DefaultState, DefaultContext> = new Koa()
 
 // 注册中间件
 app.use(cors()) // 解决跨域问题
+
 app.use(
   KoaBody({
     multipart: true, // 开启文件上传
@@ -32,9 +33,8 @@ app.use(koaStatic(path.join(__dirname, '../upload')))
 
 // 路由
 app.use(router.routes()).use(router.allowedMethods())
-// allowedMethods 对偏门的请求提示501
 
-// 统一
+// allowedMethods 对偏门的请求提示501
 
 // 统一错误处理
 app.on('error', errHandlerFn)
