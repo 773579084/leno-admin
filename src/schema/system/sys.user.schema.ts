@@ -2,7 +2,7 @@ import Joi from 'joi'
 import {
   username,
   email,
-  sex,
+  dictString,
   phonenumber,
   nickName,
   checkNum,
@@ -12,11 +12,11 @@ import {
 } from '../common.schema'
 
 // 验证id
-export const userIdJudge = Joi.object({
+export const IdJudge = Joi.object({
   userId: Joi.number()
 })
 // 验证 ids
-export const userIdsJudge = Joi.object({
+export const IdsJudge = Joi.object({
   userId: checkNumArr
 })
 
@@ -27,8 +27,8 @@ export const addUserJudg = Joi.object({
   phonenumber,
   email,
   userName: username,
-  sex,
-  status: checkNum,
+  sex: dictString,
+  status: dictString,
   password,
   postIds: checkNumArr,
   roleIds: checkNumArr,
@@ -41,8 +41,8 @@ export const putUserJudg = Joi.object({
   deptId: checkNum,
   phonenumber,
   email,
-  sex,
-  status: checkNum,
+  sex: dictString,
+  status: dictString,
   postIds: checkNumArr,
   roleIds: checkNumArr,
   remark,

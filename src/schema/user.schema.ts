@@ -1,5 +1,5 @@
 import Joi from 'joi'
-import { username, phonenumber, nickName, email, sex, password } from './common.schema'
+import { username, phonenumber, nickName, email, dictString, password } from './common.schema'
 
 export const loginSchema = Joi.object({
   userName: username,
@@ -15,5 +15,5 @@ export const changeUserInfoSchema = Joi.object({
   email: email.required(),
   phonenumber: phonenumber.required(),
   nickName,
-  sex
+  sex: dictString
 })

@@ -61,7 +61,7 @@ const User = seq.define(
       comment: '账号状态: 0 正常，1 停用'
     },
     del_flag: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.CHAR(1),
       defaultValue: 0,
       comment: '账号状态: 0 存在，1 删除'
     },

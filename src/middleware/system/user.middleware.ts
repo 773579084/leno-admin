@@ -24,8 +24,8 @@ import {
   userQuerySerType
 } from '@/types'
 import {
-  userIdJudge,
-  userIdsJudge,
+  IdJudge,
+  IdsJudge,
   addUserJudg,
   checkPwdJudg,
   putUserJudg
@@ -99,7 +99,7 @@ const userIdSchema = async (ctx: Context, next: () => Promise<void>) => {
     const list = ctx.request.path.split('/')
     const userId = list[list.length - 1]
     const userIdList = userId.split(',')
-    await userIdsJudge.validateAsync({ userId: userIdList })
+    await IdsJudge.validateAsync({ userId: userIdList })
     ctx.state.userId = userIdList
   } catch (error) {
     console.error('用户名id格式错误!', ctx.request['body'])
@@ -259,7 +259,7 @@ const userInfoMid = async (ctx: Context, next: () => Promise<void>) => {
   let finRes = {} as IUserDetail
 
   try {
-    await userIdJudge.validateAsync({ userId })
+    await IdJudge.validateAsync({ userId })
   } catch (error) {
     console.error('用户上传id错误', error)
     return ctx.app.emit('error', checkUserIdErr, ctx)

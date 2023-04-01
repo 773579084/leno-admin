@@ -4,11 +4,6 @@
  * 500 => 服务器拒绝请求
  */
 export default {
-  sqlErr: {
-    code: '500',
-    message: '服务器内部错误',
-    result: ''
-  },
   // 登录注册
   InvalidConnectionError: {
     code: '400',
@@ -145,6 +140,36 @@ export default {
   getRoutersErr: {
     code: '400',
     message: '获取菜单路由失败',
+    result: ''
+  },
+  // 统一报错提醒（服务于简单模块和代码生成）
+  getListErr: {
+    code: '500',
+    message: '获取列表失败'
+  },
+  checkIdsErr: {
+    code: '400',
+    message: 'id格式错误',
+    result: ''
+  },
+  delErr: {
+    code: '500',
+    message: '删除失败',
+    result: ''
+  },
+  sqlErr: {
+    code: '500',
+    message: '服务器内部错误',
+    result: ''
+  },
+  verifyErr: {
+    code: '400',
+    message: '内容已存在',
+    result: ''
+  },
+  uploadParamsErr: {
+    code: '400',
+    message: '请检查上传传参',
     result: ''
   }
 }

@@ -77,3 +77,23 @@ export const userExcelHeader = [
     dataIndex: 'dept.leader'
   }
 ]
+
+export const dictTypeExcelHeader = [
+  {
+    title: '字典序号',
+    dataIndex: 'dict_id',
+    width: 80
+  },
+  {
+    title: '字典名称',
+    dataIndex: 'dict_name'
+  },
+  {
+    title: '字典类型',
+    dataIndex: 'dict_type'
+  },
+  {
+    title: '帐号状态',
+    dataIndex: 'status'
+  }
+]

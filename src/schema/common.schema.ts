@@ -18,9 +18,6 @@ export const nickName = Joi.string().min(1).max(10).required()
 // 邮箱
 export const email = Joi.string().email().allow('').allow(null)
 
-// 性别
-export const sex = Joi.number()
-
 // 检测 number
 export const checkNum = Joi.number().allow('').allow(null)
 
@@ -29,3 +26,19 @@ export const remark = Joi.string().max(200).allow('').allow(null)
 
 // 检查 num数组
 export const checkNumArr = Joi.array().items(Joi.number())
+
+// 必传id
+export const mustId = Joi.number().required()
+
+// 验证id
+export const IdJudge = Joi.object({
+  id: Joi.number()
+})
+
+// 验证 ids
+export const IdsJudge = Joi.object({
+  ids: checkNumArr
+})
+
+// 验证字典规定状态类
+export const dictString = Joi.string()

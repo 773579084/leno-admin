@@ -3,10 +3,12 @@ import { imgType } from '@/types'
 import errors from '@/constants/err.type'
 import { removeSpecifyFile, getExcelAddress, parsingExcel } from '@/utils'
 import path from 'path'
-const { unAvatarSizeErr, unSupportedFileErr, importUserListErr } = errors
+const { unAvatarSizeErr, unSupportedFileErr, importUserListErr, checkIdsErr, sqlErr, verifyErr } =
+  errors
 import { excelMap, userExcelHeader } from '@/public/map'
 import bcrypt from 'bcryptjs'
 import XLSX from 'exceljs'
+import { IdsJudge } from '@/schema/common.schema'
 
 // 判断 上传图片的 大小是否合适
 export const contrastFileSizeSchema = (limitSize = 1024 * 1024) => {
@@ -137,5 +139,45 @@ export const judegImportMid = (table, updates) => {
       code: 200,
       message: '用户信息上传成功！'
     }
+  }
+}
+
+// 判断id是否正确
+export const judgeIdSchema = () => {
+  return async (ctx: Context, next: () => Promise<void>) => {
+    try {
+      const list = ctx.request.path.split('/')
+      const ids = list[list.length - 1]
+      const idsList = ids.split(',')
+      await IdsJudge.validateAsync({ ids: idsList })
+      ctx.state.ids = idsList
+    } catch (error) {
+      console.error('id格式错误!', ctx.request['body'])
+      return ctx.app.emit('error', checkIdsErr, ctx)
+    }
+    await next()
+  }
+}
+
+// 判断 是否不唯一
+export const verify = (sqlName: string, uploadName: string, getListSer: Function) => {
+  return async (ctx: Context, next: () => Promise<void>) => {
+    try {
+      const res = ctx.request['body'] as any
+      const obj = (await getListSer({ [sqlName]: res[uploadName] })) as {
+        count: number
+        rows: string[]
+      }
+      if (obj.count) {
+        console.error('内容已存在,不唯一!', ctx.request['body'])
+        ctx.app.emit('error', verifyErr, ctx)
+        return
+      }
+    } catch (error) {
+      console.error('sql查询信息错误', error)
+      ctx.app.emit('error', sqlErr, ctx)
+    }
+
+    await next()
   }
 }
