@@ -2,7 +2,7 @@
  * 字典类型
  */
 import DictType from '@/model/system/dict_type.model'
-import { dictTypeQuerySerType, IdictType } from '@/types'
+import { dictTypeQuerySerType, IdictType } from '@/types/system/system_dict_type'
 import { Op } from 'sequelize'
 
 class DictTypeService {
@@ -37,7 +37,7 @@ class DictTypeService {
   }
 
   // 新增
-  async addUserSer(user) {
+  async addSer(user) {
     const res = (await DictType.create(user)) as any
     return res || {}
   }
@@ -75,5 +75,5 @@ class DictTypeService {
   }
 }
 
-export const { getListSer, delSer, addUserSer, putSer, getDetailSer, exportExcelSer } =
+export const { getListSer, delSer, addSer, putSer, getDetailSer, exportExcelSer } =
   new DictTypeService()

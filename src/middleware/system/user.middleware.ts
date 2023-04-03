@@ -29,7 +29,7 @@ import {
   addUserJudg,
   checkPwdJudg,
   putUserJudg
-} from '@/schema/system/sys.user.schema'
+} from '@/schema/system/sys_user.schema'
 import { updatePassword, getAllUserInfoSer } from '@/service/user.service'
 import errors from '@/constants/err.type'
 import { formatHumpLineTransfer, timeChange } from '@/utils'

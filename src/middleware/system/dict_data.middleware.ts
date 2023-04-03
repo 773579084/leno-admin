@@ -7,16 +7,17 @@ import {
   addSer,
   putSer,
   getDetailSer,
-  exportExcelSer
-} from '@/service/system/dict_type.service'
+  exportExcelSer,
+  getDataTypeSer
+} from '@/service/system/dict_data.service'
 import {
-  dictTypeListType,
+  dictDataListType,
   userType,
-  dictTypeQueryType,
-  dictTypeQuerySerType,
-  IdictType
+  dictDataQueryType,
+  dictDataQuerySerType,
+  IdictData
 } from '@/types'
-import { addJudg, putJudg } from '@/schema/system/sys_dict_type.schema'
+import { addJudg, putJudg } from '@/schema/system/sys_dict_data.schema'
 import errors from '@/constants/err.type'
 import { formatHumpLineTransfer } from '@/utils'
 const { uploadParamsErr, getListErr, sqlErr, exportUserListErr } = errors
@@ -24,18 +25,14 @@ const { uploadParamsErr, getListErr, sqlErr, exportUserListErr } = errors
 // 获取列表
 const getListMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    const { pageNum, pageSize, ...params } = ctx.query as unknown as dictTypeQueryType
-    let newParams = { pageNum, pageSize } as dictTypeQuerySerType
+    const { pageNum, pageSize, ...params } = ctx.query as unknown as dictDataQueryType
+    let newParams = { pageNum, pageSize } as dictDataQuerySerType
 
-    if (params.beginTime) {
-      newParams.beginTime = params.beginTime
-      newParams.endTime = params.endTime
-    }
-    params.dictName ? (newParams.dict_name = params.dictName) : null
+    params.dictLabel ? (newParams.dict_label = params.dictLabel) : null
     params.dictType ? (newParams.dict_type = params.dictType) : null
     params.status ? (newParams.status = params.status) : null
 
-    const res = (await getListSer(newParams)) as dictTypeListType
+    const res = (await getListSer(newParams)) as dictDataListType
 
     ctx.state.formatData = res
     await next()
@@ -49,7 +46,7 @@ const getListMid = async (ctx: Context, next: () => Promise<void>) => {
 const addSchema = (judge: string) => {
   return async (ctx: Context, next: () => Promise<void>) => {
     try {
-      const list = ctx.request['body'] as IdictType
+      const list = ctx.request['body'] as userType
       judge === 'add' ? await addJudg.validateAsync(list) : await putJudg.validateAsync(list)
     } catch (error) {
       console.error('新增上传参数出错', error)
@@ -63,7 +60,7 @@ const addSchema = (judge: string) => {
 const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { userName } = ctx.state.user as userType
-    const addContent = ctx.request['body'] as IdictType
+    const addContent = ctx.request['body'] as IdictData
     const addContent2 = { ...addContent, createBy: userName }
     const newAddContent = formatHumpLineTransfer(addContent2, 'line')
     await addSer(newAddContent)
@@ -77,7 +74,22 @@ const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
 // 获取详细数据
 const getDetailMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    const res = await getDetailSer({ dict_id: ctx.state.ids })
+    const res = await getDetailSer({ dict_code: ctx.state.ids })
+    ctx.state.formatData = res
+  } catch (error) {
+    console.error('用户个人信息查询错误', error)
+    return ctx.app.emit('error', sqlErr, ctx)
+  }
+
+  await next()
+}
+
+// 根据字典类型查询字典数据信息
+const getDataTypeMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    const list = ctx.request.path.split('/')
+    const dictType = list[list.length - 1]
+    const res = await getDataTypeSer({ dict_type: dictType })
     ctx.state.formatData = res
   } catch (error) {
     console.error('用户个人信息查询错误', error)
@@ -91,7 +103,9 @@ const getDetailMid = async (ctx: Context, next: () => Promise<void>) => {
 const putMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { userName } = ctx.state.user as userType
-    const res = ctx.request['body'] as IdictType
+    const res = ctx.request['body'] as IdictData
+    console.log(91, res)
+
     await putSer({ ...res, updateBy: userName })
 
     await next()
@@ -113,4 +127,4 @@ const exportExcelMid = async (ctx: Context, next: () => Promise<void>) => {
   await next()
 }
 
-export { getListMid, getAddMid, addSchema, getDetailMid, putMid, exportExcelMid }
+export { getListMid, getAddMid, addSchema, getDetailMid, putMid, exportExcelMid, getDataTypeMid }

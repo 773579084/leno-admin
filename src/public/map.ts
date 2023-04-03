@@ -97,3 +97,27 @@ export const dictTypeExcelHeader = [
     dataIndex: 'status'
   }
 ]
+
+export const dictDataExcelHeader = [
+  {
+    title: '字典序号',
+    dataIndex: 'dict_code',
+    width: 80
+  },
+  {
+    title: '字典标签',
+    dataIndex: 'dict_label'
+  },
+  {
+    title: '字典键值',
+    dataIndex: 'dict_value'
+  },
+  {
+    title: '字典类型',
+    dataIndex: 'dict_type'
+  },
+  {
+    title: '帐号状态',
+    dataIndex: 'status'
+  }
+]
