@@ -39,7 +39,6 @@ export interface deptType {
   createdAt: string
   updatedAt: string
 }
-
 export interface Post {
   status: string
   remark?: any
@@ -53,7 +52,6 @@ export interface Post {
   createBy: string
   updateBy?: any
 }
-
 export interface Role {
   status: string
   remark: string
@@ -70,7 +68,6 @@ export interface Role {
   createBy: string
   updateBy?: any
 }
-
 export interface IUserDetail {
   email?: any
   phonenumber?: any
@@ -150,7 +147,6 @@ export interface IdictType {
   createdAt?: string
   updatedAt?: string
 }
-
 export interface dictTypeListType {
   count: number
   rows: IdictType[]

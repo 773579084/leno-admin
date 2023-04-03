@@ -41,4 +41,4 @@ export const IdsJudge = Joi.object({
 })
 
 // 验证字典规定状态类
-export const dictString = Joi.string()
+export const dictString = Joi.string().max(50)
