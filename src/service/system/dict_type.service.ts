@@ -73,7 +73,23 @@ class DictTypeService {
 
     return (await res).rows || {}
   }
+
+  // 获取列表
+  async getOptionselectSer() {
+    const res = await DictType.findAll({
+      raw: true
+    })
+
+    return res
+  }
 }
 
-export const { getListSer, delSer, addSer, putSer, getDetailSer, exportExcelSer } =
-  new DictTypeService()
+export const {
+  getListSer,
+  delSer,
+  addSer,
+  putSer,
+  getDetailSer,
+  exportExcelSer,
+  getOptionselectSer
+} = new DictTypeService()

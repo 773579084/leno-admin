@@ -7,14 +7,16 @@ import {
   addSer,
   putSer,
   getDetailSer,
-  exportExcelSer
+  exportExcelSer,
+  getOptionselectSer
 } from '@/service/system/dict_type.service'
 import {
   dictTypeListType,
   userType,
   dictTypeQueryType,
   dictTypeQuerySerType,
-  IdictType
+  IdictType,
+  IdictSerType
 } from '@/types'
 import { addJudg, putJudg } from '@/schema/system/sys_dict_type.schema'
 import errors from '@/constants/err.type'
@@ -113,4 +115,27 @@ const exportExcelMid = async (ctx: Context, next: () => Promise<void>) => {
   await next()
 }
 
-export { getListMid, getAddMid, addSchema, getDetailMid, putMid, exportExcelMid }
+// 获取字典选择框列表
+const getOptionselectMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    console.log(121)
+
+    const res = (await getOptionselectSer()) as IdictSerType[]
+
+    ctx.state.formatData = res
+    await next()
+  } catch (error) {
+    console.error('查询字典选择框列表列表失败', error)
+    return ctx.app.emit('error', getListErr, ctx)
+  }
+}
+
+export {
+  getListMid,
+  getAddMid,
+  addSchema,
+  getDetailMid,
+  putMid,
+  exportExcelMid,
+  getOptionselectMid
+}

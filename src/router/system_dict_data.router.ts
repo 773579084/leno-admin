@@ -33,14 +33,7 @@ router.get('/dict/data/list', auth, getListMid, formatHandle, getListCon)
 router.delete(`/dict/data/:id`, auth, judgeIdSchema(), delUserCon)
 
 // 新增
-router.post(
-  '/dict/data',
-  auth,
-  addSchema('add'),
-  verify('dict_value', 'dictValue', getListSer),
-  getAddMid,
-  getAddCon
-)
+router.post('/dict/data', auth, addSchema('add'), getAddMid, getAddCon)
 
 // 获取详细数据
 router.get(`/dict/data/:id`, auth, judgeIdSchema(), getDetailMid, formatHandle, getDetailCon)

@@ -74,7 +74,24 @@ class DictTypeController {
     // 3、返回结果
     ctx.body = buffer
   }
+
+  // 获取字典选择框列表
+  async getOptionselectCon(ctx: Context, next: () => Promise<void>) {
+    // 3、返回结果
+    ctx.body = {
+      code: 200,
+      message: '查询字典选择框列表成功！',
+      result: ctx.state.formatData
+    }
+  }
 }
 
-export const { getListCon, delUserCon, getAddCon, getDetailCon, putCon, exportExcelCon } =
-  new DictTypeController()
+export const {
+  getListCon,
+  delUserCon,
+  getAddCon,
+  getDetailCon,
+  putCon,
+  exportExcelCon,
+  getOptionselectCon
+} = new DictTypeController()

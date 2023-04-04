@@ -13,7 +13,8 @@ import {
   getAddCon,
   getDetailCon,
   putCon,
-  exportExcelCon
+  exportExcelCon,
+  getOptionselectCon
 } from '@/controller/system/dict_type.controller'
 import {
   getListMid,
@@ -21,12 +22,16 @@ import {
   addSchema,
   getDetailMid,
   putMid,
+  getOptionselectMid,
   exportExcelMid
 } from '@/middleware/system/dict_type.middleware'
 const router = new Router({ prefix: '/system' })
 
 // 查询列表
 router.get('/dict/type/list', auth, getListMid, formatHandle, getListCon)
+
+// 获取字典选择框列表
+router.get('/dict/type/optionselect', auth, getOptionselectMid, formatHandle, getOptionselectCon)
 
 // 删除
 router.delete(`/dict/type/:id`, auth, judgeIdSchema(), delUserCon)
