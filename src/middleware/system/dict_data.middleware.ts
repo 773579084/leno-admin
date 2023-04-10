@@ -104,9 +104,9 @@ const putMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { userName } = ctx.state.user as userType
     const res = ctx.request['body'] as IdictData
-    console.log(91, res)
+    const lineData = await formatHumpLineTransfer(res, 'line')
 
-    await putSer({ ...res, updateBy: userName })
+    await putSer({ ...lineData, updateBy: userName })
 
     await next()
   } catch (error) {

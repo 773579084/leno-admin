@@ -36,6 +36,23 @@ export interface IdictData {
   createdAt?: string
   updatedAt?: string
 }
+export interface IdictDataSer {
+  dict_code?: number
+  dict_name?: string
+  dict_sort?: number
+  dict_label?: string
+  dict_value?: string
+  dict_type?: string
+  css_class?: string
+  list_class?: string
+  is_default?: string
+  status?: string
+  createBy?: string
+  updateBy?: string
+  remark?: string
+  createdAt?: string
+  updatedAt?: string
+}
 export interface dictDataListType {
   count: number
   rows: IdictType[]

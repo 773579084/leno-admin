@@ -2,7 +2,7 @@
  * 字典类型
  */
 import DictData from '@/model/system/dict_data.model'
-import { dictDataQuerySerType, IdictData } from '@/types/system/system_dict_data'
+import { dictDataQuerySerType, IdictDataSer } from '@/types/system/system_dict_data'
 
 class DictTypeService {
   // 获取列表
@@ -55,17 +55,15 @@ class DictTypeService {
     return res ? res : null
   }
 
-  async putSer(list: IdictData) {
-    const { dictLabel, dictValue, dictSort, dictCode, dictType, ...data } = list
+  async putSer(list: IdictDataSer) {
+    const { dict_code, ...data } = list
+    console.log(60, dict_code)
+
     const res = await DictData.update(
       {
-        dict_label: dictLabel,
-        dict_value: dictValue,
-        dict_sort: dictSort,
-        dict_type: dictType,
         ...data
       },
-      { where: { dict_code: dictCode } }
+      { where: { dict_code } }
     )
 
     return res[0] > 0
