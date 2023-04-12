@@ -2,7 +2,7 @@ import { Context } from 'koa'
 import { delUserSer } from '@/service/system/user.service'
 import errors from '@/constants/err.type'
 const { delUserErr, delSuperUserErr } = errors
-import { excelBaseStyle, userExcelHeader } from '@/public/map'
+import { excelBaseStyle, userExcelHeader, userTemExcelHeader } from '@/public/excelMap'
 import Dept from '@/model/system/dept.model'
 import { excelJsExport } from '@/utils/excel'
 
@@ -111,7 +111,6 @@ class UserController {
   async exportUserListCon(ctx: Context, next: () => Promise<void>) {
     const list = ctx.state.formatData
     const dicts = ctx.state.dicts
-    console.log(114, list, dicts)
 
     // 表格数据
     const buffer = await excelJsExport({
@@ -131,7 +130,7 @@ class UserController {
     const buffer = await excelJsExport({
       sheetName: '用户数据',
       style: excelBaseStyle,
-      headerColumns: userExcelHeader,
+      headerColumns: userTemExcelHeader,
       tableData: []
     })
 

@@ -15,7 +15,7 @@ const {
   verifyErr,
   exportUserListErr
 } = errors
-import { excelMap, userExcelHeader } from '@/public/map'
+import { userExcelHeader } from '@/public/excelMap'
 import bcrypt from 'bcryptjs'
 import XLSX from 'exceljs'
 import { IdsJudge } from '@/schema/common.schema'
@@ -56,6 +56,10 @@ export const importExcelsMid = (option: { password: boolean }) => {
       const { password } = option
       const fileExistPath = path.resolve() + '\\src\\upload'
       const fileNames = await getExcelAddress(fileExistPath)
+
+      // 获取字典的值
+      const dicts = ctx.state.dicts
+
       // 存储多个excel文件
       const workbooksFromBuffer = []
       for (let i = 0; i < fileNames.length; i++) {
@@ -73,6 +77,7 @@ export const importExcelsMid = (option: { password: boolean }) => {
           // 删除sheet开头的空行
           const sheetValues = workbook.getWorksheet(sheet.id).getSheetValues()
           sheetValues.shift()
+          console.log(76, sheetValues)
 
           // 拿取字段头数据转成key
           const headerKeys = []
@@ -89,7 +94,8 @@ export const importExcelsMid = (option: { password: boolean }) => {
             const obj = {}
             value.forEach((item, index: number) => {
               // 如果值为字典内有的值，则需要转换
-              const dictKey = excelMap.changDictExport[headerKeys[index]]
+              const dictKey = dicts[headerKeys[index]]
+
               if (dictKey) {
                 for (const key in dictKey) {
                   if (item === dictKey[key]) {
@@ -194,11 +200,15 @@ export const verify = (sqlName: string, uploadName: string, getListSer: Function
   }
 }
 
-// 导出列表（excel）
-export const exportExcelMid = (serve: Function, maps?: { [key: string]: string }) => {
+// 导出列表数据及字典转换（excel）
+export const exportExcelMid = (serve?: Function, maps?: { [key: string]: string }) => {
   return async (ctx: Context, next: () => Promise<void>) => {
     try {
-      const res = await serve()
+      if (serve) {
+        const res = await serve()
+        ctx.state.formatData = res
+      }
+
       if (maps) {
         const arr = {} as unknown as dictMapListType
         for (let key in maps) {
@@ -207,7 +217,26 @@ export const exportExcelMid = (serve: Function, maps?: { [key: string]: string }
         }
         ctx.state.dicts = arr
       }
-      ctx.state.formatData = res
+    } catch (error) {
+      console.error('导出用户列表错误!', ctx.request['body'])
+      return ctx.app.emit('error', exportUserListErr, ctx)
+    }
+    await next()
+  }
+}
+
+// 导出列表数据及字典转换（excel）
+export const importExcelDictMapMid = (maps?: { [key: string]: string }) => {
+  return async (ctx: Context, next: () => Promise<void>) => {
+    try {
+      if (maps) {
+        const arr = {} as unknown as dictMapListType
+        for (let key in maps) {
+          const dict = await getDataTypeSer({ dict_type: maps[key] })
+          arr[key] = dict
+        }
+        ctx.state.dicts = arr
+      }
     } catch (error) {
       console.error('导出用户列表错误!', ctx.request['body'])
       return ctx.app.emit('error', exportUserListErr, ctx)

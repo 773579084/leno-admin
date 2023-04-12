@@ -1,18 +1,3 @@
-export const excelMap = {
-  // 备注 后期使用字典动态替换
-  changDictExport: {
-    sex: {
-      '0': '男',
-      '1': '女',
-      '2': '未知'
-    },
-    status: {
-      '0': '正常',
-      '1': '停用'
-    }
-  }
-}
-
 export const excelBaseStyle = {
   font: {
     size: 10,
@@ -67,6 +52,43 @@ export const userExcelHeader = [
   {
     title: '最后登录时间',
     dataIndex: 'login_date'
+  },
+  {
+    title: '部门名称',
+    dataIndex: 'dept.dept_name'
+  },
+  {
+    title: '部门负责人',
+    dataIndex: 'dept.leader'
+  }
+]
+
+export const userTemExcelHeader = [
+  {
+    title: '用户序号',
+    dataIndex: 'user_id',
+    width: 80
+  },
+  {
+    title: '登录名称',
+    dataIndex: 'user_name'
+  },
+  {
+    title: '用户邮箱',
+    dataIndex: 'email',
+    width: 240
+  },
+  {
+    title: '手机号码',
+    dataIndex: 'phonenumber'
+  },
+  {
+    title: '用户性别',
+    dataIndex: 'sex'
+  },
+  {
+    title: '帐号状态',
+    dataIndex: 'status'
   },
   {
     title: '部门名称',

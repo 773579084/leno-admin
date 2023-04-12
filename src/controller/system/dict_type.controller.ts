@@ -2,7 +2,7 @@ import { Context } from 'koa'
 import { delSer } from '@/service/system/dict_type.service'
 import errors from '@/constants/err.type'
 const { delErr } = errors
-import { excelBaseStyle, dictTypeExcelHeader } from '@/public/map'
+import { excelBaseStyle, dictTypeExcelHeader } from '@/public/excelMap'
 import { excelJsExport } from '@/utils/excel'
 
 class DictTypeController {

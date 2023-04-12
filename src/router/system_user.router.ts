@@ -2,7 +2,12 @@ import Router from 'koa-router'
 import auth from '@/middleware/auth.middleware'
 // 格式转换
 import { formatHandle } from '@/middleware/formatHandle'
-import { importExcelsMid, judegImportMid, exportExcelMid } from '@/middleware/common.middleware'
+import {
+  importExcelsMid,
+  judegImportMid,
+  exportExcelMid,
+  importExcelDictMapMid
+} from '@/middleware/common.middleware'
 // user
 import {
   getUserListCon,
@@ -81,6 +86,7 @@ router.post(
 router.post(
   '/user/importExcel',
   auth,
+  importExcelDictMapMid({ status: 'sys_normal_disable', sex: 'sys_user_sex' }),
   importExcelsMid({ password: true }),
   importExcelCon,
   judegImportMid(User, [
