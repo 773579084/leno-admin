@@ -2,9 +2,8 @@ import { Context } from 'koa'
 import { dictMapListType, imgType } from '@/types'
 import errors from '@/constants/err.type'
 import { getExcelAddress, parsingExcel } from '@/utils/excel'
-import { exportExcelSer } from '@/service/system/dict_type.service'
 import { getDataTypeSer } from '@/service/system/dict_data.service'
-import { removeSpecifyFile } from '@/utils'
+import { formatHumpLineTransfer, removeSpecifyFile } from '@/utils'
 import path from 'path'
 const {
   unAvatarSizeErr,
@@ -19,6 +18,7 @@ import { userExcelHeader } from '@/public/excelMap'
 import bcrypt from 'bcryptjs'
 import XLSX from 'exceljs'
 import { IdsJudge } from '@/schema/common.schema'
+import { ModelStatic, Op } from 'sequelize'
 
 // 判断 上传图片的 大小是否合适
 export const contrastFileSizeSchema = (limitSize = 1024 * 1024) => {
@@ -131,7 +131,7 @@ export const importExcelsMid = (option: { password: boolean }) => {
 }
 
 // 导入excel--修改sql
-export const judegImportMid = (table, updates) => {
+export const judegImportMid = (table: ModelStatic<any>, updates: string[]) => {
   return async (ctx: Context, next: () => Promise<void>) => {
     const { updateSupport } = ctx.request['body'] as {
       updateSupport: string
@@ -177,16 +177,34 @@ export const judgeIdSchema = () => {
   }
 }
 
-// 判断 是否不唯一
-export const verify = (sqlName: string, uploadName: string, getListSer: Function) => {
+// 判断 是否不唯一(sql与upload需要按照对应顺序传入)
+export const verifyMid = (sqlNames: string[], Model: ModelStatic<any>, isEdit?: string) => {
   return async (ctx: Context, next: () => Promise<void>) => {
     try {
-      const res = ctx.request['body'] as any
-      const obj = (await getListSer({ [sqlName]: res[uploadName] })) as {
-        count: number
-        rows: string[]
+      const body = ctx.request['body'] as any
+
+      const res = formatHumpLineTransfer(body, 'line')
+      const whereOpt = {}
+      if (isEdit) {
+        Object.assign(whereOpt, {
+          [isEdit]: {
+            [Op.ne]: res[isEdit]
+          }
+        })
       }
-      if (obj.count) {
+
+      sqlNames.forEach((item, index) => {
+        res[item] && Object.assign(whereOpt, { [sqlNames[index]]: res[item] })
+      })
+
+      // ser 查找是否有值
+      const isRepeat = (await Model.findOne({
+        raw: true,
+        attributes: [...sqlNames],
+        where: whereOpt
+      })) as any
+
+      if (isRepeat) {
         console.error('内容已存在,不唯一!', ctx.request['body'])
         ctx.app.emit('error', verifyErr, ctx)
         return

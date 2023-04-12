@@ -5,7 +5,7 @@ import Router from 'koa-router'
 import auth from '@/middleware/auth.middleware'
 // 格式转换
 import { formatHandle } from '@/middleware/formatHandle'
-import { judgeIdSchema, verify } from '@/middleware/common.middleware'
+import { judgeIdSchema, verifyMid } from '@/middleware/common.middleware'
 import { getListSer, exportExcelSer } from '@/service/system/dict_type.service'
 import {
   getListCon,
@@ -25,6 +25,7 @@ import {
   getOptionselectMid
 } from '@/middleware/system/dict_type.middleware'
 import { exportExcelMid } from '@/middleware/common.middleware'
+import DictType from '@/model/system/dict_type.model'
 const router = new Router({ prefix: '/system' })
 
 // 查询列表
@@ -41,7 +42,7 @@ router.post(
   '/dict/type',
   auth,
   addSchema('add'),
-  verify('dict_type', 'dictType', getListSer),
+  verifyMid(['dict_type'], DictType),
   getAddMid,
   getAddCon
 )
@@ -50,7 +51,14 @@ router.post(
 router.get(`/dict/type/:id`, auth, judgeIdSchema(), getDetailMid, formatHandle, getDetailCon)
 
 // 修改
-router.put('/dict/type', auth, addSchema('put'), putMid, putCon)
+router.put(
+  '/dict/type',
+  auth,
+  addSchema('put'),
+  verifyMid(['dict_type'], DictType, 'dict_id'),
+  putMid,
+  putCon
+)
 
 // 导出列表(excel)
 router.post(
