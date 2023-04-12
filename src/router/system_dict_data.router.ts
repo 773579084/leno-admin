@@ -6,7 +6,7 @@ import auth from '@/middleware/auth.middleware'
 // 格式转换
 import { formatHandle } from '@/middleware/formatHandle'
 import { judgeIdSchema, verify } from '@/middleware/common.middleware'
-import { getListSer } from '@/service/system/dict_data.service'
+import { exportExcelSer, getListSer } from '@/service/system/dict_data.service'
 import {
   getListCon,
   delUserCon,
@@ -21,9 +21,9 @@ import {
   addSchema,
   getDetailMid,
   putMid,
-  exportExcelMid,
   getDataTypeMid
 } from '@/middleware/system/dict_data.middleware'
+import { exportExcelMid } from '@/middleware/common.middleware'
 const router = new Router({ prefix: '/system' })
 
 // 查询列表
@@ -45,6 +45,11 @@ router.get(`/dict/data/type/:dictType`, auth, getDataTypeMid, formatHandle, getD
 router.put('/dict/data', auth, addSchema('put'), putMid, putCon)
 
 // 导出列表(excel)
-router.post('/dict/data/export', auth, exportExcelMid, exportExcelCon)
+router.post(
+  '/dict/data/export',
+  auth,
+  exportExcelMid(exportExcelSer, { status: 'sys_normal_disable' }),
+  exportExcelCon
+)
 
 module.exports = router

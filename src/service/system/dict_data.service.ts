@@ -57,7 +57,6 @@ class DictTypeService {
 
   async putSer(list: IdictDataSer) {
     const { dict_code, ...data } = list
-    console.log(60, dict_code)
 
     const res = await DictData.update(
       {

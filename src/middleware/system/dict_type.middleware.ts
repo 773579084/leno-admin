@@ -7,7 +7,6 @@ import {
   addSer,
   putSer,
   getDetailSer,
-  exportExcelSer,
   getOptionselectSer
 } from '@/service/system/dict_type.service'
 import {
@@ -21,7 +20,7 @@ import {
 import { addJudg, putJudg } from '@/schema/system/sys_dict_type.schema'
 import errors from '@/constants/err.type'
 import { formatHumpLineTransfer } from '@/utils'
-const { uploadParamsErr, getListErr, sqlErr, exportUserListErr } = errors
+const { uploadParamsErr, getListErr, sqlErr } = errors
 
 // 获取列表
 const getListMid = async (ctx: Context, next: () => Promise<void>) => {
@@ -103,23 +102,9 @@ const putMid = async (ctx: Context, next: () => Promise<void>) => {
   }
 }
 
-// 导出列表（excel）
-const exportExcelMid = async (ctx: Context, next: () => Promise<void>) => {
-  try {
-    const res = await exportExcelSer()
-    ctx.state.formatData = res
-  } catch (error) {
-    console.error('导出用户列表错误!', ctx.request['body'])
-    return ctx.app.emit('error', exportUserListErr, ctx)
-  }
-  await next()
-}
-
 // 获取字典选择框列表
 const getOptionselectMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    console.log(121)
-
     const res = (await getOptionselectSer()) as IdictSerType[]
 
     ctx.state.formatData = res
@@ -130,12 +115,4 @@ const getOptionselectMid = async (ctx: Context, next: () => Promise<void>) => {
   }
 }
 
-export {
-  getListMid,
-  getAddMid,
-  addSchema,
-  getDetailMid,
-  putMid,
-  exportExcelMid,
-  getOptionselectMid
-}
+export { getListMid, getAddMid, addSchema, getDetailMid, putMid, getOptionselectMid }

@@ -4,7 +4,7 @@ import errors from '@/constants/err.type'
 const { delUserErr, delSuperUserErr } = errors
 import { excelBaseStyle, userExcelHeader } from '@/public/map'
 import Dept from '@/model/system/dept.model'
-import { excelJsExport } from '@/utils'
+import { excelJsExport } from '@/utils/excel'
 
 class UserController {
   // 生成用户列表
@@ -109,13 +109,17 @@ class UserController {
 
   // 导出用户列表
   async exportUserListCon(ctx: Context, next: () => Promise<void>) {
-    const users = ctx.state.formatData
+    const list = ctx.state.formatData
+    const dicts = ctx.state.dicts
+    console.log(114, list, dicts)
+
     // 表格数据
     const buffer = await excelJsExport({
       sheetName: '用户数据',
       style: excelBaseStyle,
       headerColumns: userExcelHeader,
-      tableData: users
+      tableData: list,
+      dicts: dicts
     })
     // 3、返回结果
     ctx.body = buffer

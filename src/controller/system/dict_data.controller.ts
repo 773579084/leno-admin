@@ -3,7 +3,7 @@ import { delSer } from '@/service/system/dict_data.service'
 import errors from '@/constants/err.type'
 const { delErr } = errors
 import { excelBaseStyle, dictDataExcelHeader } from '@/public/map'
-import { excelJsExport } from '@/utils'
+import { excelJsExport } from '@/utils/excel'
 
 class DictTypeController {
   // 生成列表

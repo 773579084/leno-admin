@@ -2,7 +2,7 @@ import Router from 'koa-router'
 import auth from '@/middleware/auth.middleware'
 // 格式转换
 import { formatHandle } from '@/middleware/formatHandle'
-import { importExcelsMid, judegImportMid } from '@/middleware/common.middleware'
+import { importExcelsMid, judegImportMid, exportExcelMid } from '@/middleware/common.middleware'
 // user
 import {
   getUserListCon,
@@ -29,11 +29,11 @@ import {
   updatePwdMid,
   putUserSchema,
   putUserMid,
-  putUserStatusMid,
-  exportUserListMid
+  putUserStatusMid
 } from '@/middleware/system/user.middleware'
 import { verifyUser, crptyPassword } from '@/middleware/user.middleware'
 import { getRoutersCon } from '@/controller/system/menu.controller'
+import { exportUserListSer } from '@/service/system/user.service'
 import User from '@/model/user.model'
 const router = new Router({ prefix: '/system' })
 
@@ -70,7 +70,12 @@ router.put('/user/profile', auth, putUserStatusMid, putUserStatusCon)
 router.get('/menu/getRouters', auth, putUserStatusMid, getRoutersCon)
 
 // 导出用户列表
-router.post('/user/export', auth, exportUserListMid, exportUserListCon)
+router.post(
+  '/user/export',
+  auth,
+  exportExcelMid(exportUserListSer, { status: 'sys_normal_disable', sex: 'sys_user_sex' }),
+  exportUserListCon
+)
 
 // 导入用户列表
 router.post(

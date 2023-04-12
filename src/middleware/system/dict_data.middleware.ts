@@ -7,7 +7,6 @@ import {
   addSer,
   putSer,
   getDetailSer,
-  exportExcelSer,
   getDataTypeSer
 } from '@/service/system/dict_data.service'
 import {
@@ -20,7 +19,7 @@ import {
 import { addJudg, putJudg } from '@/schema/system/sys_dict_data.schema'
 import errors from '@/constants/err.type'
 import { formatHumpLineTransfer } from '@/utils'
-const { uploadParamsErr, getListErr, sqlErr, exportUserListErr } = errors
+const { uploadParamsErr, getListErr, sqlErr } = errors
 
 // 获取列表
 const getListMid = async (ctx: Context, next: () => Promise<void>) => {
@@ -115,16 +114,4 @@ const putMid = async (ctx: Context, next: () => Promise<void>) => {
   }
 }
 
-// 导出列表（excel）
-const exportExcelMid = async (ctx: Context, next: () => Promise<void>) => {
-  try {
-    const res = await exportExcelSer()
-    ctx.state.formatData = res
-  } catch (error) {
-    console.error('导出用户列表错误!', ctx.request['body'])
-    return ctx.app.emit('error', exportUserListErr, ctx)
-  }
-  await next()
-}
-
-export { getListMid, getAddMid, addSchema, getDetailMid, putMid, exportExcelMid, getDataTypeMid }
+export { getListMid, getAddMid, addSchema, getDetailMid, putMid, getDataTypeMid }

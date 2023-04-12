@@ -3,7 +3,7 @@ import { delSer } from '@/service/system/dict_type.service'
 import errors from '@/constants/err.type'
 const { delErr } = errors
 import { excelBaseStyle, dictTypeExcelHeader } from '@/public/map'
-import { excelJsExport } from '@/utils'
+import { excelJsExport } from '@/utils/excel'
 
 class DictTypeController {
   // 生成列表
@@ -64,13 +64,17 @@ class DictTypeController {
   // 导出列表
   async exportExcelCon(ctx: Context, next: () => Promise<void>) {
     const list = ctx.state.formatData
+    const dicts = ctx.state.dicts
+
     // 表格数据
     const buffer = await excelJsExport({
       sheetName: '字典管理数据',
       style: excelBaseStyle,
       headerColumns: dictTypeExcelHeader,
-      tableData: list
+      tableData: list,
+      dicts: dicts
     })
+
     // 3、返回结果
     ctx.body = buffer
   }

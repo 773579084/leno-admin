@@ -1,9 +1,6 @@
 import fs from 'fs'
 import path from 'path'
 import dayjs from 'dayjs'
-import XLSX from 'exceljs'
-import { excelMap } from '@/public/map'
-import { excelParamsType } from '@/types'
 
 /** 删除文件
  * @param {string} filename
@@ -170,103 +167,4 @@ export const flatten = (obj) => {
   }
   process('', obj)
   return result
-}
-
-/**
- * excel 导出
- * style:excel表的样式配置
- * tableData:表的数据内容
- * headerColumns:表头配置
- * sheetName：工作表名
- */
-export const excelJsExport = async (options: excelParamsType) => {
-  const { sheetName, style, headerColumns, tableData } = options
-
-  // 创建工作簿
-  const workbook = new XLSX.Workbook()
-  workbook.creator = '我隔这敲代码呢'
-  workbook.created = new Date()
-
-  // 添加工作表
-  const worksheet = workbook.addWorksheet(sheetName)
-
-  if (headerColumns.length > 0) {
-    // 设置列头
-    const columnsData = headerColumns.map((column, index) => {
-      const width = column.width
-      return {
-        header: column.title,
-        key: column.dataIndex,
-        width: isNaN(width) ? 20 : width / 10
-      }
-    })
-    worksheet.columns = columnsData
-    // 设置表头样式
-    const headerRow = worksheet.getRow(1)
-    headerRow.eachCell((cell) => {
-      cell.style = style as Partial<XLSX.Style>
-    })
-  }
-  // 设置行数据
-  if (tableData.length > 0) {
-    // 将传入的数据格式化为exceljs可使用的数据格式
-    const data = []
-    tableData.forEach((table) => {
-      let obj = {}
-      const tableFlat = flatten(table)
-
-      headerColumns.forEach((header) => {
-        if (excelMap.changDictExport[header.dataIndex]) {
-          obj[header.dataIndex] =
-            excelMap.changDictExport[header.dataIndex][table[header.dataIndex]]
-        } else {
-          obj[header.dataIndex] = tableFlat[header.dataIndex]
-        }
-      })
-      data.push(obj)
-    })
-
-    // 添加行
-    if (data) worksheet.addRows(data)
-    // 获取每列数据，依次对齐
-    worksheet.columns.forEach((column) => {
-      column.alignment = style.alignment as Partial<XLSX.Alignment>
-    })
-    // 设置每行的边框
-    const dataLength = data.length as number
-    const tabeRows = worksheet.getRows(2, dataLength + 1)
-    tabeRows.forEach((row) => {
-      row.eachCell({ includeEmpty: true }, (cell) => {
-        cell.border = style.border as Partial<XLSX.Borders>
-      })
-    })
-  }
-
-  return await workbook.xlsx.writeBuffer()
-}
-
-/**
- * EXCEL 获取文件上传地址
- */
-export const getExcelAddress = async (fileExistPath: string) => {
-  // 多个excel文件保存路径
-
-  let fileNames = []
-  fs.readdirSync(path.format({ dir: fileExistPath })).forEach((excel) => {
-    if (excel.split('.')[excel.split('.').length - 1] === 'xlsx' && 'xls') {
-      fileNames.push(excel)
-    }
-  })
-  return fileNames
-}
-
-/**
- * EXCEL 解析上传文件
- */
-export const parsingExcel = async (fileName: string, fileExistPath: string) => {
-  const workbook = new XLSX.Workbook()
-  //整个文件的绝对路径
-  const absoluteFilePath = fileExistPath + '\\' + fileName
-  //这种方式是解析buffer
-  return await workbook.xlsx.load(fs.readFileSync(absoluteFilePath))
 }

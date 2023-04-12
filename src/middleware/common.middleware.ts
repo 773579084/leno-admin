@@ -1,10 +1,20 @@
 import { Context } from 'koa'
-import { imgType } from '@/types'
+import { dictMapListType, imgType } from '@/types'
 import errors from '@/constants/err.type'
-import { removeSpecifyFile, getExcelAddress, parsingExcel } from '@/utils'
+import { getExcelAddress, parsingExcel } from '@/utils/excel'
+import { exportExcelSer } from '@/service/system/dict_type.service'
+import { getDataTypeSer } from '@/service/system/dict_data.service'
+import { removeSpecifyFile } from '@/utils'
 import path from 'path'
-const { unAvatarSizeErr, unSupportedFileErr, importUserListErr, checkIdsErr, sqlErr, verifyErr } =
-  errors
+const {
+  unAvatarSizeErr,
+  unSupportedFileErr,
+  importUserListErr,
+  checkIdsErr,
+  sqlErr,
+  verifyErr,
+  exportUserListErr
+} = errors
 import { excelMap, userExcelHeader } from '@/public/map'
 import bcrypt from 'bcryptjs'
 import XLSX from 'exceljs'
@@ -73,6 +83,8 @@ export const importExcelsMid = (option: { password: boolean }) => {
           sheetValues.shift()
           // 第三遍遍历，解析组合数据
           sheetValues.forEach((value: (string | number | null)[]) => {
+            console.log(77, value)
+
             value.shift()
             const obj = {}
             value.forEach((item, index: number) => {
@@ -178,6 +190,28 @@ export const verify = (sqlName: string, uploadName: string, getListSer: Function
       ctx.app.emit('error', sqlErr, ctx)
     }
 
+    await next()
+  }
+}
+
+// 导出列表（excel）
+export const exportExcelMid = (serve: Function, maps?: { [key: string]: string }) => {
+  return async (ctx: Context, next: () => Promise<void>) => {
+    try {
+      const res = await serve()
+      if (maps) {
+        const arr = {} as unknown as dictMapListType
+        for (let key in maps) {
+          const dict = await getDataTypeSer({ dict_type: maps[key] })
+          arr[key] = dict
+        }
+        ctx.state.dicts = arr
+      }
+      ctx.state.formatData = res
+    } catch (error) {
+      console.error('导出用户列表错误!', ctx.request['body'])
+      return ctx.app.emit('error', exportUserListErr, ctx)
+    }
     await next()
   }
 }
