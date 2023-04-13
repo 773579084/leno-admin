@@ -23,7 +23,7 @@ import { ModelStatic, Op } from 'sequelize'
 // 判断 上传图片的 大小是否合适
 export const contrastFileSizeSchema = (limitSize = 1024 * 1024) => {
   return async (ctx: Context, next: () => Promise<void>) => {
-    const { avatar } = ctx.request?.files
+    const { avatar } = ctx.request.files
     const { size } = avatar as imgType
 
     if (size > limitSize) {
@@ -77,7 +77,6 @@ export const importExcelsMid = (option: { password: boolean }) => {
           // 删除sheet开头的空行
           const sheetValues = workbook.getWorksheet(sheet.id).getSheetValues()
           sheetValues.shift()
-          console.log(76, sheetValues)
 
           // 拿取字段头数据转成key
           const headerKeys = []
@@ -88,8 +87,6 @@ export const importExcelsMid = (option: { password: boolean }) => {
           sheetValues.shift()
           // 第三遍遍历，解析组合数据
           sheetValues.forEach((value: (string | number | null)[]) => {
-            console.log(77, value)
-
             value.shift()
             const obj = {}
             value.forEach((item, index: number) => {

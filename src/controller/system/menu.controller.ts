@@ -7,7 +7,7 @@ class UserController {
     ctx.body = {
       code: 200,
       message: '获取路由成功',
-      result: ctx.state.menus
+      result: ctx.state.routers
     }
   }
 }

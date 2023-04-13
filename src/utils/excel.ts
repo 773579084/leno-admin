@@ -1,24 +1,8 @@
-import { dictMapListType, dictMapType, excelParamsType } from '@/types'
+import { dictMapType, excelParamsType } from '@/types'
 import XLSX from 'exceljs'
 import fs from 'fs'
 import path from 'path'
-import { flatten } from '.'
-
-/**
- * 字典数据映射
- */
-export const dictMapFn = (dicts: dictMapListType): dictMapType => {
-  const maps = {} as dictMapType
-
-  for (let key in dicts) {
-    maps[key] = {}
-    dicts[key].forEach((dict) => {
-      maps[key][dict.dict_value] = dict.dict_label
-    })
-  }
-
-  return maps
-}
+import { dictMapFn, flatten } from '.'
 
 /**
  * excel 导出

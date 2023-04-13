@@ -1,78 +1,92 @@
 import { Context } from 'koa'
 import { getRoutersSer } from '@/service/system/menu.service'
+import { formatHumpLineTransfer } from '@/utils'
+import { menusType, RouteType } from '@/types'
 import errors from '@/constants/err.type'
 const { getRoutersErr } = errors
+
+// 获取菜单数据并进行数据转换
+const conversionMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    // 获取数据库菜单数据
+    const firstRes = await getRoutersSer()
+    const newRes = formatHumpLineTransfer(firstRes, 'hump')
+    ctx.state.menus = newRes
+    // 按照路由格式存储一级菜单
+  } catch (error) {
+    console.error('前端路由获取失败', error)
+    return ctx.app.emit('error', getRoutersErr, ctx)
+  }
+  await next()
+}
 
 // 生成前端menu路由
 const getRouterMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    const routes = [] as any
-    // 获取数据库菜单数据
-    const firstRes = await getRoutersSer(0)
-    // 按照路由格式存储一级菜单
+    const menus = ctx.state.menus
+    const routers = [] as RouteType[]
 
-    // 创建一级菜单
-    /**
-     * 此处嵌套遍历不可以使用 forEach ，会存在异步的问题
-     * 需要使用 for 循环
-     */
-    for (let i = 0; i < firstRes.length; i++) {
-      const firstRoute = {
-        alwaysShow: firstRes[i].menu_type === 'M',
-        children: [],
-        element: firstRes[i].component,
-        hidden: firstRes[i].visible,
-        meta: {
-          icon: firstRes[i].icon,
-          link: firstRes[i].is_frame ? '' : firstRes[i].path,
-          noCache: firstRes[i].is_cache,
-          title: firstRes[i].menu_name
-        },
-        name: firstRes[i].path,
-        path: firstRes[i].is_frame ? '/' + firstRes[i].path : firstRes[i].path
-      }
-      // 查找二级菜单
-      const secondRes = await getRoutersSer(firstRes[i].menu_id)
-      // 创建二级菜单，并且将二级菜单推入一级菜单的children中
-      for (let i2 = 0; i2 < secondRes.length; i2++) {
-        firstRoute.children.push({
-          component: secondRes[i2].component,
+    menus.forEach((menu: menusType) => {
+      if (menu.parentId === 0) {
+        const route = {} as RouteType
+        Object.assign(route, {
+          name: menu.path,
+          path: '/' + menu.path,
+          alwaysShow: menu.menuType === 'M' ? true : false,
+          element: menu.component,
+          hidden: menu.visible === '0' ? false : true,
           children: [],
-          hidden: secondRes[i2].visible,
-          name: secondRes[i2].path,
-          path: secondRes[i2].is_frame ? secondRes[i2].path : secondRes[i2].path,
           meta: {
-            icon: secondRes[i2].icon,
-            link: secondRes[i2].is_frame ? '' : secondRes[i2].path,
-            noCache: secondRes[i2].is_cache,
-            title: secondRes[i2].menu_name
+            title: menu.menuName,
+            link: menu.isFrame ? null : menu.path,
+            noCache: menu.isCache ? false : true,
+            icon: menu.icon
           }
         })
-        // 查找三级菜单
-        const threeRes = await getRoutersSer(secondRes[i2].menu_id)
-        for (let i3 = 0; i3 < threeRes.length; i3++) {
-          firstRoute.children[i2].children.push({
-            component: threeRes[i3].component,
-            hidden: threeRes[i3].visible,
-            name: threeRes[i3].path,
-            path: threeRes[i3].is_frame ? threeRes[i3].path : threeRes[i3].path,
-            meta: {
-              icon: threeRes[i3].icon,
-              link: threeRes[i3].is_frame ? '' : threeRes[i3].path,
-              noCache: threeRes[i3].is_cache,
-              title: threeRes[i3].menu_name
-            }
-          })
+        createRoute(route, menu.menuId)
+
+        if (route.children.length < 1) {
+          delete route.children
         }
+        routers.push(route)
       }
-      routes.push(firstRoute)
+    })
+
+    function createRoute(route: RouteType, parentId: number) {
+      menus.forEach((menu: menusType) => {
+        if (menu.parentId === parentId) {
+          const routeChild = {
+            name: menu.path,
+            path: '/' + menu.path,
+            alwaysShow: menu.menuType === 'M' ? true : false,
+            element: menu.component,
+            hidden: menu.visible === '0' ? false : true,
+            children: [],
+            meta: {
+              title: menu.menuName,
+              link: menu.isFrame ? null : menu.path,
+              noCache: menu.isCache ? false : true,
+              icon: menu.icon
+            }
+          }
+          route.children.push(routeChild)
+
+          createRoute(routeChild, menu.menuId)
+        }
+      })
+
+      if (route.children.length < 1) {
+        delete route.children
+      }
     }
-    ctx.state.menus = routes
-    await next()
+
+    ctx.state.routers = routers
+    // 按照路由格式存储一级菜单
   } catch (error) {
     console.error('前端路由创建失败', error)
     return ctx.app.emit('error', getRoutersErr, ctx)
   }
+  await next()
 }
 
-export { getRouterMid }
+export { getRouterMid, conversionMid }

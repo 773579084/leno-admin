@@ -1,5 +1,5 @@
 import Menu from '@/model/system/menu.model'
-import { menusType } from '@/types'
+import { menusSqlType } from '@/types'
 import { Op } from 'sequelize'
 
 class MenuService {
@@ -10,13 +10,13 @@ class MenuService {
    * 按钮权限 1000开头
    */
   // 获取菜单
-  async getRoutersSer(menu_id) {
+  async getRoutersSer() {
     const firstRes = (await Menu.findAll({
       where: {
-        parent_id: menu_id,
+        status: '0',
         [Op.or]: [{ menu_type: 'M' }, { menu_type: 'C' }]
       }
-    })) as unknown as menusType[]
+    })) as unknown as menusSqlType[]
 
     return firstRes
   }

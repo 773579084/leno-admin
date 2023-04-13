@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import dayjs from 'dayjs'
+import { dictMapListType, dictMapType } from '@/types'
 
 /** 删除文件
  * @param {string} filename
@@ -167,4 +168,20 @@ export const flatten = (obj) => {
   }
   process('', obj)
   return result
+}
+
+/**
+ * 字典数据映射
+ */
+export const dictMapFn = (dicts: dictMapListType): dictMapType => {
+  const maps = {} as dictMapType
+
+  for (let key in dicts) {
+    maps[key] = {}
+    dicts[key].forEach((dict) => {
+      maps[key][dict.dict_value] = dict.dict_label
+    })
+  }
+
+  return maps
 }
