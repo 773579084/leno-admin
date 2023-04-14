@@ -44,8 +44,9 @@ const getRouterMid = async (ctx: Context, next: () => Promise<void>) => {
           }
         })
         createRoute(route, menu.menuId)
+        console.log(47, route)
 
-        if (route.children.length < 1) {
+        if (route.children && route.children.length < 1) {
           delete route.children
         }
         routers.push(route)
@@ -57,7 +58,7 @@ const getRouterMid = async (ctx: Context, next: () => Promise<void>) => {
         if (menu.parentId === parentId) {
           const routeChild = {
             name: menu.path,
-            path: '/' + menu.path,
+            path: menu.path,
             alwaysShow: menu.menuType === 'M' ? true : false,
             element: menu.component,
             hidden: menu.visible === '0' ? false : true,
