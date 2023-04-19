@@ -1,49 +1,41 @@
 /**
- * 字典类型
+ * 菜单管理
  */
 import Router from 'koa-router'
 import auth from '@/middleware/auth.middleware'
 // 格式转换
 import { formatHandle } from '@/middleware/formatHandle'
 import { judgeIdSchema, verifyMid } from '@/middleware/common.middleware'
-import { getRoutersCon } from '@/controller/system/menu.controller'
-import { getRouterMid, conversionMid } from '@/middleware/system//menu.middleware'
-import DictData from '@/model/system/dict_data.model'
+import { menuCon } from '@/controller/system/menu.controller'
+import {
+  getRouterMid,
+  conversionMid,
+  getMenusMid,
+  addMenuMid,
+  addEditSchema,
+  delMenuMid,
+  getDetailMid,
+  putMid
+} from '@/middleware/system//menu.middleware'
+import Menu from '@/model/system/menu.model'
 const router = new Router({ prefix: '/system' })
 
 // 查询routers菜单
-router.get('/menu/getRouters', auth, conversionMid, getRouterMid, getRoutersCon)
+router.get('/menu/getRouters', auth, conversionMid, getRouterMid, menuCon)
 
-// // 查询列表
-// router.get('/dict/data/list', auth, getListMid, formatHandle, getListCon)
+// 查询列表
+router.get('/menu/list', auth, getMenusMid, formatHandle, menuCon)
 
-// // 删除
-// router.delete(`/dict/data/:id`, auth, judgeIdSchema(), delUserCon)
+// 新增
+router.post('/menu', auth, addEditSchema('add'), addMenuMid, menuCon)
 
-// // 新增
-// router.post(
-//   '/dict/data',
-//   auth,
-//   addSchema('add'),
-//   verifyMid(['dict_value'], DictData),
-//   getAddMid,
-//   getAddCon
-// )
+// 删除
+router.delete(`/menu/:id`, auth, judgeIdSchema(), delMenuMid, menuCon)
 
-// // 获取详细数据
-// router.get(`/dict/data/:id`, auth, judgeIdSchema(), getDetailMid, formatHandle, getDetailCon)
+// 获取详细数据
+router.get(`/menu/:id`, auth, judgeIdSchema(), getDetailMid, formatHandle, menuCon)
 
-// // 根据字典类型查询字典数据信息
-// router.get(`/dict/data/type/:dictType`, auth, getDataTypeMid, formatHandle, getDetailCon)
-
-// // 修改
-// router.put(
-//   '/dict/data',
-//   auth,
-//   addSchema('put'),
-//   verifyMid(['dict_value', 'dict_type'], DictData, 'dict_code'),
-//   putMid,
-//   putCon
-// )
+// 修改
+router.put('/menu', auth, addEditSchema('put'), putMid, menuCon)
 
 module.exports = router

@@ -175,6 +175,12 @@ export const judgeIdSchema = () => {
 }
 
 // 判断 是否不唯一(sql与upload需要按照对应顺序传入)
+/**
+ * @param sqlNames 需要判断唯一变量的key[]
+ * @param Model sql表单
+ * @param isEdit 如果是编辑则判断唯一变量需要除开自己
+ * @returns
+ */
 export const verifyMid = (sqlNames: string[], Model: ModelStatic<any>, isEdit?: string) => {
   return async (ctx: Context, next: () => Promise<void>) => {
     try {

@@ -19,28 +19,29 @@ export interface menusSqlType {
   remark: string
   createdAt: string
   updatedAt: string
+  updateBy?: string
 }
 // 菜单类型
 export interface menusType {
   path: string
-  component: string
-  query: string
+  component?: string
+  query?: string
   visible: string
   status: string
-  perms: string
-  icon: string
-  remark: string
-  menuId: number
+  perms?: string
+  icon?: string
+  remark?: string
+  menuId?: number
   menuName: string
   parentId: number
   orderNum: number
   isFrame: number
   isCache: number
   menuType: string
-  createBy: string
-  updateBy: string
-  createdAt: string
-  updatedAt: string
+  createBy?: string
+  updateBy?: string
+  createdAt?: string
+  updatedAt?: string
 }
 
 // 返回路由

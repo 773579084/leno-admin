@@ -1,15 +1,19 @@
 import { Context } from 'koa'
 
 class UserController {
-  // 获取路由
-  async getRoutersCon(ctx: Context, next: () => Promise<void>) {
-    // 3、返回结果
-    ctx.body = {
+  async menuCon(ctx: Context, next: () => Promise<void>) {
+    const responeObj = {
       code: 200,
-      message: '获取路由成功',
-      result: ctx.state.routers
+      message: '操作成功'
     }
+
+    ctx.state.formatData &&
+      Object.assign(responeObj, {
+        result: ctx.state.formatData
+      })
+    // 3、返回结果
+    ctx.body = responeObj
   }
 }
 
-export const { getRoutersCon } = new UserController()
+export const { menuCon } = new UserController()

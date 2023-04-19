@@ -152,6 +152,11 @@ export default {
     message: 'id格式错误',
     result: ''
   },
+  addErr: {
+    code: '500',
+    message: '新增失败',
+    result: ''
+  },
   delErr: {
     code: '500',
     message: '删除失败',

@@ -37,7 +37,6 @@ import {
   putUserStatusMid
 } from '@/middleware/system/user.middleware'
 import { verifyUser, crptyPassword } from '@/middleware/user.middleware'
-import { getRoutersCon } from '@/controller/system/menu.controller'
 import { exportUserListSer } from '@/service/system/user.service'
 import User from '@/model/user.model'
 const router = new Router({ prefix: '/system' })
@@ -70,9 +69,6 @@ router.put('/user', auth, putUserSchema, putUserMid, putUserCon)
 // 修改用户状态
 router.put('/user/profile', auth, putUserStatusMid, putUserStatusCon)
 // #endregion
-
-// 新增用户弹窗内岗位及角色数据获取
-router.get('/menu/getRouters', auth, putUserStatusMid, getRoutersCon)
 
 // 导出用户列表
 router.post(

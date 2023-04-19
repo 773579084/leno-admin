@@ -27,8 +27,7 @@ class DictTypeController {
     // 3、返回结果
     ctx.body = {
       code: 200,
-      message: '删除用户成功！',
-      result: ''
+      message: '删除用户成功！'
     }
   }
 

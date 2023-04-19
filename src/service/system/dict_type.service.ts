@@ -55,7 +55,6 @@ class DictTypeService {
     const res = await DictType.update(
       {
         dict_name: dictName,
-        dict_id: dictId,
         dict_type: dictType,
         ...data
       },
