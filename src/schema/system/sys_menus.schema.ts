@@ -12,8 +12,8 @@ export const addJudg = Joi.object({
   menuName: requireString,
   parentId: mustId,
   orderNum: mustId,
-  isFrame: requireString,
-  isCache: requireString,
+  isFrame: mustId,
+  isCache: mustId,
   menuType: requireString,
   status: dictString,
   remark
@@ -31,8 +31,8 @@ export const putJudg = Joi.object({
   menuName: requireString,
   parentId: mustId,
   orderNum: mustId,
-  isFrame: requireString,
-  isCache: requireString,
+  isFrame: mustId,
+  isCache: mustId,
   menuType: requireString,
   status: dictString,
   remark
