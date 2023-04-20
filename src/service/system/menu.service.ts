@@ -17,8 +17,6 @@ class MenuService {
   }
   // 获取菜单
   async getMenusSer({ status, menuName }) {
-    console.log(19, status, menuName)
-
     const whereObj = {}
     status && Object.assign(whereObj, { status })
     menuName && Object.assign(whereObj, { menu_name: menuName })
@@ -27,7 +25,6 @@ class MenuService {
       raw: true,
       where: whereObj
     })
-    console.log(28, res)
 
     return res
   }

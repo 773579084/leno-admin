@@ -34,6 +34,7 @@ const getRouterMid = async (ctx: Context, next: () => Promise<void>) => {
     const menus = ctx.state.menus
     const routers = [] as RouteType[]
     menus.sort((a: { orderNum: number }, b: { orderNum: number }) => a.orderNum - b.orderNum)
+
     menus.forEach((menu: menusType) => {
       if (menu.parentId === 0) {
         const route = {} as RouteType
@@ -61,7 +62,6 @@ const getRouterMid = async (ctx: Context, next: () => Promise<void>) => {
     })
 
     function createRoute(route: RouteType, parentId: number) {
-      menus.sort((a: { orderNum: number }, b: { orderNum: number }) => a.orderNum - b.orderNum)
       menus.forEach((menu: menusType) => {
         if (menu.parentId === parentId) {
           const routeChild = {
