@@ -7,6 +7,7 @@ import koaStatic from 'koa-static'
 
 // 引入路由
 import router from '@/router'
+import auth from '@/middleware/auth.middleware'
 // 初始化 Koa 应用实例
 const app: Koa<DefaultState, DefaultContext> = new Koa()
 
@@ -31,10 +32,10 @@ app.use(
 // 配置静态资源网址访问
 app.use(koaStatic(path.join(__dirname, '../upload')))
 
+// 统一权限判断
+app.use(auth)
 // 路由
 app.use(router.routes()).use(router.allowedMethods())
-
-// allowedMethods 对偏门的请求提示501
 
 // 统一错误处理
 app.on('error', errHandlerFn)

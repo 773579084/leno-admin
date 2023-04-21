@@ -2,7 +2,6 @@
  * 字典类型
  */
 import Router from 'koa-router'
-import auth from '@/middleware/auth.middleware'
 // 格式转换
 import { formatHandle } from '@/middleware/formatHandle'
 import { judgeIdSchema, verifyMid } from '@/middleware/common.middleware'
@@ -29,18 +28,17 @@ import DictType from '@/model/system/dict_type.model'
 const router = new Router({ prefix: '/system' })
 
 // 查询列表
-router.get('/dict/type/list', auth, getListMid, formatHandle, getListCon)
+router.get('/dict/type/list', getListMid, formatHandle, getListCon)
 
 // 获取字典选择框列表
-router.get('/dict/type/optionselect', auth, getOptionselectMid, formatHandle, getOptionselectCon)
+router.get('/dict/type/optionselect', getOptionselectMid, formatHandle, getOptionselectCon)
 
 // 删除
-router.delete(`/dict/type/:id`, auth, judgeIdSchema(), delUserCon)
+router.delete(`/dict/type/:id`, judgeIdSchema(), delUserCon)
 
 // 新增
 router.post(
   '/dict/type',
-  auth,
   addSchema('add'),
   verifyMid(['dict_type'], DictType),
   getAddMid,
@@ -48,12 +46,12 @@ router.post(
 )
 
 // 获取详细数据
-router.get(`/dict/type/:id`, auth, judgeIdSchema(), getDetailMid, formatHandle, getDetailCon)
+router.get(`/dict/type/:id`, judgeIdSchema(), getDetailMid, formatHandle, getDetailCon)
 
 // 修改
 router.put(
   '/dict/type',
-  auth,
+
   addSchema('put'),
   verifyMid(['dict_type'], DictType, 'dict_id'),
   putMid,
@@ -63,7 +61,7 @@ router.put(
 // 导出列表(excel)
 router.post(
   '/dict/type/export',
-  auth,
+
   exportExcelMid(exportExcelSer, { status: 'sys_normal_disable' }),
   exportExcelCon
 )

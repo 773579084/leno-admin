@@ -1,5 +1,4 @@
 import Router from 'koa-router'
-import auth from '@/middleware/auth.middleware'
 // 格式转换
 import { formatHandle } from '@/middleware/formatHandle'
 import {
@@ -43,37 +42,37 @@ const router = new Router({ prefix: '/system' })
 
 // #region 用户管理
 // 查询列表用户
-router.get('/user/list', auth, getUserListMid, formatHandle, getUserListCon)
+router.get('/user/list', getUserListMid, formatHandle, getUserListCon)
 
 // 删除用户
-router.delete(`/user/:id`, auth, userIdSchema, delUserCon)
+router.delete(`/user/:id`, userIdSchema, delUserCon)
 
 // 查询部门下拉树结构
-router.get('/dept/treeselect', auth, deptTreeMid, formatHandle, getdeptTreeCon)
+router.get('/dept/treeselect', deptTreeMid, formatHandle, getdeptTreeCon)
 
 // 获取用户的角色与部门关联信息
-router.get('/user', auth, getPostRoleMid, formatHandle, getPostRoleCon)
+router.get('/user', getPostRoleMid, formatHandle, getPostRoleCon)
 
 // 新增用户
-router.post('/user', auth, addUserSchema, verifyUser, crptyPassword, getAddUserMid, getAddUserCon)
+router.post('/user', addUserSchema, verifyUser, crptyPassword, getAddUserMid, getAddUserCon)
 
 // 修改用户密码
-router.put('/user/updatePwd', auth, updatePwdMid, updatePwdCon)
+router.put('/user/updatePwd', updatePwdMid, updatePwdCon)
 
 // 获取用户个人详细数据
-router.get(`/userInfo/:id`, auth, userInfoMid, formatHandle, userInfoCon)
+router.get(`/userInfo/:id`, userInfoMid, formatHandle, userInfoCon)
 
 // 修改用户
-router.put('/user', auth, putUserSchema, putUserMid, putUserCon)
+router.put('/user', putUserSchema, putUserMid, putUserCon)
 
 // 修改用户状态
-router.put('/user/profile', auth, putUserStatusMid, putUserStatusCon)
+router.put('/user/profile', putUserStatusMid, putUserStatusCon)
 // #endregion
 
 // 导出用户列表
 router.post(
   '/user/export',
-  auth,
+
   exportExcelMid(exportUserListSer, { status: 'sys_normal_disable', sex: 'sys_user_sex' }),
   exportUserListCon
 )
@@ -81,7 +80,7 @@ router.post(
 // 导入用户列表
 router.post(
   '/user/importExcel',
-  auth,
+
   importExcelDictMapMid({ status: 'sys_normal_disable', sex: 'sys_user_sex' }),
   importExcelsMid({ password: true }),
   importExcelCon,
@@ -97,6 +96,6 @@ router.post(
 )
 
 // 导出用户excel模板
-router.post('/user/importTemplate', auth, exportTemlateCon)
+router.post('/user/importTemplate', exportTemlateCon)
 
 module.exports = router
