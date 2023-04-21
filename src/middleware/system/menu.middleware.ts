@@ -45,6 +45,7 @@ const getRouterMid = async (ctx: Context, next: () => Promise<void>) => {
           element: menu.component,
           hidden: menu.visible === '0' ? false : true,
           children: [],
+          query: menu.query,
           meta: {
             title: menu.menuName,
             link: menu.isFrame ? null : menu.path,
@@ -67,6 +68,7 @@ const getRouterMid = async (ctx: Context, next: () => Promise<void>) => {
           const routeChild = {
             name: menu.path,
             path: menu.path,
+            query: menu.query,
             alwaysShow: menu.menuType === 'M' ? true : false,
             element: menu.component,
             hidden: menu.visible === '0' ? false : true,

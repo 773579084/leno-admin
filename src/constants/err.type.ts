@@ -15,6 +15,11 @@ export default {
     message: '用户名已存在',
     result: ''
   },
+  userStatusErr: {
+    code: '400',
+    message: '用户账号已被停用，请联系管理人员',
+    result: ''
+  },
   userRegisterError: {
     code: '400',
     message: '用户注册错误',

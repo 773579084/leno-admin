@@ -14,12 +14,13 @@ class DictTypeService {
       limit: Number(pageSize),
       where: {
         ...params
-      }
+      },
+      order: [['dict_sort', 'ASC']]
     })
 
     const list = {
-      count: (await res).count,
-      rows: (await res).rows || {}
+      count: res.count,
+      rows: res.rows || {}
     }
     return list
   }
@@ -74,7 +75,7 @@ class DictTypeService {
       raw: true // 设置为 true，即可返回源数据
     })
 
-    return (await res).rows || {}
+    return res.rows || {}
   }
 }
 

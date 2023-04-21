@@ -15,7 +15,8 @@ import {
   loginValidator,
   verifyUser,
   crptyPassword,
-  pwdSchema
+  pwdSchema,
+  isUserStatus
 } from '@/middleware/user.middleware'
 import { contrastFileSizeSchema, judImgFormatSchema } from '@/middleware/common.middleware'
 import auth from '@/middleware/auth.middleware'
@@ -24,7 +25,7 @@ import refreshAuth from '@/middleware/refresh.middleware'
 const router = new Router({ prefix: '/user' })
 
 // 登录
-router.post('/login', userSchema, loginValidator, login)
+router.post('/login', userSchema, isUserStatus, loginValidator, login)
 
 // 注册
 router.post('/register', userSchema, verifyUser, crptyPassword, register)

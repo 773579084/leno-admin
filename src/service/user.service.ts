@@ -10,6 +10,19 @@ class UserService {
     return res.dataValues
   }
 
+  // 查询改名用户的账号状态
+  async userStatusSer(userName: string) {
+    // 插入数据到数据库
+    const res = await User.findOne({
+      raw: true,
+      attributes: ['status'],
+      where: {
+        user_name: userName
+      }
+    })
+    return res
+  }
+
   // 查找数据是否有重复的数据
   async getUserInfo({ userId, userName, password }: userType) {
     const whereOpt = {}
@@ -98,5 +111,6 @@ export const {
   updateUserInfoSer,
   updateAvatarSer,
   deletFrontAvatarSer,
-  getAllUserInfoSer
+  getAllUserInfoSer,
+  userStatusSer
 } = new UserService()

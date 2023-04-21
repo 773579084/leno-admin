@@ -1,6 +1,6 @@
 import { Context } from 'koa'
 import { userType, pwdType } from '@/types'
-import { getUserInfo } from '@/service/user.service'
+import { getUserInfo, userStatusSer } from '@/service/user.service'
 import errors from '@/constants/err.type'
 import bcrypt from 'bcryptjs'
 import { loginSchema, resetPwdSchema, changeUserInfoSchema } from '@/schema/user.schema'
@@ -11,7 +11,9 @@ const {
   userDoesNotExist,
   userRegisterError,
   FormatWrongErr,
-  InvalidConnectionError
+  InvalidConnectionError,
+  userStatusErr,
+  sqlErr
 } = errors
 
 // 判断用户名与密码是否为空
@@ -23,6 +25,23 @@ const userSchema = async (ctx: Context, next: () => Promise<void>) => {
   } catch (error) {
     console.error('用户名或密码格式错误!', ctx.request['body'])
     return ctx.app.emit('error', FormatWrongErr, ctx)
+  }
+  await next()
+}
+
+// 判断用户是否停用
+const isUserStatus = async (ctx: Context, next: () => Promise<void>) => {
+  const { userName } = ctx.request['body'] as userType
+
+  try {
+    const res = (await userStatusSer(userName)) as unknown as { status: string }
+    if (res.status === '1') {
+      console.error('该用户为停用状态!', ctx.request['body'])
+      return ctx.app.emit('error', userStatusErr, ctx)
+    }
+  } catch (error) {
+    console.error('用户是否停用数据库错误', ctx.request['body'])
+    return ctx.app.emit('error', sqlErr, ctx)
   }
   await next()
 }
@@ -116,4 +135,12 @@ const userInfoSchema = async (ctx: Context, next: () => Promise<void>) => {
   await next()
 }
 
-export { userSchema, verifyUser, crptyPassword, loginValidator, pwdSchema, userInfoSchema }
+export {
+  userSchema,
+  verifyUser,
+  crptyPassword,
+  loginValidator,
+  pwdSchema,
+  userInfoSchema,
+  isUserStatus
+}
