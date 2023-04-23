@@ -6,8 +6,8 @@ import path from 'path'
 import koaStatic from 'koa-static'
 
 // 引入路由
-import router from '@/router'
-import auth from '@/middleware/auth.middleware'
+import router from '@/business/router'
+import auth from '@/business/middleware/auth.middleware'
 // 初始化 Koa 应用实例
 const app: Koa<DefaultState, DefaultContext> = new Koa()
 
