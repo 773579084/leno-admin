@@ -1,13 +1,13 @@
 import Router from 'koa-router'
 // 格式转换
-import { formatHandle } from '@/business/middleware/formatHandle'
+import { formatHandle } from '@/business/middleware/common/formatHandle'
 import {
   importExcelsMid,
   judegImportMid,
   exportExcelMid,
   importExcelDictMapMid,
   judgeIdSchema
-} from '@/business/middleware/common.middleware'
+} from '@/business/middleware/common/common.middleware'
 import {
   getUserListMid,
   deptTreeMid,

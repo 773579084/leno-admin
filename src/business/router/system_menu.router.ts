@@ -3,8 +3,8 @@
  */
 import Router from 'koa-router'
 // 格式转换
-import { formatHandle } from '@/business/middleware/formatHandle'
-import { judgeIdSchema } from '@/business/middleware/common.middleware'
+import { formatHandle } from '@/business/middleware/common/formatHandle'
+import { judgeIdSchema } from '@/business/middleware/common/common.middleware'
 import IndexCon from '@/business/controller'
 import {
   getRouterMid,

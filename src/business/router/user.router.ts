@@ -16,8 +16,11 @@ import {
   refreshTokenMid
 } from '@/business/middleware/user.middleware'
 import IndexCon from '@/business/controller'
-import { contrastFileSizeSchema, judImgFormatSchema } from '@/business/middleware/common.middleware'
-import refreshAuth from '@/business/middleware/refresh.middleware'
+import {
+  contrastFileSizeSchema,
+  judImgFormatSchema
+} from '@/business/middleware/common/common.middleware'
+import refreshAuth from '@/business/middleware/common/refresh.middleware'
 
 const router = new Router({ prefix: '/user' })
 

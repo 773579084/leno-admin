@@ -3,8 +3,8 @@
  */
 import Router from 'koa-router'
 // 格式转换
-import { formatHandle } from '@/business/middleware/formatHandle'
-import { judgeIdSchema, verifyMid } from '@/business/middleware/common.middleware'
+import { formatHandle } from '@/business/middleware/common/formatHandle'
+import { judgeIdSchema, verifyMid } from '@/business/middleware/common/common.middleware'
 import { exportExcelSer } from '@/business/service/system/dict_data.service'
 import IndexCon from '@/business/controller'
 import {
@@ -17,7 +17,7 @@ import {
   delMid,
   exportMid
 } from '@/business/middleware/system/dict_data.middleware'
-import { exportExcelMid } from '@/business/middleware/common.middleware'
+import { exportExcelMid } from '@/business/middleware/common/common.middleware'
 import DictData from '@/mysql/model/system/dict_data.model'
 const router = new Router({ prefix: '/system' })
 

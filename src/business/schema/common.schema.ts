@@ -43,5 +43,5 @@ export const IdsJudge = Joi.object({
 // 验证字典规定状态类
 export const dictString = Joi.string().max(50).allow('').allow(null)
 
-// 验证字典规定状态类必传
+// 验证必传字符串
 export const requireString = Joi.string().max(500).required()
