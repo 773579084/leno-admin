@@ -172,6 +172,11 @@ export default {
     message: '服务器内部错误',
     result: ''
   },
+  redisErr: {
+    code: '500',
+    message: 'redis内部错误',
+    result: ''
+  },
   verifyErr: {
     code: '400',
     message: '内容已存在',

@@ -1,9 +1,9 @@
 import { Context } from 'koa'
 import jwt from 'jsonwebtoken'
-import env from '@/config/config.default'
 import errors from '@/constants/err.type'
 import dayjs from 'dayjs'
 const { invalidToken } = errors
+const {JWT_SECRET} = process.env
 
 const auth = async (ctx: Context, next: () => Promise<void>) => {
   const { authorization = '' } = ctx.request.header
@@ -12,7 +12,7 @@ const auth = async (ctx: Context, next: () => Promise<void>) => {
   if (ctx.request.url !== '/user/login' && ctx.request.url !== '/user/register') {
     try {
       // user中包含了payload的信息(userId, userName)
-      const user = jwt.verify(token, env.JWT_SECRET)
+      const user = jwt.verify(token, JWT_SECRET)
 
       if (dayjs().isAfter(user.exp)) {
         console.error('token 过期')
