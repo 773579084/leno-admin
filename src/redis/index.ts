@@ -1,17 +1,10 @@
-import redis from './redis'
+import redis from 'ioredis'
+const {REDIS_PORT,REDIS_HOST,REDIS_PASSWORD,REDIS_DB}  = process.env as any
 
-/**
- * 选择数据库
- * @param DbName
- * @returns
- */
-const selectDb = (DbName: number = 0) => {
-  return new Promise<void>((resolve, reject) => {
-    try {
-      redis.select(DbName)
-    } catch (error) {
-      console.error('redis选择数据库出错', error)
-    }
-  })
-}
-export default selectDb
+ export default new redis({
+     port:REDIS_PORT,
+     host:REDIS_HOST,
+     password:REDIS_PASSWORD,
+     db:REDIS_DB
+    //  family:4  // 4 (IPv4) or 6 (IPv6)
+ })
