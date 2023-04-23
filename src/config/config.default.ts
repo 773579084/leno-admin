@@ -1,5 +1,6 @@
 import dotenv from 'dotenv'
-dotenv.config()
-const pro = process.env
+const path = require('path');
+const customPath = path.resolve(process.cwd(), `.env.${process.env.NODE_ENV}`);
+dotenv.config({ path: customPath })
 
-export default pro
+

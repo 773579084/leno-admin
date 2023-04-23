@@ -10,7 +10,6 @@ import {
 } from '@/service/user.service'
 import { pwdType, userType, imgType } from '@/types'
 import jwt from 'jsonwebtoken'
-import env from '@/config/config.default'
 import bcrypt from 'bcryptjs'
 import errors from '@/constants/err.type'
 import path from 'path'
@@ -58,14 +57,14 @@ class UserController {
               ...data,
               exp: dayjs().add(10, 'd').valueOf()
             },
-            env.JWT_SECRET
+            process.env.JWT_SECRET
           ),
           refreshToken: jwt.sign(
             {
               ...data,
               exp: dayjs().add(30, 'd').valueOf()
             },
-            env.JWT_REFRESH_SECRET
+            process.env.JWT_REFRESH_SECRET
           )
         }
       }
@@ -190,7 +189,7 @@ class UserController {
             ...data,
             exp: dayjs().add(10, 'd').valueOf()
           },
-          env.JWT_SECRET
+          process.env.JWT_SECRET
         )
       }
     }
