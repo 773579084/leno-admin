@@ -149,11 +149,7 @@ export const judegImportMid = (table: ModelStatic<any>, updates: string[]) => {
       return ctx.app.emit('error', { code: '400', message: error.errors[0].message }, ctx)
     }
 
-    // 3、返回结果
-    ctx.body = {
-      code: 200,
-      message: '用户信息上传成功！'
-    }
+    await next()
   }
 }
 

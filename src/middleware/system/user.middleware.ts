@@ -13,7 +13,8 @@ import {
   delUserRole,
   delUserPost,
   putUserStatusSer,
-  exportUserListSer
+  exportUserListSer,
+  delUserSer
 } from '@/service/system/user.service'
 import {
   userListType,
@@ -33,6 +34,9 @@ import {
 import { updatePassword, getAllUserInfoSer } from '@/service/user.service'
 import errors from '@/constants/err.type'
 import { formatHumpLineTransfer, timeChange } from '@/utils'
+import { excelJsExport } from '@/utils/excel'
+import { excelBaseStyle, userExcelHeader, userTemExcelHeader } from '@/public/excelMap'
+import Dept from '@/model/system/dept.model'
 const {
   checkUserIdErr,
   getDeptTreeErr,
@@ -41,11 +45,13 @@ const {
   checkPwdErr,
   sqlErr,
   putUserErr,
-  exportUserListErr
+  exportUserListErr,
+  delErr,
+  exportExcelErr
 } = errors
 
 // 生成用户列表
-const getUserListMid = async (ctx: Context, next: () => Promise<void>) => {
+export const getUserListMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { pageNum, pageSize, ...params } = ctx.query as unknown as userQueryType
     let newParams = { pageNum, pageSize } as userQuerySerType
@@ -82,7 +88,7 @@ const getUserListMid = async (ctx: Context, next: () => Promise<void>) => {
 }
 
 // 导出用户列表
-const exportUserListMid = async (ctx: Context, next: () => Promise<void>) => {
+export const exportUserListMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const res = await exportUserListSer()
     ctx.state.formatData = res
@@ -93,23 +99,8 @@ const exportUserListMid = async (ctx: Context, next: () => Promise<void>) => {
   await next()
 }
 
-// 判断用户名id是否正确
-const userIdSchema = async (ctx: Context, next: () => Promise<void>) => {
-  try {
-    const list = ctx.request.path.split('/')
-    const userId = list[list.length - 1]
-    const userIdList = userId.split(',')
-    await IdsJudge.validateAsync({ userId: userIdList })
-    ctx.state.userId = userIdList
-  } catch (error) {
-    console.error('用户名id格式错误!', ctx.request['body'])
-    return ctx.app.emit('error', checkUserIdErr, ctx)
-  }
-  await next()
-}
-
 // 查询部门下拉树结构
-const deptTreeMid = async (ctx: Context, next: () => Promise<void>) => {
+export const deptTreeMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const res = (await getdeptTreeSer()) as unknown as deptType[]
 
@@ -154,8 +145,9 @@ const deptTreeMid = async (ctx: Context, next: () => Promise<void>) => {
   }
   await next()
 }
+
 // 岗位及角色数据获取
-const getPostRoleMid = async (ctx: Context, next: () => Promise<void>) => {
+export const getPostRoleMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const postRes = await getPostSer()
     const roleRes = await getRoleSer()
@@ -171,7 +163,7 @@ const getPostRoleMid = async (ctx: Context, next: () => Promise<void>) => {
 }
 
 // 检查新增用户上传参数
-const addUserSchema = async (ctx: Context, next: () => Promise<void>) => {
+export const addUserSchema = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const userList = ctx.request['body'] as userType
     await addUserJudg.validateAsync(userList)
@@ -183,7 +175,7 @@ const addUserSchema = async (ctx: Context, next: () => Promise<void>) => {
 }
 
 // 检查新增用户上传参数
-const putUserSchema = async (ctx: Context, next: () => Promise<void>) => {
+export const putUserSchema = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const userList = ctx.request['body'] as userType
     await putUserJudg.validateAsync(userList)
@@ -195,7 +187,7 @@ const putUserSchema = async (ctx: Context, next: () => Promise<void>) => {
 }
 
 // 新增用户
-const getAddUserMid = async (ctx: Context, next: () => Promise<void>) => {
+export const getAddUserMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { userName } = ctx.state.user as userType
     const { postIds, roleIds, ...user } = ctx.request['body'] as userType
@@ -231,8 +223,20 @@ const getAddUserMid = async (ctx: Context, next: () => Promise<void>) => {
   }
 }
 
+// 删除
+export const delMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    await delUserSer(ctx.state.ids)
+  } catch (error) {
+    console.error('删除用户失败', error)
+    return ctx.app.emit('error', delErr, ctx)
+  }
+
+  await next()
+}
+
 // 修改密码
-const updatePwdMid = async (ctx: Context, next: () => Promise<void>) => {
+export const updatePwdMid = async (ctx: Context, next: () => Promise<void>) => {
   const { password, userId } = ctx.request['body']
   const { userName } = ctx.state.user as userType
   try {
@@ -253,7 +257,7 @@ const updatePwdMid = async (ctx: Context, next: () => Promise<void>) => {
 }
 
 // 获取用户个人详细数据
-const userInfoMid = async (ctx: Context, next: () => Promise<void>) => {
+export const userInfoMid = async (ctx: Context, next: () => Promise<void>) => {
   const path = ctx.request.path
   const userId = path.split('/')[path.split('/').length - 1]
   let finRes = {} as IUserDetail
@@ -296,7 +300,7 @@ const userInfoMid = async (ctx: Context, next: () => Promise<void>) => {
 }
 
 // 修改用户
-const putUserMid = async (ctx: Context, next: () => Promise<void>) => {
+export const putUserMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { userName } = ctx.state.user as userType
     const { postIds, roleIds, ...user } = ctx.request['body'] as userType
@@ -332,7 +336,7 @@ const putUserMid = async (ctx: Context, next: () => Promise<void>) => {
   }
 }
 
-const putUserStatusMid = async (ctx: Context, next: () => Promise<void>) => {
+export const putUserStatusMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { userName } = ctx.state.user as userType
     let { userId, status } = ctx.request['body'] as userType
@@ -346,17 +350,67 @@ const putUserStatusMid = async (ctx: Context, next: () => Promise<void>) => {
   }
 }
 
-export {
-  getUserListMid,
-  userIdSchema,
-  deptTreeMid,
-  getAddUserMid,
-  getPostRoleMid,
-  addUserSchema,
-  updatePwdMid,
-  userInfoMid,
-  putUserSchema,
-  putUserMid,
-  putUserStatusMid,
-  exportUserListMid
+// 导出
+export const exportMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    const list = ctx.state.formatData
+    const dicts = ctx.state.dicts
+
+    // 表格数据
+    const buffer = await excelJsExport({
+      sheetName: '用户数据',
+      style: excelBaseStyle,
+      headerColumns: userExcelHeader,
+      tableData: list,
+      dicts: dicts
+    })
+
+    ctx.state.buffer = buffer
+    await next()
+  } catch (error) {
+    console.error('导出失败', error)
+    return ctx.app.emit('error', exportExcelErr, ctx)
+  }
+}
+
+// 导出模板
+export const exportTemMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    // 表格数据
+    const buffer = await excelJsExport({
+      sheetName: '用户数据',
+      style: excelBaseStyle,
+      headerColumns: userTemExcelHeader,
+      tableData: []
+    })
+
+    ctx.state.buffer = buffer
+    await next()
+  } catch (error) {
+    console.error('导出失败', error)
+    return ctx.app.emit('error', exportExcelErr, ctx)
+  }
+}
+
+// 导入 用户excel
+export const importExcelUserCon = async (ctx: Context, next: () => Promise<void>) => {
+  const excelData = ctx.state.excelData
+  // 将导入用户的部门名称替换成部门id
+  for (let i = 0; i < excelData.length; i++) {
+    for (let key in excelData[i]) {
+      if (key === 'dept.dept_name') {
+        const deptArr = (await Dept.findAll({
+          raw: true,
+          attributes: ['dept_id'],
+          where: {
+            dept_name: excelData[i][key]
+          }
+        })) as unknown as { dept_id: number }[]
+        excelData[i]['dept_id'] = deptArr[0].dept_id
+      }
+    }
+  }
+
+  ctx.state.excelData = excelData
+  await next()
 }

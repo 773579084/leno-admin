@@ -1,16 +1,16 @@
 import { Context } from 'koa'
 import jwt from 'jsonwebtoken'
-import env from '@/config/config.default'
 import errors from '@/constants/err.type'
 import dayjs from 'dayjs'
 const { invalidRefreshToken } = errors
+const { JWT_REFRESH_SECRET } = process.env
 
 const refreshAuth = async (ctx: Context, next: () => Promise<void>) => {
   const { authorization = '' } = ctx.request.header
   const refreshToken = authorization.replace('Bearer ', '')
 
   try {
-    const user = jwt.verify(refreshToken, env.JWT_REFRESH_SECRET)
+    const user = jwt.verify(refreshToken, JWT_REFRESH_SECRET)
     if (dayjs().isAfter(user.exp)) {
       console.error('refreshToken 过期')
       return ctx.app.emit('error', invalidRefreshToken, ctx)

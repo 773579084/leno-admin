@@ -7,7 +7,8 @@ import {
   addSer,
   putSer,
   getDetailSer,
-  getDataTypeSer
+  getDataTypeSer,
+  delSer
 } from '@/service/system/dict_data.service'
 import {
   dictDataListType,
@@ -19,10 +20,12 @@ import {
 import { addJudg, putJudg } from '@/schema/system/sys_dict_data.schema'
 import errors from '@/constants/err.type'
 import { formatHumpLineTransfer } from '@/utils'
-const { uploadParamsErr, getListErr, sqlErr } = errors
+import { excelJsExport } from '@/utils/excel'
+import { dictDataExcelHeader, excelBaseStyle } from '@/public/excelMap'
+const { uploadParamsErr, getListErr, sqlErr, delErr, exportExcelErr } = errors
 
 // 获取列表
-const getListMid = async (ctx: Context, next: () => Promise<void>) => {
+export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { pageNum, pageSize, ...params } = ctx.query as unknown as dictDataQueryType
     let newParams = { pageNum, pageSize } as dictDataQuerySerType
@@ -42,7 +45,7 @@ const getListMid = async (ctx: Context, next: () => Promise<void>) => {
 }
 
 // 检查新增上传参数 judge 判断时新增或修改
-const addSchema = (judge: string) => {
+export const addSchema = (judge: string) => {
   return async (ctx: Context, next: () => Promise<void>) => {
     try {
       const list = ctx.request['body'] as userType
@@ -56,7 +59,7 @@ const addSchema = (judge: string) => {
 }
 
 // 新增
-const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
+export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { userName } = ctx.state.user as userType
     const addContent = ctx.request['body'] as IdictData
@@ -70,8 +73,20 @@ const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
   }
 }
 
+// 删除
+export const delMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    await delSer(ctx.state.ids)
+  } catch (error) {
+    console.error('删除用户失败', error)
+    return ctx.app.emit('error', delErr, ctx)
+  }
+
+  await next()
+}
+
 // 获取详细数据
-const getDetailMid = async (ctx: Context, next: () => Promise<void>) => {
+export const getDetailMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const res = await getDetailSer({ dict_code: ctx.state.ids })
     ctx.state.formatData = res
@@ -84,7 +99,7 @@ const getDetailMid = async (ctx: Context, next: () => Promise<void>) => {
 }
 
 // 根据字典类型查询字典数据信息
-const getDataTypeMid = async (ctx: Context, next: () => Promise<void>) => {
+export const getDataTypeMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const list = ctx.request.path.split('/')
     const dictType = list[list.length - 1]
@@ -98,8 +113,8 @@ const getDataTypeMid = async (ctx: Context, next: () => Promise<void>) => {
   await next()
 }
 
-// 修改用户
-const putMid = async (ctx: Context, next: () => Promise<void>) => {
+// 修改
+export const putMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { userName } = ctx.state.user as userType
     const res = ctx.request['body'] as IdictData
@@ -114,4 +129,22 @@ const putMid = async (ctx: Context, next: () => Promise<void>) => {
   }
 }
 
-export { getListMid, getAddMid, addSchema, getDetailMid, putMid, getDataTypeMid }
+// 导出
+export const exportMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    const list = ctx.state.formatData
+
+    // 表格数据
+    const buffer = await excelJsExport({
+      sheetName: '字典管理数据',
+      style: excelBaseStyle,
+      headerColumns: dictDataExcelHeader,
+      tableData: list
+    })
+    ctx.state.buffer = buffer
+    await next()
+  } catch (error) {
+    console.error('导出失败', error)
+    return ctx.app.emit('error', exportExcelErr, ctx)
+  }
+}

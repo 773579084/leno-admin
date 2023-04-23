@@ -186,5 +186,10 @@ export default {
     code: '400',
     message: '请检查上传传参',
     result: ''
+  },
+  exportExcelErr: {
+    code: '500',
+    message: '导出excel失败',
+    result: ''
   }
 }
