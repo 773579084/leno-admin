@@ -3,13 +3,68 @@ import { dictMapListType } from '@/types'
 import errors from '@/app/err.type'
 import { getExcelAddress, parsingExcel } from '@/business/utils/excel'
 import { getDataTypeSer } from '@/business/service/system/dict_data.service'
-import { formatHumpLineTransfer, removeSpecifyFile } from '@/business/utils'
+import { formatHumpLineTransfer, removeSpecifyFile, timeChange } from '@/business/utils'
 import path from 'path'
 const { importUserListErr, sqlErr, verifyErr, exportUserListErr } = errors
 import { userExcelHeader } from '@/business/public/excelMap'
 import bcrypt from 'bcryptjs'
 import XLSX from 'exceljs'
 import { ModelStatic, Op } from 'sequelize'
+
+// 下划线转驼峰
+export const formatHandle = async (ctx: Context, next: () => Promise<void>) => {
+  const res = await formatHumpLineTransfer(ctx.state.formatData)
+  // 转换时间格式
+  ctx.state.formatData = await timeChange(res)
+  await next()
+}
+
+/**
+ * 判断 是否不唯一(sql与upload需要按照对应顺序传入)
+ * @param sqlNames 需要判断唯一变量的key[]
+ * @param Model sql表单
+ * @param isEdit 如果是编辑则判断唯一变量需要除开自己
+ * @returns
+ */
+export const verifyMid = (sqlNames: string[], Model: ModelStatic<any>, isEdit?: string) => {
+  return async (ctx: Context, next: () => Promise<void>) => {
+    try {
+      const body = ctx.request['body'] as any
+
+      const res = formatHumpLineTransfer(body, 'line')
+      const whereOpt = {}
+      if (isEdit) {
+        Object.assign(whereOpt, {
+          [isEdit]: {
+            [Op.ne]: res[isEdit]
+          }
+        })
+      }
+
+      sqlNames.forEach((item, index) => {
+        res[item] && Object.assign(whereOpt, { [sqlNames[index]]: res[item] })
+      })
+
+      // ser 查找是否有值
+      const isRepeat = (await Model.findOne({
+        raw: true,
+        attributes: [...sqlNames],
+        where: whereOpt
+      })) as any
+
+      if (isRepeat) {
+        console.error('内容已存在,不唯一!', ctx.request['body'])
+        ctx.app.emit('error', verifyErr, ctx)
+        return
+      }
+    } catch (error) {
+      console.error('sql查询信息错误', error)
+      ctx.app.emit('error', sqlErr, ctx)
+    }
+
+    await next()
+  }
+}
 
 // 导入excel--解析
 export const importExcelsMid = (option: { password: boolean }) => {
@@ -109,53 +164,6 @@ export const judegImportMid = (table: ModelStatic<any>, updates: string[]) => {
     } catch (error) {
       console.error('user excel新增与修改错误', ctx.request['body'])
       return ctx.app.emit('error', { code: '400', message: error.errors[0].message }, ctx)
-    }
-
-    await next()
-  }
-}
-
-// 判断 是否不唯一(sql与upload需要按照对应顺序传入)
-/**
- * @param sqlNames 需要判断唯一变量的key[]
- * @param Model sql表单
- * @param isEdit 如果是编辑则判断唯一变量需要除开自己
- * @returns
- */
-export const verifyMid = (sqlNames: string[], Model: ModelStatic<any>, isEdit?: string) => {
-  return async (ctx: Context, next: () => Promise<void>) => {
-    try {
-      const body = ctx.request['body'] as any
-
-      const res = formatHumpLineTransfer(body, 'line')
-      const whereOpt = {}
-      if (isEdit) {
-        Object.assign(whereOpt, {
-          [isEdit]: {
-            [Op.ne]: res[isEdit]
-          }
-        })
-      }
-
-      sqlNames.forEach((item, index) => {
-        res[item] && Object.assign(whereOpt, { [sqlNames[index]]: res[item] })
-      })
-
-      // ser 查找是否有值
-      const isRepeat = (await Model.findOne({
-        raw: true,
-        attributes: [...sqlNames],
-        where: whereOpt
-      })) as any
-
-      if (isRepeat) {
-        console.error('内容已存在,不唯一!', ctx.request['body'])
-        ctx.app.emit('error', verifyErr, ctx)
-        return
-      }
-    } catch (error) {
-      console.error('sql查询信息错误', error)
-      ctx.app.emit('error', sqlErr, ctx)
     }
 
     await next()

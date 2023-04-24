@@ -3,7 +3,7 @@
  */
 import Router from 'koa-router'
 // 格式转换
-import { formatHandle } from '@/business/middleware/common/formatHandle'
+import { formatHandle } from '@/business/middleware/common/common.middleware'
 import { verifyMid } from '@/business/middleware/common/common.middleware'
 import { exportExcelSer } from '@/business/service'
 import {
