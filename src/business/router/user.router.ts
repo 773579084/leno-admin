@@ -20,7 +20,7 @@ import {
   contrastFileSizeSchema,
   judImgFormatSchema
 } from '@/business/middleware/common/common.middleware'
-import refreshAuth from '@/business/middleware/common/refresh.middleware'
+import refreshAuth from '@/business/middleware/common/refresh'
 
 const router = new Router({ prefix: '/user' })
 

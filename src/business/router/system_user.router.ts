@@ -62,7 +62,7 @@ router.put('/user/profile', putUserStatusMid, IndexCon())
 // 导出用户列表
 router.post(
   '/user/export',
-  exportExcelMid(exportUserListSer, { status: 'sys_normal_disable', sex: 'sys_user_sex' }),
+  exportExcelMid(exportUserListSer, User, { status: 'sys_normal_disable', sex: 'sys_user_sex' }),
   exportMid,
   IndexCon()
 )

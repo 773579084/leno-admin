@@ -5,7 +5,7 @@ import Router from 'koa-router'
 // 格式转换
 import { formatHandle } from '@/business/middleware/common/formatHandle'
 import { judgeIdSchema, verifyMid } from '@/business/middleware/common/common.middleware'
-import { exportExcelSer } from '@/business/service/system/dict_data.service'
+import { exportExcelSer } from '@/business/service'
 import IndexCon from '@/business/controller'
 import {
   getListMid,
@@ -54,7 +54,7 @@ router.put(
 // 导出列表(excel)
 router.post(
   '/dict/data/export',
-  exportExcelMid(exportExcelSer, { status: 'sys_normal_disable' }),
+  exportExcelMid(exportExcelSer, DictData, { status: 'sys_normal_disable' }),
   exportMid,
   IndexCon()
 )

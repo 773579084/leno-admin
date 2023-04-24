@@ -269,7 +269,7 @@ export const updateUserInfoMid = async (ctx: Context, next: () => Promise<void>)
 
 // 上传头像
 export const updateAvatarMid = async (ctx: Context, next: () => Promise<void>) => {
-  const { avatar } = ctx.request.files // files 是koa-body提供的文件地址位置
+  const { avatar } = (ctx.request as any).files
   const { filepath } = avatar as imgType
   const basePath = path.basename(filepath) as string
   const { userId, userName } = ctx.state.user as userType

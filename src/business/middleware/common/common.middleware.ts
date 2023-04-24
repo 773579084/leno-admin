@@ -23,7 +23,7 @@ import { ModelStatic, Op } from 'sequelize'
 // 判断 上传图片的 大小是否合适
 export const contrastFileSizeSchema = (limitSize = 1024 * 1024) => {
   return async (ctx: Context, next: () => Promise<void>) => {
-    const { avatar } = ctx.request.files
+    const { avatar } = (ctx.request as any).files
     const { size } = avatar as imgType
 
     if (size > limitSize) {
@@ -36,7 +36,7 @@ export const contrastFileSizeSchema = (limitSize = 1024 * 1024) => {
 // 判断 上传图片的格式
 export const judImgFormatSchema = (imgFormat = ['image/jpeg', 'image/png']) => {
   return async (ctx: Context, next: () => Promise<void>) => {
-    const { avatar } = ctx.request.files // files 是koa-body提供的文件地址位置
+    const { avatar } = (ctx.request as any).files
     const { mimetype, filepath } = avatar as imgType
     const basePath = path.basename(filepath) as string
 
@@ -218,14 +218,19 @@ export const verifyMid = (sqlNames: string[], Model: ModelStatic<any>, isEdit?: 
 }
 
 // 导出列表数据及字典转换（excel）
-export const exportExcelMid = (serve?: Function, maps?: { [key: string]: string }) => {
+export const exportExcelMid = (
+  serve: Function,
+  model: ModelStatic<any>,
+  maps?: { [key: string]: string }
+) => {
   return async (ctx: Context, next: () => Promise<void>) => {
     try {
       if (serve) {
-        const res = await serve()
+        const res = await serve(model)
         ctx.state.formatData = res
       }
 
+      // 字典转换
       if (maps) {
         const arr = {} as unknown as dictMapListType
         for (let key in maps) {

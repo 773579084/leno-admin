@@ -61,3 +61,9 @@ export interface RouteType {
   alwaysShow?: boolean
   meta: Meta
 }
+
+// 搜索
+export interface MenuParamsType {
+  status?: string
+  menuName?: menuName
+}

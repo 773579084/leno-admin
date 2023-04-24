@@ -30,7 +30,7 @@ export interface IdictType {
   updatedAt?: string
 }
 export interface IdictSerType {
-  dict_id?: number
+  dict_id?: string
   dict_name?: string
   dict_type?: string
   status?: string

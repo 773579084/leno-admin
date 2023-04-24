@@ -2,28 +2,17 @@
  * 字典类型
  */
 import { Context } from 'koa'
-import {
-  getListSer,
-  addSer,
-  putSer,
-  getDetailSer,
-  getOptionselectSer,
-  delSer
-} from '@/business/service/system/dict_type.service'
-import {
-  dictTypeListType,
-  userType,
-  dictTypeQueryType,
-  dictTypeQuerySerType,
-  IdictType,
-  IdictSerType
-} from '@/types'
+import { getOptionselectSer } from '@/business/service/system/dict_type.service'
+import { getListSer, addSer, putSer, getDetailSer, delSer } from '@/business/service'
+import { userType, dictTypeQueryType, dictTypeQuerySerType, IdictType, IdictSerType } from '@/types'
 import { addJudg, putJudg } from '@/business/schema/system/sys_dict_type.schema'
 import errors from '@/app/err.type'
 import { formatHumpLineTransfer } from '@/business/utils'
 import { excelJsExport } from '@/business/utils/excel'
 import { dictTypeExcelHeader, excelBaseStyle } from '@/business/public/excelMap'
+import DictType from '@/mysql/model/system/dict_type.model'
 const { uploadParamsErr, getListErr, sqlErr, delErr, exportExcelErr } = errors
+import { Op } from 'sequelize'
 
 // 获取列表
 export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
@@ -32,14 +21,15 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
     let newParams = { pageNum, pageSize } as dictTypeQuerySerType
 
     if (params.beginTime) {
-      newParams.beginTime = params.beginTime
-      newParams.endTime = params.endTime
+      newParams.created_at = {
+        [Op.between]: [params.beginTime, params.endTime]
+      }
     }
     params.dictName ? (newParams.dict_name = params.dictName) : null
     params.dictType ? (newParams.dict_type = params.dictType) : null
     params.status ? (newParams.status = params.status) : null
 
-    const res = (await getListSer(newParams)) as dictTypeListType
+    const res = await getListSer<dictTypeQuerySerType>(DictType, newParams)
 
     ctx.state.formatData = res
     await next()
@@ -70,7 +60,7 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
     const addContent = ctx.request['body'] as IdictType
     const addContent2 = { ...addContent, createBy: userName }
     const newAddContent = formatHumpLineTransfer(addContent2, 'line')
-    await addSer(newAddContent)
+    await addSer(DictType, newAddContent)
     await next()
   } catch (error) {
     console.error('新增用户失败', error)
@@ -81,7 +71,7 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
 // 删除
 export const delMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    await delSer(ctx.state.ids)
+    await delSer(DictType, { dict_id: ctx.state.ids })
   } catch (error) {
     console.error('删除用户失败', error)
     return ctx.app.emit('error', delErr, ctx)
@@ -93,7 +83,7 @@ export const delMid = async (ctx: Context, next: () => Promise<void>) => {
 // 获取详细数据
 export const getDetailMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    const res = await getDetailSer({ dict_id: ctx.state.ids })
+    const res = await getDetailSer(DictType, { dict_id: ctx.state.ids })
     ctx.state.formatData = res
   } catch (error) {
     console.error('用户个人信息查询错误', error)
@@ -108,7 +98,10 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { userName } = ctx.state.user as userType
     const res = ctx.request['body'] as IdictType
-    await putSer({ ...res, updateBy: userName })
+    const newRes = formatHumpLineTransfer(res, 'line') as IdictSerType
+    const { dict_id, ...date } = newRes
+
+    await putSer(DictType, { dict_id }, { ...date, updateBy: userName })
 
     await next()
   } catch (error) {

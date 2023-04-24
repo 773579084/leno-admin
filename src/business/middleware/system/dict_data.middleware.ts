@@ -2,26 +2,15 @@
  * 字典类型
  */
 import { Context } from 'koa'
-import {
-  getListSer,
-  addSer,
-  putSer,
-  getDetailSer,
-  getDataTypeSer,
-  delSer
-} from '@/business/service/system/dict_data.service'
-import {
-  dictDataListType,
-  userType,
-  dictDataQueryType,
-  dictDataQuerySerType,
-  IdictData
-} from '@/types'
+import { getDataTypeSer } from '@/business/service/system/dict_data.service'
+import { getListSer, addSer, putSer, getDetailSer, delSer } from '@/business/service'
+import { userType, dictDataQueryType, dictDataQuerySerType, IdictData, IdictDataSer } from '@/types'
 import { addJudg, putJudg } from '@/business/schema/system/sys_dict_data.schema'
 import errors from '@/app/err.type'
 import { formatHumpLineTransfer } from '@/business/utils'
 import { excelJsExport } from '@/business/utils/excel'
 import { dictDataExcelHeader, excelBaseStyle } from '@/business/public/excelMap'
+import DictData from '@/mysql/model/system/dict_data.model'
 const { uploadParamsErr, getListErr, sqlErr, delErr, exportExcelErr } = errors
 
 // 获取列表
@@ -34,7 +23,9 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
     params.dictType ? (newParams.dict_type = params.dictType) : null
     params.status ? (newParams.status = params.status) : null
 
-    const res = (await getListSer(newParams)) as dictDataListType
+    const res = await getListSer<dictDataQuerySerType>(DictData, newParams, {
+      order: [['dict_sort', 'ASC']]
+    })
 
     ctx.state.formatData = res
     await next()
@@ -65,7 +56,8 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
     const addContent = ctx.request['body'] as IdictData
     const addContent2 = { ...addContent, createBy: userName }
     const newAddContent = formatHumpLineTransfer(addContent2, 'line')
-    await addSer(newAddContent)
+
+    await addSer<IdictDataSer>(DictData, newAddContent)
     await next()
   } catch (error) {
     console.error('新增用户失败', error)
@@ -76,7 +68,7 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
 // 删除
 export const delMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    await delSer(ctx.state.ids)
+    await delSer(DictData, { dict_code: ctx.state.ids })
   } catch (error) {
     console.error('删除用户失败', error)
     return ctx.app.emit('error', delErr, ctx)
@@ -88,7 +80,8 @@ export const delMid = async (ctx: Context, next: () => Promise<void>) => {
 // 获取详细数据
 export const getDetailMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    const res = await getDetailSer({ dict_code: ctx.state.ids })
+    const res = await getDetailSer<IdictDataSer>(DictData, { dict_code: ctx.state.ids })
+
     ctx.state.formatData = res
   } catch (error) {
     console.error('用户个人信息查询错误', error)
@@ -106,7 +99,7 @@ export const getDataTypeMid = async (ctx: Context, next: () => Promise<void>) =>
     const res = await getDataTypeSer({ dict_type: dictType })
     ctx.state.formatData = res
   } catch (error) {
-    console.error('用户个人信息查询错误', error)
+    console.error('字典数据信息查询错误', error)
     return ctx.app.emit('error', sqlErr, ctx)
   }
 
@@ -119,8 +112,9 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
     const { userName } = ctx.state.user as userType
     const res = ctx.request['body'] as IdictData
     const lineData = await formatHumpLineTransfer(res, 'line')
+    const { dict_code, ...data } = lineData
 
-    await putSer({ ...lineData, updateBy: userName })
+    await putSer<IdictDataSer>(DictData, { dict_code }, { ...data, updateBy: userName })
 
     await next()
   } catch (error) {
