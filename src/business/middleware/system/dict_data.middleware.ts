@@ -5,7 +5,6 @@ import { Context } from 'koa'
 import { getDataTypeSer } from '@/business/service/system/dict_data.service'
 import { getListSer, addSer, putSer, getDetailSer, delSer } from '@/business/service'
 import { userType, dictDataQueryType, dictDataQuerySerType, IdictData, IdictDataSer } from '@/types'
-import { addJudg, putJudg } from '@/business/schema/system/sys_dict_data.schema'
 import errors from '@/app/err.type'
 import { formatHumpLineTransfer } from '@/business/utils'
 import { excelJsExport } from '@/business/utils/excel'
@@ -32,20 +31,6 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
   } catch (error) {
     console.error('查询字典类型列表失败', error)
     return ctx.app.emit('error', getListErr, ctx)
-  }
-}
-
-// 检查新增上传参数 judge 判断时新增或修改
-export const addSchema = (judge: string) => {
-  return async (ctx: Context, next: () => Promise<void>) => {
-    try {
-      const list = ctx.request['body'] as userType
-      judge === 'add' ? await addJudg.validateAsync(list) : await putJudg.validateAsync(list)
-    } catch (error) {
-      console.error('新增上传参数出错', error)
-      return ctx.app.emit('error', uploadParamsErr, ctx)
-    }
-    await next()
   }
 }
 

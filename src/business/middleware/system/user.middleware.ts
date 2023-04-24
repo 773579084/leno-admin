@@ -162,30 +162,6 @@ export const getPostRoleMid = async (ctx: Context, next: () => Promise<void>) =>
   }
 }
 
-// 检查新增用户上传参数
-export const addUserSchema = async (ctx: Context, next: () => Promise<void>) => {
-  try {
-    const userList = ctx.request['body'] as userType
-    await addUserJudg.validateAsync(userList)
-  } catch (error) {
-    console.error('新增用户上传参数出错', error)
-    return ctx.app.emit('error', addUserErr, ctx)
-  }
-  await next()
-}
-
-// 检查新增用户上传参数
-export const putUserSchema = async (ctx: Context, next: () => Promise<void>) => {
-  try {
-    const userList = ctx.request['body'] as userType
-    await putUserJudg.validateAsync(userList)
-  } catch (error) {
-    console.error('修改用户上传参数出错', error)
-    return ctx.app.emit('error', putUserErr, ctx)
-  }
-  await next()
-}
-
 // 新增用户
 export const getAddUserMid = async (ctx: Context, next: () => Promise<void>) => {
   try {

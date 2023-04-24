@@ -9,7 +9,7 @@ import {
   password,
   remark,
   checkNumArr
-} from '../common.schema'
+} from '../config.schema'
 
 // 验证id
 export const IdJudge = Joi.object({

@@ -1,12 +1,9 @@
 import Router from 'koa-router'
 import {
-  userInfoSchema,
-  userSchema,
-  loginValidator,
-  verifyUser,
-  crptyPassword,
-  pwdSchema,
-  isUserStatus,
+  loginValidatorMid,
+  verifyUserMid,
+  crptyPasswordMid,
+  isUserStatusMid,
   registerMid,
   loginMid,
   getUserInfoMid,
@@ -16,26 +13,30 @@ import {
   refreshTokenMid
 } from '@/business/middleware/user.middleware'
 import IndexCon from '@/business/controller'
-import {
-  contrastFileSizeSchema,
-  judImgFormatSchema
-} from '@/business/middleware/common/common.middleware'
 import refreshAuth from '@/business/middleware/common/refresh'
+import { userSchema, pwdSchema, userInfoSchema } from '@/business/schema/user.schema'
+import { contrastFileSizeSchema, judImgFormatSchema } from '@/business/schema'
 
 const router = new Router({ prefix: '/user' })
-
 // 登录
 router.post(
   '/login',
   userSchema,
-  isUserStatus,
-  loginValidator,
+  isUserStatusMid,
+  loginValidatorMid,
   loginMid,
   IndexCon('用户登录成功！')
 )
 
 // 注册
-router.post('/register', userSchema, verifyUser, crptyPassword, registerMid, IndexCon('注册成功！'))
+router.post(
+  '/register',
+  userSchema,
+  verifyUserMid,
+  crptyPasswordMid,
+  registerMid,
+  IndexCon('注册成功！')
+)
 
 // 获取用户所有的个人信息
 router.get('/profile/userInfo', getUserInfoMid, IndexCon('用户获取个人信息成功！'))

@@ -5,18 +5,15 @@ import {
   importExcelsMid,
   judegImportMid,
   exportExcelMid,
-  importExcelDictMapMid,
-  judgeIdSchema
+  importExcelDictMapMid
 } from '@/business/middleware/common/common.middleware'
 import {
   getUserListMid,
   deptTreeMid,
   getAddUserMid,
   getPostRoleMid,
-  addUserSchema,
   userInfoMid,
   updatePwdMid,
-  putUserSchema,
   putUserMid,
   putUserStatusMid,
   delMid,
@@ -24,12 +21,14 @@ import {
   exportTemMid,
   importExcelUserCon
 } from '@/business/middleware/system/user.middleware'
-import { verifyUser, crptyPassword } from '@/business/middleware/user.middleware'
+import { verifyUserMid, crptyPasswordMid } from '@/business/middleware/user.middleware'
 import IndexCon from '@/business/controller'
 import { exportUserListSer } from '@/business/service/system/user.service'
 import User from '@/mysql/model/user.model'
-const router = new Router({ prefix: '/system' })
+import { judgeIdSchema, addEditSchema } from '@/business/schema'
+import { addUserJudg, putUserJudg } from '@/business/schema/system/sys_user.schema'
 
+const router = new Router({ prefix: '/system' })
 // #region 用户管理
 // 查询列表用户
 router.get('/user/list', getUserListMid, formatHandle, IndexCon())
@@ -44,7 +43,14 @@ router.get('/dept/treeselect', deptTreeMid, formatHandle, IndexCon())
 router.get('/user', getPostRoleMid, formatHandle, IndexCon())
 
 // 新增用户
-router.post('/user', addUserSchema, verifyUser, crptyPassword, getAddUserMid, IndexCon())
+router.post(
+  '/user',
+  addEditSchema(addUserJudg),
+  verifyUserMid,
+  crptyPasswordMid,
+  getAddUserMid,
+  IndexCon()
+)
 
 // 修改用户密码
 router.put('/user/updatePwd', updatePwdMid, IndexCon())
@@ -53,7 +59,7 @@ router.put('/user/updatePwd', updatePwdMid, IndexCon())
 router.get(`/userInfo/:id`, userInfoMid, formatHandle, IndexCon())
 
 // 修改用户
-router.put('/user', putUserSchema, putUserMid, IndexCon())
+router.put('/user', addEditSchema(putUserJudg), putUserMid, IndexCon())
 
 // 修改用户状态
 router.put('/user/profile', putUserStatusMid, IndexCon())

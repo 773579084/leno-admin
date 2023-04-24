@@ -4,30 +4,31 @@
 import Router from 'koa-router'
 // 格式转换
 import { formatHandle } from '@/business/middleware/common/formatHandle'
-import { judgeIdSchema, verifyMid } from '@/business/middleware/common/common.middleware'
+import { verifyMid } from '@/business/middleware/common/common.middleware'
 import { exportExcelSer } from '@/business/service'
 import IndexCon from '@/business/controller'
 import {
   getListMid,
   getAddMid,
-  addSchema,
   getDetailMid,
   putMid,
   getDataTypeMid,
   delMid,
   exportMid
 } from '@/business/middleware/system/dict_data.middleware'
+import { addEditSchema, judgeIdSchema } from '@/business/schema'
 import { exportExcelMid } from '@/business/middleware/common/common.middleware'
 import DictData from '@/mysql/model/system/dict_data.model'
-const router = new Router({ prefix: '/system' })
+import { addJudg, putJudg } from '@/business/schema/system/sys_dict_data.schema'
 
+const router = new Router({ prefix: '/system' })
 // 查询列表
 router.get('/dict/data/list', getListMid, formatHandle, IndexCon())
 
 // 新增
 router.post(
   '/dict/data',
-  addSchema('add'),
+  addEditSchema(addJudg),
   verifyMid(['dict_value'], DictData),
   getAddMid,
   IndexCon()
@@ -45,7 +46,7 @@ router.get(`/dict/data/type/:dictType`, getDataTypeMid, formatHandle, IndexCon()
 // 修改
 router.put(
   '/dict/data',
-  addSchema('put'),
+  addEditSchema(putJudg),
   verifyMid(['dict_value', 'dict_type'], DictData, 'dict_code'),
   putMid,
   IndexCon()

@@ -39,20 +39,6 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
   }
 }
 
-// 检查新增上传参数 judge 判断时新增或修改
-export const addSchema = (judge: string) => {
-  return async (ctx: Context, next: () => Promise<void>) => {
-    try {
-      const list = ctx.request['body'] as IdictType
-      judge === 'add' ? await addJudg.validateAsync(list) : await putJudg.validateAsync(list)
-    } catch (error) {
-      console.error('新增上传参数出错', error)
-      return ctx.app.emit('error', uploadParamsErr, ctx)
-    }
-    await next()
-  }
-}
-
 // 新增
 export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
   try {

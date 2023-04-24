@@ -32,21 +32,8 @@ const {
   updateAvatarErr
 } = errors
 
-// 判断用户名与密码是否为空
-export const userSchema = async (ctx: Context, next: () => Promise<void>) => {
-  const { userName, password } = ctx.request['body'] as userType
-
-  try {
-    await loginSchema.validateAsync({ userName, password })
-  } catch (error) {
-    console.error('用户名或密码格式错误!', ctx.request['body'])
-    return ctx.app.emit('error', FormatWrongErr, ctx)
-  }
-  await next()
-}
-
 // 判断用户是否停用
-export const isUserStatus = async (ctx: Context, next: () => Promise<void>) => {
+export const isUserStatusMid = async (ctx: Context, next: () => Promise<void>) => {
   const { userName } = ctx.request['body'] as userType
 
   try {
@@ -63,7 +50,7 @@ export const isUserStatus = async (ctx: Context, next: () => Promise<void>) => {
 }
 
 // 判断用户名是否重复
-export const verifyUser = async (ctx: Context, next: () => Promise<void>) => {
+export const verifyUserMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { userName } = ctx.request['body'] as userType
     if (await getUserInfo({ userName })) {
@@ -80,7 +67,7 @@ export const verifyUser = async (ctx: Context, next: () => Promise<void>) => {
 }
 
 // 用户密码加密中间件
-export const crptyPassword = async (ctx: Context, next: () => Promise<void>) => {
+export const crptyPasswordMid = async (ctx: Context, next: () => Promise<void>) => {
   const { password } = ctx.request['body'] as userType
 
   const salt = bcrypt.genSaltSync(10)
@@ -93,7 +80,7 @@ export const crptyPassword = async (ctx: Context, next: () => Promise<void>) => 
 }
 
 // 判断用户是否存在，密码是否匹配
-export const loginValidator = async (ctx: Context, next: () => Promise<void>) => {
+export const loginValidatorMid = async (ctx: Context, next: () => Promise<void>) => {
   const { userName, password } = ctx.request['body'] as userType
 
   try {
@@ -117,37 +104,6 @@ export const loginValidator = async (ctx: Context, next: () => Promise<void>) =>
     return ctx.app.emit('error', userLoginError, ctx)
   }
 
-  await next()
-}
-
-// 判断新旧密码 格式是否正确
-export const pwdSchema = async (ctx: Context, next: () => Promise<void>) => {
-  const { oldPwd, newPwd } = ctx.request['body'] as pwdType
-
-  try {
-    await resetPwdSchema.validateAsync({ oldPwd, newPwd })
-  } catch (error) {
-    console.error('账号密码格式不对!', ctx.request['body'])
-    return ctx.app.emit('error', FormatWrongErr, ctx)
-  }
-  await next()
-}
-
-// 检查 用户昵称 手机号码 邮箱 是否为空
-export const userInfoSchema = async (ctx: Context, next: () => Promise<void>) => {
-  const { email, phonenumber, nickName, sex = 0 } = ctx.request['body'] as userType
-
-  try {
-    await changeUserInfoSchema.validateAsync({
-      email,
-      phonenumber,
-      nickName,
-      sex
-    })
-  } catch (error) {
-    console.error('用户昵称、手机号码或邮箱格式不正确!', error)
-    return ctx.app.emit('error', FormatWrongErr, ctx)
-  }
   await next()
 }
 

@@ -1,53 +1,15 @@
 import { Context } from 'koa'
-import { dictMapListType, imgType } from '@/types'
+import { dictMapListType } from '@/types'
 import errors from '@/app/err.type'
 import { getExcelAddress, parsingExcel } from '@/business/utils/excel'
 import { getDataTypeSer } from '@/business/service/system/dict_data.service'
 import { formatHumpLineTransfer, removeSpecifyFile } from '@/business/utils'
 import path from 'path'
-const {
-  unAvatarSizeErr,
-  unSupportedFileErr,
-  importUserListErr,
-  checkIdsErr,
-  sqlErr,
-  verifyErr,
-  exportUserListErr
-} = errors
+const { importUserListErr, sqlErr, verifyErr, exportUserListErr } = errors
 import { userExcelHeader } from '@/business/public/excelMap'
 import bcrypt from 'bcryptjs'
 import XLSX from 'exceljs'
-import { IdsJudge } from '@/business/schema/common.schema'
 import { ModelStatic, Op } from 'sequelize'
-
-// 判断 上传图片的 大小是否合适
-export const contrastFileSizeSchema = (limitSize = 1024 * 1024) => {
-  return async (ctx: Context, next: () => Promise<void>) => {
-    const { avatar } = (ctx.request as any).files
-    const { size } = avatar as imgType
-
-    if (size > limitSize) {
-      console.error('图片超过大小限制')
-      return ctx.app.emit('error', unAvatarSizeErr, ctx)
-    }
-    await next()
-  }
-}
-// 判断 上传图片的格式
-export const judImgFormatSchema = (imgFormat = ['image/jpeg', 'image/png']) => {
-  return async (ctx: Context, next: () => Promise<void>) => {
-    const { avatar } = (ctx.request as any).files
-    const { mimetype, filepath } = avatar as imgType
-    const basePath = path.basename(filepath) as string
-
-    if (!imgFormat.includes(mimetype)) {
-      removeSpecifyFile(basePath)
-      console.error('图片上传格式错误,请上传jpeg/png格式')
-      return ctx.app.emit('error', unSupportedFileErr, ctx)
-    }
-    await next()
-  }
-}
 
 // 导入excel--解析
 export const importExcelsMid = (option: { password: boolean }) => {
@@ -149,23 +111,6 @@ export const judegImportMid = (table: ModelStatic<any>, updates: string[]) => {
       return ctx.app.emit('error', { code: '400', message: error.errors[0].message }, ctx)
     }
 
-    await next()
-  }
-}
-
-// 判断id是否正确
-export const judgeIdSchema = () => {
-  return async (ctx: Context, next: () => Promise<void>) => {
-    try {
-      const list = ctx.request.path.split('/')
-      const ids = list[list.length - 1]
-      const idsList = ids.split(',')
-      await IdsJudge.validateAsync({ ids: idsList })
-      ctx.state.ids = idsList
-    } catch (error) {
-      console.error('id格式错误!', ctx.request['body'])
-      return ctx.app.emit('error', checkIdsErr, ctx)
-    }
     await next()
   }
 }
