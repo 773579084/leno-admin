@@ -23,7 +23,7 @@ export const formatHandle = async (ctx: Context, next: () => Promise<void>) => {
  * 判断 是否不唯一(sql与upload需要按照对应顺序传入)
  * @param sqlNames 需要判断唯一变量的key[]
  * @param Model sql表单
- * @param judge 限定判断条件
+ * @param judge 修改时除开判断自身
  * @returns
  */
 export const verifyMid = (sqlNames: string[], Model: ModelStatic<any>, judge?: string) => {
@@ -37,7 +37,7 @@ export const verifyMid = (sqlNames: string[], Model: ModelStatic<any>, judge?: s
       if (judge) {
         Object.assign(whereOpt, {
           [judge]: {
-            [Op.eq]: res[judge]
+            [Op.ne]: res[judge]
           }
         })
       }

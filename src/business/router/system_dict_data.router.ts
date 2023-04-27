@@ -47,7 +47,7 @@ router.get(`/dict/data/type/:dictType`, getDataTypeMid, formatHandle, IndexCon()
 router.put(
   '/dict/data',
   addEditSchema(putJudg),
-  verifyMid(['dict_value', 'dict_type'], DictData),
+  verifyMid(['dict_value', 'dict_type'], DictData, 'dict_code'),
   putMid,
   IndexCon()
 )
