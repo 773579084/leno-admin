@@ -29,7 +29,7 @@ router.get('/dict/data/list', getListMid, formatHandle, IndexCon())
 router.post(
   '/dict/data',
   addEditSchema(addJudg),
-  verifyMid(['dict_value'], DictData, 'dict_type'),
+  verifyMid(['dict_value', 'dict_type'], DictData),
   getAddMid,
   IndexCon()
 )
