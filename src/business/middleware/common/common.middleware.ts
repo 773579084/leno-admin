@@ -23,20 +23,21 @@ export const formatHandle = async (ctx: Context, next: () => Promise<void>) => {
  * 判断 是否不唯一(sql与upload需要按照对应顺序传入)
  * @param sqlNames 需要判断唯一变量的key[]
  * @param Model sql表单
- * @param isEdit 如果是编辑则判断唯一变量需要除开自己
+ * @param judge 限定判断条件
  * @returns
  */
-export const verifyMid = (sqlNames: string[], Model: ModelStatic<any>, isEdit?: string) => {
+export const verifyMid = (sqlNames: string[], Model: ModelStatic<any>, judge?: string) => {
   return async (ctx: Context, next: () => Promise<void>) => {
     try {
       const body = ctx.request['body'] as any
 
       const res = formatHumpLineTransfer(body, 'line')
       const whereOpt = {}
-      if (isEdit) {
+
+      if (judge) {
         Object.assign(whereOpt, {
-          [isEdit]: {
-            [Op.ne]: res[isEdit]
+          [judge]: {
+            [Op.eq]: res[judge]
           }
         })
       }
@@ -46,11 +47,11 @@ export const verifyMid = (sqlNames: string[], Model: ModelStatic<any>, isEdit?: 
       })
 
       // ser 查找是否有值
-      const isRepeat = (await Model.findOne({
+      const isRepeat = await Model.findOne({
         raw: true,
         attributes: [...sqlNames],
         where: whereOpt
-      })) as any
+      })
 
       if (isRepeat) {
         console.error('内容已存在,不唯一!', ctx.request['body'])
