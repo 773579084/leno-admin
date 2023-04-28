@@ -23,7 +23,7 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
     params.status ? (newParams.status = params.status) : null
 
     const res = await getListSer<dictDataQuerySerType>(DictData, newParams, {
-      order: [['dict_sort', 'ASC']]
+      otherWhere: { order: [['dict_sort', 'ASC']] }
     })
 
     ctx.state.formatData = res

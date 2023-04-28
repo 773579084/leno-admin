@@ -14,32 +14,32 @@ const GenColumn = seq.define(
       comment: '编号'
     },
     table_id: {
-      type: DataTypes.CHAR(200),
+      type: DataTypes.CHAR(255),
       defaultValue: '',
       comment: '归属表编号'
     },
     column_name: {
-      type: DataTypes.CHAR(200),
+      type: DataTypes.CHAR(255),
       defaultValue: '',
       comment: '列名称'
     },
     column_comment: {
-      type: DataTypes.CHAR(500),
+      type: DataTypes.CHAR(255),
       defaultValue: '',
       comment: '列描述'
     },
     column_type: {
-      type: DataTypes.CHAR(200),
+      type: DataTypes.CHAR(255),
       defaultValue: '',
       comment: '列类型'
     },
     sql_type: {
-      type: DataTypes.CHAR(200),
+      type: DataTypes.CHAR(255),
       defaultValue: '',
       comment: '数据类型'
     },
     sql_field: {
-      type: DataTypes.CHAR(200),
+      type: DataTypes.CHAR(255),
       defaultValue: '',
       comment: '字段名'
     },
@@ -79,33 +79,33 @@ const GenColumn = seq.define(
       comment: '是否查询字段（1是）'
     },
     query_type: {
-      type: DataTypes.CHAR(200),
+      type: DataTypes.CHAR(255),
       defaultValue: 'EQ',
       comment: '查询方式（等于、不等于、大于、小于、范围）'
     },
     html_type: {
-      type: DataTypes.CHAR(200),
+      type: DataTypes.CHAR(255),
       defaultValue: '',
       comment: '显示类型（文本框、文本域、下拉框、复选框、单选框、日期控件）'
     },
     dict_type: {
-      type: DataTypes.CHAR(200),
+      type: DataTypes.CHAR(255),
       defaultValue: '',
       comment: '字典类型'
     },
     sort: {
-      type: DataTypes.INET,
-      defaultValue: '',
+      type: DataTypes.BIGINT,
+      defaultValue: 0,
       comment: '排序'
     },
     create_by: {
       type: DataTypes.CHAR(64),
-      defaultValue: null,
+      defaultValue: '',
       comment: '创建者'
     },
     update_by: {
       type: DataTypes.CHAR(64),
-      defaultValue: null,
+      defaultValue: '',
       comment: '更新者'
     }
   },

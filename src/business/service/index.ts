@@ -1,13 +1,16 @@
 /**
  * 通用Ser方法
  */
-import { ModelStatic, Optional, FindOptions } from 'sequelize'
+import { ModelStatic, Optional, FindOptions, Includeable } from 'sequelize'
 
 // 获取列表
 export const getListSer = async <T extends { pageNum?: number; pageSize?: number }>(
   model: ModelStatic<any>,
   queryParams: T,
-  conditions?: FindOptions
+  conditions?: {
+    otherWhere?: FindOptions
+    include?: Includeable[] | Includeable
+  }
 ) => {
   const obj = {}
   const { pageNum = 1, pageSize = 10, ...params } = queryParams
@@ -18,12 +21,14 @@ export const getListSer = async <T extends { pageNum?: number; pageSize?: number
       limit: Number(pageSize)
     })
 
+  conditions?.include && Object.assign(obj, { include: conditions.include })
+
   const res = await model.findAndCountAll({
     ...obj,
     where: {
       ...params
     },
-    ...conditions
+    ...conditions?.otherWhere
   })
 
   const list = {

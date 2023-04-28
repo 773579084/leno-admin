@@ -4,7 +4,7 @@
 import { Context } from 'koa'
 import { getOptionselectSer } from '@/business/service/system/dict_type.service'
 import { getListSer, addSer, putSer, getDetailSer, delSer } from '@/business/service'
-import { userType, dictTypeQueryType, dictTypeQuerySerType, IdictType, IdictSerType } from '@/types'
+import { userType, IdictType, IdictSerType } from '@/types'
 import errors from '@/app/err.type'
 import { formatHumpLineTransfer } from '@/business/utils'
 import { excelJsExport } from '@/business/utils/excel'
@@ -12,28 +12,33 @@ import { dictTypeExcelHeader, excelBaseStyle } from '@/business/public/excelMap'
 import DictType from '@/mysql/model/system/dict_type.model'
 const { uploadParamsErr, getListErr, sqlErr, delErr, exportExcelErr } = errors
 import { Op } from 'sequelize'
+import { genQuerySerType, genQueryType } from '@/types/tools/gen'
+import Gen from '@/mysql/model/tool/gen.model'
+import GenColumn from '@/mysql/model/tool/gen_column.model'
+import redis from '@/redis'
 
 // 获取列表
 export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    const { pageNum, pageSize, ...params } = ctx.query as unknown as dictTypeQueryType
-    let newParams = { pageNum, pageSize } as dictTypeQuerySerType
+    const { pageNum, pageSize, ...params } = ctx.query as unknown as genQueryType
+    let newParams = { pageNum, pageSize } as genQuerySerType
 
     if (params.beginTime) {
       newParams.created_at = {
         [Op.between]: [params.beginTime, params.endTime]
       }
     }
-    params.dictName ? (newParams.dict_name = params.dictName) : null
-    params.dictType ? (newParams.dict_type = params.dictType) : null
-    params.status ? (newParams.status = params.status) : null
+    params.tableName ? (newParams.table_name = params.tableName) : null
+    params.tableComment ? (newParams.table_comment = params.tableComment) : null
 
-    const res = await getListSer<dictTypeQuerySerType>(DictType, newParams)
+    const res = await getListSer<genQuerySerType>(Gen, newParams, {
+      include: [{ model: GenColumn, as: 'columns' }]
+    })
 
     ctx.state.formatData = res
     await next()
   } catch (error) {
-    console.error('查询字典类型列表失败', error)
+    console.error('查询代码生成列表失败', error)
     return ctx.app.emit('error', getListErr, ctx)
   }
 }
@@ -45,7 +50,7 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
     const addContent = ctx.request['body'] as IdictType
     const addContent2 = { ...addContent, createBy: userName }
     const newAddContent = formatHumpLineTransfer(addContent2, 'line')
-    await addSer(DictType, newAddContent)
+    await addSer(Gen, newAddContent)
     await next()
   } catch (error) {
     console.error('新增失败', error)
@@ -56,7 +61,7 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
 // 删除
 export const delMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    await delSer(DictType, { dict_id: ctx.state.ids })
+    await delSer(Gen, { table_id: ctx.state.ids })
   } catch (error) {
     console.error('删除失败', error)
     return ctx.app.emit('error', delErr, ctx)
@@ -65,16 +70,19 @@ export const delMid = async (ctx: Context, next: () => Promise<void>) => {
   await next()
 }
 
-// 获取详细数据
-export const getDetailMid = async (ctx: Context, next: () => Promise<void>) => {
+// 查询还未导入的表模板
+export const getDbListMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    const res = await getDetailSer(DictType, { dict_id: ctx.state.ids })
+    let newParams = { pageNum: 1, pageSize: 10000 }
+    const res = await getListSer<genQuerySerType>(Gen, newParams, {
+      include: [{ model: GenColumn, as: 'columns' }]
+    })
+
     ctx.state.formatData = res
   } catch (error) {
-    console.error('获取详细数据错误', error)
-    return ctx.app.emit('error', sqlErr, ctx)
+    console.error('查询还未导入的表模板失败', error)
+    return ctx.app.emit('error', getListErr, ctx)
   }
-
   await next()
 }
 

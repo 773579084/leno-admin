@@ -1,5 +1,6 @@
 import { DataTypes } from 'sequelize'
 import seq from '@/mysql/db/seq.db'
+import GenColumn from './gen_column.model'
 
 // 创建数据库模型
 const Gen = seq.define(
@@ -79,12 +80,12 @@ const Gen = seq.define(
       comment: '生成路径（不填默认项目路径）'
     },
     options: {
-      type: DataTypes.CHAR(1000),
+      type: DataTypes.CHAR(255),
       defaultValue: '0',
       comment: '其它生成选项'
     },
     remark: {
-      type: DataTypes.CHAR(500),
+      type: DataTypes.CHAR(255),
       defaultValue: '',
       comment: '备注'
     },
@@ -104,5 +105,8 @@ const Gen = seq.define(
     freezeTableName: true // 告诉sequelize不需要自动将表名变成复数
   }
 )
+// 一对一关联 (关联表的关联顺序为 hasOne =》belongsTo，并且需要写在一张表内)
+Gen.hasMany(GenColumn, { foreignKey: 'table_id', sourceKey: 'table_id', as: 'columns' })
+GenColumn.belongsTo(Gen, { foreignKey: 'table_id', targetKey: 'table_id' })
 
 export default Gen
