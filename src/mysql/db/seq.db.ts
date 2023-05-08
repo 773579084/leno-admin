@@ -42,4 +42,5 @@ process.on('unhandledRejection', (error) => {
   // 此时解决上述数据库创建失败，catch无法捕获到
   console.log('数据库连接失败', error)
 })
+
 export default seq

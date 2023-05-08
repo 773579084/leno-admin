@@ -6,11 +6,11 @@ import Router from 'koa-router'
 import { formatHandle } from '@/business/middleware/common/common.middleware'
 import { verifyMid } from '@/business/middleware/common/common.middleware'
 import {
+  findAllSqlMid,
   getListMid,
   getAddMid,
   putMid,
-  delMid,
-  getDbListMid
+  delMid
 } from '@/business/middleware/tool/gen.middleware'
 import { judgeIdSchema, addEditSchema } from '@/business/schema'
 import IndexCon from '@/business/controller'
@@ -19,7 +19,7 @@ import Gen from '@/mysql/model/tool/gen.model'
 
 const router = new Router({ prefix: '/tool' })
 // 查询列表
-router.get('/gen/list', getListMid, formatHandle, IndexCon())
+router.get('/gen/list', findAllSqlMid, getListMid, formatHandle, IndexCon())
 
 // 新增
 router.post(
@@ -32,9 +32,6 @@ router.post(
 
 // 删除
 router.delete(`/gen/del/:id`, judgeIdSchema(), delMid, IndexCon())
-
-// 查询还未导入的表模板
-router.get('/gen/db/list', getDbListMid, formatHandle, IndexCon())
 
 // 导入生成表模板
 router.post('/gen/importTable/:tables', getAddMid, IndexCon())

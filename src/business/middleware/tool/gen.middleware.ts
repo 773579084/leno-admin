@@ -16,6 +16,34 @@ import { genQuerySerType, genQueryType } from '@/types/tools/gen'
 import Gen from '@/mysql/model/tool/gen.model'
 import GenColumn from '@/mysql/model/tool/gen_column.model'
 import redis from '@/redis'
+import sequelize from '@/mysql/db/seq.db'
+
+// 查询数据库所有的表 -》 并将表数据转换为代码生成表的数据
+export const findAllSqlMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    const existNames = await redis.smembers('tool_sql_names')
+    // 1、获取数据库里面所有的sql名字
+    const tables = await sequelize.getQueryInterface().showAllTables()
+    // console.log(28, tables)
+    // 1-1、 判断sql表是否已经生成过数据了
+    tables.forEach((name, index) => {
+      if (existNames.findIndex((value) => value === name) !== -1) {
+        tables.splice(index)
+      } else {
+        // 1-1-1、将tables表名存储到redis做缓存
+        tables.forEach((name) => {
+          redis.sadd('tool_sql_names', name)
+        })
+      }
+    })
+    console.log(40, tables)
+  } catch (error) {
+    console.error('查询数据库所有的表', error)
+    return ctx.app.emit('error', sqlErr, ctx)
+  }
+
+  await next()
+}
 
 // 获取列表
 export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
@@ -67,22 +95,6 @@ export const delMid = async (ctx: Context, next: () => Promise<void>) => {
     return ctx.app.emit('error', delErr, ctx)
   }
 
-  await next()
-}
-
-// 查询还未导入的表模板
-export const getDbListMid = async (ctx: Context, next: () => Promise<void>) => {
-  try {
-    let newParams = { pageNum: 1, pageSize: 10000 }
-    const res = await getListSer<genQuerySerType>(Gen, newParams, {
-      include: [{ model: GenColumn, as: 'columns' }]
-    })
-
-    ctx.state.formatData = res
-  } catch (error) {
-    console.error('查询还未导入的表模板失败', error)
-    return ctx.app.emit('error', getListErr, ctx)
-  }
   await next()
 }
 

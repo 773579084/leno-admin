@@ -33,15 +33,15 @@ const GenColumn = seq.define(
       defaultValue: '',
       comment: '列类型'
     },
-    sql_type: {
+    ts_type: {
       type: DataTypes.CHAR(255),
       defaultValue: '',
-      comment: '数据类型'
+      comment: 'ts数据类型'
     },
-    sql_field: {
+    ts_field: {
       type: DataTypes.CHAR(255),
       defaultValue: '',
-      comment: '字段名'
+      comment: 'ts字段名'
     },
     is_pk: {
       type: DataTypes.CHAR(1),
