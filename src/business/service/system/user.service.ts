@@ -1,8 +1,8 @@
-import Dept from '@/mysql/model/system/dept.model'
-import User from '@/mysql/model/user.model'
-import Post from '@/mysql/model/system/post.model'
-import Role from '@/mysql/model/system/role.model'
-import UserRole from '@/mysql/model/system/sys_user_role.model'
+import SysDept from '@/mysql/model/system/dept.model'
+import LenoUser from '@/mysql/model/user.model'
+import SysPost from '@/mysql/model/system/post.model'
+import SysRole from '@/mysql/model/system/role.model'
+import SysUserRole from '@/mysql/model/system/sys_user_role.model'
 import UserPost from '@/mysql/model/system/sys_user_post.model'
 import { userQuerySerType } from '@/types'
 import { Op } from 'sequelize'
@@ -15,11 +15,11 @@ export const getUserListSer = async (queryParams: userQuerySerType) => {
       [Op.between]: [beginTime, endTime]
     }
 
-  const res = await User.findAndCountAll({
+  const res = await LenoUser.findAndCountAll({
     attributes: { exclude: ['password'] },
     include: [
       {
-        model: Dept,
+        model: SysDept,
         as: 'dept'
       }
     ],
@@ -40,7 +40,7 @@ export const getUserListSer = async (queryParams: userQuerySerType) => {
 
 // 删除用户
 export const delUserSer = async (userId) => {
-  const res = await User.update(
+  const res = await LenoUser.update(
     {
       del_flag: '2'
     },
@@ -52,32 +52,32 @@ export const delUserSer = async (userId) => {
 
 // 查询部门下拉树结构
 export const getdeptTreeSer = async () => {
-  const res = await Dept.findAll({})
+  const res = await SysDept.findAll({})
 
   return res || null
 }
 
 // 获取岗位信息
 export const getPostSer = async () => {
-  const res = await Post.findAll({})
+  const res = await SysPost.findAll({})
   return res || null
 }
 
 // 获取角色信息
 export const getRoleSer = async () => {
-  const res = await Role.findAll()
+  const res = await SysRole.findAll()
   return res || null
 }
 
 // 新增用户
 export const addUserSer = async (user) => {
-  const res = (await User.create(user)) as any
+  const res = (await LenoUser.create(user)) as any
   return res || {}
 }
 
 // 新增 用户与角色关系
 export const addUserRoleSer = async (list) => {
-  await UserRole.bulkCreate(list)
+  await SysUserRole.bulkCreate(list)
 }
 
 // 新增 用户与岗位关系
@@ -99,7 +99,7 @@ export const getUserPostSer = async (userId) => {
 
 // 查询角色岗位关联表
 export const getUserRoleSer = async (userId) => {
-  const res = await UserRole.findAll({
+  const res = await SysUserRole.findAll({
     raw: true,
     attributes: ['role_id'],
     where: {
@@ -111,7 +111,7 @@ export const getUserRoleSer = async (userId) => {
 
 export const putUserSer = async (user) => {
   const { nickName, deptId, ...data } = user
-  const res = await User.update(
+  const res = await LenoUser.update(
     {
       nick_name: nickName,
       dept_id: deptId,
@@ -131,7 +131,7 @@ export const delUserPost = async (userId) => {
 }
 
 export const delUserRole = async (userId) => {
-  const res = await UserRole.destroy({
+  const res = await SysUserRole.destroy({
     where: { user_id: userId }
   })
   return res || null
@@ -139,19 +139,19 @@ export const delUserRole = async (userId) => {
 
 export const putUserStatusSer = async (user) => {
   const { userId, ...data } = user
-  const res = await User.update(data, { where: { user_id: userId } })
+  const res = await LenoUser.update(data, { where: { user_id: userId } })
 
   return res[0] > 0
 }
 
 // 导出用户列表
 export const exportUserListSer = async () => {
-  const res = await User.findAndCountAll({
+  const res = await LenoUser.findAndCountAll({
     raw: true, // 设置为 true，即可返回源数据
     attributes: { exclude: ['password'] },
     include: [
       {
-        model: Dept,
+        model: SysDept,
         as: 'dept',
         attributes: ['dept_name', 'leader']
       }

@@ -24,7 +24,7 @@ import {
 import { verifyUserMid, crptyPasswordMid } from '@/business/middleware/user.middleware'
 import IndexCon from '@/business/controller'
 import { exportUserListSer } from '@/business/service/system/user.service'
-import User from '@/mysql/model/user.model'
+import LenoUser from '@/mysql/model/user.model'
 import { judgeIdSchema, addEditSchema } from '@/business/schema'
 import { addUserJudg, putUserJudg } from '@/business/schema/system/sys_user.schema'
 
@@ -68,7 +68,10 @@ router.put('/user/profile', putUserStatusMid, IndexCon())
 // 导出用户列表
 router.post(
   '/user/export',
-  exportExcelMid(exportUserListSer, User, { status: 'sys_normal_disable', sex: 'sys_user_sex' }),
+  exportExcelMid(exportUserListSer, LenoUser, {
+    status: 'sys_normal_disable',
+    sex: 'sys_user_sex'
+  }),
   exportMid,
   IndexCon()
 )
@@ -79,7 +82,7 @@ router.post(
   importExcelDictMapMid({ status: 'sys_normal_disable', sex: 'sys_user_sex' }),
   importExcelsMid({ password: true }),
   importExcelUserCon,
-  judegImportMid(User, [
+  judegImportMid(LenoUser, [
     'dept_id',
     'user_name',
     'nick_name',

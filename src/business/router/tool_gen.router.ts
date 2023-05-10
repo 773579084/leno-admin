@@ -15,7 +15,7 @@ import {
 import { judgeIdSchema, addEditSchema } from '@/business/schema'
 import IndexCon from '@/business/controller'
 import { addJudg, putJudg } from '@/business/schema/tool/gen.schema'
-import Gen from '@/mysql/model/tool/gen.model'
+import ToolGen from '@/mysql/model/tool/gen.model'
 
 const router = new Router({ prefix: '/tool' })
 // 查询列表
@@ -25,7 +25,7 @@ router.get('/gen/list', findAllSqlMid, getListMid, formatHandle, IndexCon())
 router.post(
   '/gen/add',
   addEditSchema(addJudg),
-  verifyMid(['table_name', 'class_name'], Gen),
+  verifyMid(['table_name', 'class_name'], ToolGen),
   getAddMid,
   IndexCon()
 )
@@ -40,7 +40,7 @@ router.post('/gen/importTable/:tables', getAddMid, IndexCon())
 // router.put(
 //   '/dict/type',
 //   addEditSchema(putJudg),
-//   verifyMid(['dict_type'], DictType, 'dict_id'),
+//   verifyMid(['dict_type'], SysDictType, 'dict_id'),
 //   putMid,
 //   IndexCon()
 // )

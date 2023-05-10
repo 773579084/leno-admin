@@ -2,7 +2,7 @@ import { DataTypes } from 'sequelize'
 import seq from '@/mysql/db/seq.db'
 
 // 创建数据库模型
-const Role = seq.define(
+const SysRole = seq.define(
   'sys_role',
   {
     role_id: {
@@ -71,8 +71,9 @@ const Role = seq.define(
   },
   {
     tableName: 'sys_role', // 强制创建表名
-    freezeTableName: true // 告诉sequelize不需要自动将表名变成复数
+    freezeTableName: true, // 告诉sequelize不需要自动将表名变成复数
+    comment: '角色信息表'
   }
 )
 
-export default Role
+export default SysRole

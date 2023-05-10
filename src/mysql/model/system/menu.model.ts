@@ -2,7 +2,7 @@ import { DataTypes } from 'sequelize'
 import seq from '@/mysql/db/seq.db'
 
 // 创建数据库模型
-const Menu = seq.define(
+const SysMenu = seq.define(
   'sys_menu',
   {
     menu_id: {
@@ -93,8 +93,9 @@ const Menu = seq.define(
   },
   {
     tableName: 'sys_menu', // 强制创建表名
-    freezeTableName: true // 告诉sequelize不需要自动将表名变成复数
+    freezeTableName: true, // 告诉sequelize不需要自动将表名变成复数
+    comment: '菜单权限表'
   }
 )
 
-export default Menu
+export default SysMenu

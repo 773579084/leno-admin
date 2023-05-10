@@ -1,9 +1,8 @@
 import { DataTypes } from 'sequelize'
 import seq from '@/mysql/db/seq.db'
-import GenColumn from './gen_column.model'
 
 // 创建数据库模型
-const Gen = seq.define(
+const ToolGen = seq.define(
   'tool_gen',
   {
     table_id: {
@@ -102,11 +101,9 @@ const Gen = seq.define(
   },
   {
     tableName: 'tool_gen', // 强制创建表名
-    freezeTableName: true // 告诉sequelize不需要自动将表名变成复数
+    freezeTableName: true, // 告诉sequelize不需要自动将表名变成复数
+    comment: '代码生成表'
   }
 )
-// 一对一关联 (关联表的关联顺序为 hasOne =》belongsTo，并且需要写在一张表内)
-Gen.hasMany(GenColumn, { foreignKey: 'table_id', sourceKey: 'table_id', as: 'columns' })
-GenColumn.belongsTo(Gen, { foreignKey: 'table_id', targetKey: 'table_id' })
 
-export default Gen
+export default ToolGen

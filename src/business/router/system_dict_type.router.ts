@@ -18,7 +18,7 @@ import {
 import { exportExcelMid } from '@/business/middleware/common/common.middleware'
 import { judgeIdSchema, addEditSchema } from '@/business/schema'
 import IndexCon from '@/business/controller'
-import DictType from '@/mysql/model/system/dict_type.model'
+import SysDictType from '@/mysql/model/system/dict_type.model'
 import { addJudg, putJudg } from '../schema/system/sys_dict_type.schema'
 
 const router = new Router({ prefix: '/system' })
@@ -35,7 +35,7 @@ router.delete(`/dict/type/:id`, judgeIdSchema(), delMid, IndexCon())
 router.post(
   '/dict/type',
   addEditSchema(addJudg),
-  verifyMid(['dict_type'], DictType),
+  verifyMid(['dict_type'], SysDictType),
   getAddMid,
   IndexCon()
 )
@@ -47,7 +47,7 @@ router.get(`/dict/type/:id`, judgeIdSchema(), getDetailMid, formatHandle, IndexC
 router.put(
   '/dict/type',
   addEditSchema(putJudg),
-  verifyMid(['dict_type'], DictType, 'dict_id'),
+  verifyMid(['dict_type'], SysDictType, 'dict_id'),
   putMid,
   IndexCon()
 )
@@ -55,7 +55,7 @@ router.put(
 // 导出列表(excel)
 router.post(
   '/dict/type/export',
-  exportExcelMid(exportExcelSer, DictType, { status: 'sys_normal_disable' }),
+  exportExcelMid(exportExcelSer, SysDictType, { status: 'sys_normal_disable' }),
   exportMid,
   IndexCon()
 )

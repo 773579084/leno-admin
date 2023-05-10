@@ -2,7 +2,7 @@ import { DataTypes } from 'sequelize'
 import seq from '@/mysql/db/seq.db'
 
 // 创建数据库模型
-const Post = seq.define(
+const SysPost = seq.define(
   'sys_post',
   {
     post_id: {
@@ -55,8 +55,9 @@ const Post = seq.define(
   },
   {
     tableName: 'sys_post', // 强制创建表名
-    freezeTableName: true // 告诉sequelize不需要自动将表名变成复数
+    freezeTableName: true, // 告诉sequelize不需要自动将表名变成复数
+    comment: '岗位信息表'
   }
 )
 
-export default Post
+export default SysPost

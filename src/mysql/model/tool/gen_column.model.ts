@@ -2,7 +2,7 @@ import { DataTypes } from 'sequelize'
 import seq from '@/mysql/db/seq.db'
 
 // 创建数据库模型
-const GenColumn = seq.define(
+const ToolGenColumn = seq.define(
   'tool_gen_column',
   {
     column_id: {
@@ -14,8 +14,7 @@ const GenColumn = seq.define(
       comment: '编号'
     },
     table_id: {
-      type: DataTypes.CHAR(255),
-      defaultValue: '',
+      type: DataTypes.BIGINT,
       comment: '归属表编号'
     },
     column_name: {
@@ -111,8 +110,9 @@ const GenColumn = seq.define(
   },
   {
     tableName: 'tool_gen_column', // 强制创建表名
-    freezeTableName: true // 告诉sequelize不需要自动将表名变成复数
+    freezeTableName: true, // 告诉sequelize不需要自动将表名变成复数
+    comment: '代码生成字段表'
   }
 )
 
-export default GenColumn
+export default ToolGenColumn

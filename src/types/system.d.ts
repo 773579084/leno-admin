@@ -16,7 +16,7 @@ export interface deptType {
   createdAt: string
   updatedAt: string
 }
-export interface Post {
+export interface SysPost {
   status: string
   remark?: any
   createdAt: string
@@ -29,7 +29,7 @@ export interface Post {
   createBy: string
   updateBy?: any
 }
-export interface Role {
+export interface SysRole {
   status: string
   remark: string
   createdAt: string
@@ -55,9 +55,9 @@ export interface IUserDetail {
   createdAt: string
   updatedAt: string
   postIds: number[]
-  posts: Post[]
+  posts: SysPost[]
   roleIds: number[]
-  roles: Role[]
+  roles: SysRole[]
   userId: number
   deptId?: number
   userName: string

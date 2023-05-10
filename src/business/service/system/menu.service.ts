@@ -1,10 +1,10 @@
-import Menu from '@/mysql/model/system/menu.model'
+import SysMenu from '@/mysql/model/system/menu.model'
 import { MenuParamsType, menusSqlType } from '@/types'
 import { Op } from 'sequelize'
 
 // 获取路由
 export const getRoutersSer = async () => {
-  const firstRes = (await Menu.findAll({
+  const firstRes = (await SysMenu.findAll({
     where: {
       status: '0',
       [Op.or]: [{ menu_type: 'M' }, { menu_type: 'C' }]
@@ -21,7 +21,7 @@ export const getMenusSer = async (params: MenuParamsType) => {
   status && Object.assign(whereObj, { status })
   menuName && Object.assign(whereObj, { menu_name: menuName })
 
-  const res = await Menu.findAll({
+  const res = await SysMenu.findAll({
     raw: true,
     where: whereObj
   })

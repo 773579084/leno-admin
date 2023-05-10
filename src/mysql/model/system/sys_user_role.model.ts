@@ -2,7 +2,7 @@ import { DataTypes } from 'sequelize'
 import seq from '@/mysql/db/seq.db'
 
 // 创建数据库模型 用户与岗位关联
-const UserRole = seq.define(
+const SysUserRole = seq.define(
   'sys_user_role',
   {
     user_id: {
@@ -16,8 +16,9 @@ const UserRole = seq.define(
   },
   {
     tableName: 'sys_user_role', // 强制创建表名
-    freezeTableName: true // 告诉sequelize不需要自动将表名变成复数
+    freezeTableName: true, // 告诉sequelize不需要自动将表名变成复数
+    comment: '用户和角色关联表'
   }
 )
 
-export default UserRole
+export default SysUserRole

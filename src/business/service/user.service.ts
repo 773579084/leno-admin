@@ -1,10 +1,10 @@
-import User from '@/mysql/model/user.model'
+import LenoUser from '@/mysql/model/user.model'
 import { userType } from '@/types'
 
 // 注册
 export const createdUser = async (userName: string, password: string) => {
   // 插入数据到数据库
-  const res = (await User.create({ user_name: userName, password })) as any
+  const res = (await LenoUser.create({ user_name: userName, password })) as any
 
   return res.dataValues
 }
@@ -12,7 +12,7 @@ export const createdUser = async (userName: string, password: string) => {
 // 查询改名用户的账号状态
 export const userStatusSer = async (userName: string) => {
   // 插入数据到数据库
-  const res = await User.findOne({
+  const res = await LenoUser.findOne({
     raw: true,
     attributes: ['status'],
     where: {
@@ -32,7 +32,7 @@ export const getUserInfo = async ({ userId, userName, password }: userType) => {
   password && Object.assign(whereOpt, { password })
 
   // 查找是否重复
-  const res = (await User.findOne({
+  const res = (await LenoUser.findOne({
     attributes: ['user_id', 'user_name', 'password'],
     where: whereOpt
   })) as any
@@ -42,7 +42,7 @@ export const getUserInfo = async ({ userId, userName, password }: userType) => {
 
 // 获取 详细信息
 export const getAllUserInfoSer = async ({ userId }) => {
-  const res = (await User.findOne({
+  const res = (await LenoUser.findOne({
     where: { user_id: userId }
   })) as any
   return res ? res.dataValues : null
@@ -58,7 +58,7 @@ export const updatePassword = async ({
   userId: number
   update_by: string
 }) => {
-  const res = await User.update(
+  const res = await LenoUser.update(
     { password: newPwd, update_by },
     {
       where: { user_id: userId }
@@ -77,7 +77,7 @@ export const updateUserInfoSer = async ({
   sex,
   update_by
 }) => {
-  const res = await User.update(
+  const res = await LenoUser.update(
     { email, nick_name: nickName, phonenumber, sex, update_by },
     {
       where: { user_id: userId }
@@ -89,7 +89,7 @@ export const updateUserInfoSer = async ({
 
 // 查找用户之前有无上传头像，有上传将之前上传的删除掉
 export const deletFrontAvatarSer = async ({ userId }) => {
-  const res = (await User.findOne({
+  const res = (await LenoUser.findOne({
     attributes: ['avatar'],
     where: { user_id: userId }
   })) as any
@@ -99,7 +99,7 @@ export const deletFrontAvatarSer = async ({ userId }) => {
 
 // 上传个人头像地址
 export const updateAvatarSer = async ({ userId, basePath, update_by }) => {
-  const res = await User.update(
+  const res = await LenoUser.update(
     { avatar: basePath, update_by },
     {
       where: { user_id: userId }

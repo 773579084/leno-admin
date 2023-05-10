@@ -1,9 +1,8 @@
 import { DataTypes } from 'sequelize'
 import seq from '@/mysql/db/seq.db'
-import Dept from './system/dept.model'
 
 // 创建数据库模型
-const User = seq.define(
+const LenoUser = seq.define(
   'leno_user',
   {
     user_id: {
@@ -88,11 +87,9 @@ const User = seq.define(
   },
   {
     tableName: 'leno_user', // 强制创建表名
-    freezeTableName: true // 告诉sequelize不需要自动将表名变成复数
+    freezeTableName: true, // 告诉sequelize不需要自动将表名变成复数
+    comment: '用户信息表'
   }
 )
-// 一对一关联 (关联表的关联顺序为 hasOne =》belongsTo，并且需要写在一张表内)
-Dept.hasOne(User, { foreignKey: 'dept_id', sourceKey: 'dept_id' })
-User.belongsTo(Dept, { foreignKey: 'dept_id', targetKey: 'dept_id', as: 'dept' })
 
-export default User
+export default LenoUser

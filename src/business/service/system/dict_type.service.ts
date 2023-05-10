@@ -1,11 +1,11 @@
 /**
  * 字典类型
  */
-import DictType from '@/mysql/model/system/dict_type.model'
+import SysDictType from '@/mysql/model/system/dict_type.model'
 
 // 获取列表
 export const getOptionselectSer = async () => {
-  const res = await DictType.findAll({
+  const res = await SysDictType.findAll({
     raw: true
   })
 

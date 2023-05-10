@@ -10,6 +10,11 @@ import router from '@/business/router'
 import auth from '@/business/middleware/common/auth'
 // 初始化 Koa 应用实例
 const app: Koa<DefaultState, DefaultContext> = new Koa()
+import '@/mysql/db'
+import initDB from '@/mysql/db'
+
+// 初始化 数据库配置项
+initDB()
 
 // 注册中间件
 app.use(cors()) // 解决跨域问题

@@ -9,7 +9,7 @@ import errors from '@/app/err.type'
 import { formatHumpLineTransfer } from '@/business/utils'
 import { excelJsExport } from '@/business/utils/excel'
 import { dictTypeExcelHeader, excelBaseStyle } from '@/business/public/excelMap'
-import DictType from '@/mysql/model/system/dict_type.model'
+import SysDictType from '@/mysql/model/system/dict_type.model'
 const { uploadParamsErr, getListErr, sqlErr, delErr, exportExcelErr } = errors
 import { Op } from 'sequelize'
 
@@ -28,7 +28,7 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
     params.dictType ? (newParams.dict_type = params.dictType) : null
     params.status ? (newParams.status = params.status) : null
 
-    const res = await getListSer<dictTypeQuerySerType>(DictType, newParams)
+    const res = await getListSer<dictTypeQuerySerType>(SysDictType, newParams)
 
     ctx.state.formatData = res
     await next()
@@ -45,7 +45,7 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
     const addContent = ctx.request['body'] as IdictType
     const addContent2 = { ...addContent, createBy: userName }
     const newAddContent = formatHumpLineTransfer(addContent2, 'line')
-    await addSer(DictType, newAddContent)
+    await addSer(SysDictType, newAddContent)
     await next()
   } catch (error) {
     console.error('新增失败', error)
@@ -56,7 +56,7 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
 // 删除
 export const delMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    await delSer(DictType, { dict_id: ctx.state.ids })
+    await delSer(SysDictType, { dict_id: ctx.state.ids })
   } catch (error) {
     console.error('删除失败', error)
     return ctx.app.emit('error', delErr, ctx)
@@ -68,7 +68,7 @@ export const delMid = async (ctx: Context, next: () => Promise<void>) => {
 // 获取详细数据
 export const getDetailMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    const res = await getDetailSer(DictType, { dict_id: ctx.state.ids })
+    const res = await getDetailSer(SysDictType, { dict_id: ctx.state.ids })
     ctx.state.formatData = res
   } catch (error) {
     console.error('获取详细数据错误', error)
@@ -86,7 +86,7 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
     const newRes = formatHumpLineTransfer(res, 'line') as IdictSerType
     const { dict_id, ...date } = newRes
 
-    await putSer(DictType, { dict_id }, { ...date, updateBy: userName })
+    await putSer(SysDictType, { dict_id }, { ...date, updateBy: userName })
 
     await next()
   } catch (error) {

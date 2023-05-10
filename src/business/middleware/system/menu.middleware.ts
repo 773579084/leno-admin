@@ -5,7 +5,7 @@ import { formatHumpLineTransfer } from '@/business/utils'
 import { MenuParamsType, menusSqlType, menusType, RouteType, userType } from '@/types'
 import { addJudg, putJudg } from '@/business/schema/system/sys_menus.schema'
 import errors from '@/app/err.type'
-import Menu from '@/mysql/model/system/menu.model'
+import SysMenu from '@/mysql/model/system/menu.model'
 const { delErr, getRoutersErr, getListErr, uploadParamsErr, addErr, sqlErr } = errors
 
 // 获取菜单数据并进行数据转换
@@ -129,7 +129,7 @@ export const addMenuMid = async (ctx: Context, next: () => Promise<void>) => {
     const list = ctx.request['body'] as menusType
     const menu = formatHumpLineTransfer(list, 'line')
     // 获取数据库菜单数据
-    await addSer(Menu, menu)
+    await addSer(SysMenu, menu)
   } catch (error) {
     console.error('新增菜单失败', error)
     return ctx.app.emit('error', addErr, ctx)
@@ -140,7 +140,7 @@ export const addMenuMid = async (ctx: Context, next: () => Promise<void>) => {
 // 删除
 export const delMenuMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    await delSer(Menu, { menu_id: ctx.state.ids })
+    await delSer(SysMenu, { menu_id: ctx.state.ids })
   } catch (error) {
     console.error('删除用户失败', error)
     return ctx.app.emit('error', delErr, ctx)
@@ -151,7 +151,7 @@ export const delMenuMid = async (ctx: Context, next: () => Promise<void>) => {
 // 获取详情
 export const getDetailMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    const res = await getDetailSer(Menu, { menu_id: ctx.state.ids })
+    const res = await getDetailSer(SysMenu, { menu_id: ctx.state.ids })
     ctx.state.formatData = res
   } catch (error) {
     console.error('获取详情失败', error)
@@ -167,7 +167,7 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
     const res = ctx.request['body'] as menusType
     const menu = formatHumpLineTransfer(res, 'line') as menusSqlType
     const { menu_id, ...data } = menu
-    await putSer(Menu, { menu_id }, { ...data, updateBy: userName })
+    await putSer(SysMenu, { menu_id }, { ...data, updateBy: userName })
 
     await next()
   } catch (error) {

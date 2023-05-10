@@ -36,7 +36,7 @@ import errors from '@/app/err.type'
 import { formatHumpLineTransfer, timeChange } from '@/business/utils'
 import { excelJsExport } from '@/business/utils/excel'
 import { excelBaseStyle, userExcelHeader, userTemExcelHeader } from '@/business/public/excelMap'
-import Dept from '@/mysql/model/system/dept.model'
+import SysDept from '@/mysql/model/system/dept.model'
 const {
   checkUserIdErr,
   getDeptTreeErr,
@@ -375,7 +375,7 @@ export const importExcelUserCon = async (ctx: Context, next: () => Promise<void>
   for (let i = 0; i < excelData.length; i++) {
     for (let key in excelData[i]) {
       if (key === 'dept.dept_name') {
-        const deptArr = (await Dept.findAll({
+        const deptArr = (await SysDept.findAll({
           raw: true,
           attributes: ['dept_id'],
           where: {

@@ -28,19 +28,4 @@ const seq = new Sequelize(MYSQL_DB as string, MYSQL_USER as string, MYSQL_PWD as
   }
 })
 
-// 开发环境
-try {
-  seq.authenticate()
-  console.log('数据库连接成功')
-  seq.sync()
-  // { alter: true }
-} catch (error) {
-  console.log('数据库连接失败', error)
-}
-
-process.on('unhandledRejection', (error) => {
-  // 此时解决上述数据库创建失败，catch无法捕获到
-  console.log('数据库连接失败', error)
-})
-
 export default seq

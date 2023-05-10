@@ -2,7 +2,7 @@ import { DataTypes } from 'sequelize'
 import seq from '@/mysql/db/seq.db'
 
 // 创建数据库模型 字典类型表
-const DictType = seq.define(
+const SysDictType = seq.define(
   'sys_dict_type',
   {
     dict_id: {
@@ -45,8 +45,9 @@ const DictType = seq.define(
   },
   {
     tableName: 'sys_dict_type', // 强制创建表名
-    freezeTableName: true // 告诉sequelize不需要自动将表名变成复数
+    freezeTableName: true, // 告诉sequelize不需要自动将表名变成复数
+    comment: '字典类型表'
   }
 )
 
-export default DictType
+export default SysDictType

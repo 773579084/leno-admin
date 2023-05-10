@@ -1,6 +1,3 @@
-/**
- * 字典类型
- */
 import { Context } from 'koa'
 import { getOptionselectSer } from '@/business/service/system/dict_type.service'
 import { getListSer, addSer, putSer, getDetailSer, delSer } from '@/business/service'
@@ -9,19 +6,21 @@ import errors from '@/app/err.type'
 import { formatHumpLineTransfer } from '@/business/utils'
 import { excelJsExport } from '@/business/utils/excel'
 import { dictTypeExcelHeader, excelBaseStyle } from '@/business/public/excelMap'
-import DictType from '@/mysql/model/system/dict_type.model'
+import SysDictType from '@/mysql/model/system/dict_type.model'
 const { uploadParamsErr, getListErr, sqlErr, delErr, exportExcelErr } = errors
 import { Op } from 'sequelize'
 import { genQuerySerType, genQueryType } from '@/types/tools/gen'
-import Gen from '@/mysql/model/tool/gen.model'
-import GenColumn from '@/mysql/model/tool/gen_column.model'
+import ToolGen from '@/mysql/model/tool/gen.model'
+import ToolGenColumn from '@/mysql/model/tool/gen_column.model'
 import redis from '@/redis'
 import sequelize from '@/mysql/db/seq.db'
+import { conversionTables } from '@/business/utils/tools'
 
 // 查询数据库所有的表 -》 并将表数据转换为代码生成表的数据
 export const findAllSqlMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    const existNames = await redis.smembers('tool_sql_names')
+    // const existNames = await redis.smembers('tool_sql_names')
+    const existNames = []
     // 1、获取数据库里面所有的sql名字
     const tables = await sequelize.getQueryInterface().showAllTables()
     // console.log(28, tables)
@@ -37,6 +36,8 @@ export const findAllSqlMid = async (ctx: Context, next: () => Promise<void>) => 
       }
     })
     console.log(40, tables)
+
+    if (tables.length > 0) conversionTables(tables)
   } catch (error) {
     console.error('查询数据库所有的表', error)
     return ctx.app.emit('error', sqlErr, ctx)
@@ -59,8 +60,8 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
     params.tableName ? (newParams.table_name = params.tableName) : null
     params.tableComment ? (newParams.table_comment = params.tableComment) : null
 
-    const res = await getListSer<genQuerySerType>(Gen, newParams, {
-      include: [{ model: GenColumn, as: 'columns' }]
+    const res = await getListSer<genQuerySerType>(ToolGen, newParams, {
+      include: [{ model: ToolGenColumn, as: 'columns' }]
     })
 
     ctx.state.formatData = res
@@ -78,7 +79,7 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
     const addContent = ctx.request['body'] as IdictType
     const addContent2 = { ...addContent, createBy: userName }
     const newAddContent = formatHumpLineTransfer(addContent2, 'line')
-    await addSer(Gen, newAddContent)
+    await addSer(ToolGen, newAddContent)
     await next()
   } catch (error) {
     console.error('新增失败', error)
@@ -89,7 +90,7 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
 // 删除
 export const delMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    await delSer(Gen, { table_id: ctx.state.ids })
+    await delSer(ToolGen, { table_id: ctx.state.ids })
   } catch (error) {
     console.error('删除失败', error)
     return ctx.app.emit('error', delErr, ctx)
@@ -106,7 +107,7 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
     const newRes = formatHumpLineTransfer(res, 'line') as IdictSerType
     const { dict_id, ...date } = newRes
 
-    await putSer(DictType, { dict_id }, { ...date, updateBy: userName })
+    await putSer(SysDictType, { dict_id }, { ...date, updateBy: userName })
 
     await next()
   } catch (error) {
