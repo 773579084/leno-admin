@@ -60,9 +60,7 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
     params.tableName ? (newParams.table_name = params.tableName) : null
     params.tableComment ? (newParams.table_comment = params.tableComment) : null
 
-    const res = await getListSer<genQuerySerType>(ToolGen, newParams, {
-      include: [{ model: ToolGenColumn, as: 'columns' }]
-    })
+    const res = await getListSer<genQuerySerType>(ToolGen, newParams)
 
     ctx.state.formatData = res
     await next()

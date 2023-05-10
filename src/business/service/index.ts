@@ -24,6 +24,7 @@ export const getListSer = async <T extends { pageNum?: number; pageSize?: number
   conditions?.include && Object.assign(obj, { include: conditions.include })
 
   const res = await model.findAndCountAll({
+    distinct: true, // 去重查询结果集（防止子表的条数被重复计算）
     ...obj,
     where: {
       ...params
