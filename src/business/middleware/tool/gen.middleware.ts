@@ -19,8 +19,8 @@ import { conversionTables } from '@/business/utils/tools'
 // 查询数据库所有的表 -》 并将表数据转换为代码生成表的数据
 export const findAllSqlMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    // const existNames = await redis.smembers('tool_sql_names')
-    const existNames = []
+    const existNames = await redis.smembers('tool_sql_names')
+    // const existNames = []
     // 1、获取数据库里面所有的sql名字
     const tables = await sequelize.getQueryInterface().showAllTables()
     // console.log(28, tables)

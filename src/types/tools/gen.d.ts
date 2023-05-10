@@ -16,3 +16,12 @@ export interface genQuerySerType {
   endTime?: string
   created_at?: any
 }
+
+export interface sqlTableCoulmnsType {
+  name: string
+  type: string
+  allowNull: string
+  defaultValue: any
+  comment: string
+  primaryKey: string
+}

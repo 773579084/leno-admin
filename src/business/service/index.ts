@@ -38,9 +38,19 @@ export const getListSer = async <T extends { pageNum?: number; pageSize?: number
   return list
 }
 
-// 新增
+// 单个 新增
 export const addSer = async <T extends Optional<any, any>>(model: ModelStatic<any>, data: T) => {
   const res = await model.create(data)
+
+  return res
+}
+
+// 批量 新增
+export const addAllSer = async <T extends Optional<any, string>[]>(
+  model: ModelStatic<any>,
+  data: T
+) => {
+  const res = await model.bulkCreate(data)
 
   return res
 }

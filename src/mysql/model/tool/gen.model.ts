@@ -14,57 +14,57 @@ const ToolGen = seq.define(
       comment: '编号'
     },
     table_name: {
-      type: DataTypes.CHAR(200),
+      type: DataTypes.CHAR(255),
       defaultValue: '',
       comment: '表名称'
     },
     table_comment: {
-      type: DataTypes.CHAR(200),
+      type: DataTypes.CHAR(255),
       defaultValue: '',
       comment: '表描述'
     },
     sub_table_name: {
-      type: DataTypes.CHAR(200),
+      type: DataTypes.CHAR(255),
       defaultValue: '',
       comment: '关联子表的表名'
     },
     sub_table_fk_name: {
-      type: DataTypes.CHAR(200),
+      type: DataTypes.CHAR(255),
       defaultValue: '',
       comment: '子表关联的外键名'
     },
     class_name: {
-      type: DataTypes.CHAR(200),
+      type: DataTypes.CHAR(255),
       defaultValue: '',
       comment: '实体类名称'
     },
     tpl_category: {
-      type: DataTypes.CHAR(200),
+      type: DataTypes.CHAR(255),
       defaultValue: '',
       comment: '使用的模板（crud单表操作 tree树表操作）'
     },
     package_name: {
-      type: DataTypes.CHAR(200),
+      type: DataTypes.CHAR(255),
       defaultValue: '',
       comment: '生成包路径'
     },
     module_name: {
-      type: DataTypes.CHAR(200),
+      type: DataTypes.CHAR(255),
       defaultValue: '',
       comment: '生成模块名'
     },
     business_name: {
-      type: DataTypes.CHAR(200),
+      type: DataTypes.CHAR(255),
       defaultValue: '',
       comment: '生成业务名'
     },
     function_name: {
-      type: DataTypes.CHAR(200),
+      type: DataTypes.CHAR(255),
       defaultValue: '',
       comment: '生成功能名'
     },
     function_author: {
-      type: DataTypes.CHAR(200),
+      type: DataTypes.CHAR(255),
       defaultValue: '',
       comment: '生成功能作者'
     },
@@ -74,7 +74,7 @@ const ToolGen = seq.define(
       comment: '生成代码方式（0zip压缩包 1自定义路径）'
     },
     gen_path: {
-      type: DataTypes.CHAR(200),
+      type: DataTypes.CHAR(255),
       defaultValue: '/',
       comment: '生成路径（不填默认项目路径）'
     },
