@@ -9,9 +9,8 @@ import { dictTypeExcelHeader, excelBaseStyle } from '@/business/public/excelMap'
 import SysDictType from '@/mysql/model/system/dict_type.model'
 const { uploadParamsErr, getListErr, sqlErr, delErr, exportExcelErr } = errors
 import { Op } from 'sequelize'
-import { genQuerySerType, genQueryType } from '@/types/tools/gen'
+import { genQueryDbSerType, genQuerySerType, genQueryType } from '@/types/tools/gen'
 import ToolGen from '@/mysql/model/tool/gen.model'
-import ToolGenColumn from '@/mysql/model/tool/gen_column.model'
 import redis from '@/redis'
 import sequelize from '@/mysql/db/seq.db'
 import { conversionTables } from '@/business/utils/tools'
@@ -35,7 +34,6 @@ export const findAllSqlMid = async (ctx: Context, next: () => Promise<void>) => 
         })
       }
     })
-    console.log(40, tables)
 
     if (tables.length > 0) conversionTables(tables)
   } catch (error) {
@@ -47,10 +45,41 @@ export const findAllSqlMid = async (ctx: Context, next: () => Promise<void>) => 
 }
 
 // 获取列表
+export const getListDbMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    const { pageNum, pageSize, ...params } = ctx.query as unknown as genQueryType
+    let newParams = { pageNum, pageSize, is_import: '1' } as genQueryDbSerType
+
+    params.tableName ? (newParams.table_name = params.tableName) : null
+    params.tableComment ? (newParams.table_comment = params.tableComment) : null
+
+    const res = await getListSer<genQueryDbSerType>(ToolGen, newParams)
+
+    ctx.state.formatData = res
+    await next()
+  } catch (error) {
+    console.error('查询代码生成列表失败', error)
+    return ctx.app.emit('error', getListErr, ctx)
+  }
+}
+
+// 导入表
+export const importTableMid = async (ctx: Context, next: () => Promise<void>) => {
+  const list = ctx.request.path.split('/')
+  const tableList = list[list.length - 1]
+  const tables = tableList.split(',')
+  const { userName } = ctx.state.user as userType
+
+  await putSer(ToolGen, { table_name: tables }, { is_import: '0', updateBy: userName })
+
+  await next()
+}
+
+// 获取列表
 export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { pageNum, pageSize, ...params } = ctx.query as unknown as genQueryType
-    let newParams = { pageNum, pageSize } as genQuerySerType
+    let newParams = { pageNum, pageSize, is_import: '0' } as genQuerySerType
 
     if (params.beginTime) {
       newParams.created_at = {
@@ -88,7 +117,7 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
 // 删除
 export const delMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    await delSer(ToolGen, { table_id: ctx.state.ids })
+    await putSer(ToolGen, { table_id: ctx.state.ids }, { is_import: '1' })
   } catch (error) {
     console.error('删除失败', error)
     return ctx.app.emit('error', delErr, ctx)

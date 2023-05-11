@@ -15,6 +15,24 @@ export interface genQuerySerType {
   beginTime?: string
   endTime?: string
   created_at?: any
+  is_import?: string
+}
+export interface genQueryDbSerType {
+  pageNum: number
+  pageSize: number
+  table_name?: string
+  table_comment?: string
+  is_import?: string
+}
+export interface genQuerySerType {
+  pageNum: number
+  pageSize: number
+  table_name?: string
+  table_comment?: string
+  beginTime?: string
+  endTime?: string
+  created_at?: any
+  is_import?: string
 }
 
 export interface sqlTableCoulmnsType {

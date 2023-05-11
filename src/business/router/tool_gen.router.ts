@@ -10,7 +10,9 @@ import {
   getListMid,
   getAddMid,
   putMid,
-  delMid
+  delMid,
+  importTableMid,
+  getListDbMid
 } from '@/business/middleware/tool/gen.middleware'
 import { judgeIdSchema, addEditSchema } from '@/business/schema'
 import IndexCon from '@/business/controller'
@@ -18,8 +20,15 @@ import { addJudg, putJudg } from '@/business/schema/tool/gen.schema'
 import ToolGen from '@/mysql/model/tool/gen.model'
 
 const router = new Router({ prefix: '/tool' })
+
+// 查询数据库存在的表
+router.get('/gen/db/list', findAllSqlMid, getListDbMid, formatHandle, IndexCon())
+
+// 导入表
+router.post('/gen/importTable/:tables', importTableMid, IndexCon())
+
 // 查询列表
-router.get('/gen/list', findAllSqlMid, getListMid, formatHandle, IndexCon())
+router.get('/gen/list', getListMid, formatHandle, IndexCon())
 
 // 新增
 router.post(

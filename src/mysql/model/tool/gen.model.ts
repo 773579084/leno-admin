@@ -73,6 +73,11 @@ const ToolGen = seq.define(
       defaultValue: '0',
       comment: '生成代码方式（0zip压缩包 1自定义路径）'
     },
+    is_import: {
+      type: DataTypes.CHAR(1),
+      defaultValue: '1',
+      comment: '数据库表是否导入（0导入，1未导入）'
+    },
     gen_path: {
       type: DataTypes.CHAR(255),
       defaultValue: '/',

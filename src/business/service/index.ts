@@ -3,7 +3,13 @@
  */
 import { ModelStatic, Optional, FindOptions, Includeable } from 'sequelize'
 
-// 获取列表
+/**
+ * 获取列表
+ * @param model 更改的数据库model
+ * @param queryParams where里的过滤条件
+ * @param conditions 其他配置项：比如：跨表等
+ * @returns
+ */
 export const getListSer = async <T extends { pageNum?: number; pageSize?: number }>(
   model: ModelStatic<any>,
   queryParams: T,
@@ -39,14 +45,24 @@ export const getListSer = async <T extends { pageNum?: number; pageSize?: number
   return list
 }
 
-// 单个 新增
+/**
+ * 单个 新增
+ * @param model 更改的数据库model
+ * @param data {}
+ * @returns
+ */
 export const addSer = async <T extends Optional<any, any>>(model: ModelStatic<any>, data: T) => {
   const res = await model.create(data)
 
   return res
 }
 
-// 批量 新增
+/**
+ * 批量 新增
+ * @param model 更改的数据库model
+ * @param data []
+ * @returns
+ */
 export const addAllSer = async <T extends Optional<any, string>[]>(
   model: ModelStatic<any>,
   data: T
@@ -56,19 +72,27 @@ export const addAllSer = async <T extends Optional<any, string>[]>(
   return res
 }
 
-// 删除
+/**
+ * 删除
+ * @param model 更改的数据库model
+ * @param where 过滤条件
+ * @returns
+ */
 export const delSer = async (
   model: ModelStatic<any>,
   where: {
     [id: string]: string[]
   }
 ) => {
-  const res = await model.destroy({ where })
-
-  return res
+  await model.destroy({ where })
 }
 
-// 获取 详情
+/**
+ * 获取 详情
+ * @param model 更改的数据库model
+ * @param where 过滤条件
+ * @returns Object
+ */
 export const getDetailSer = async <T>(
   model: ModelStatic<any>,
   where: { [id: string]: number }
@@ -80,18 +104,26 @@ export const getDetailSer = async <T>(
   return res
 }
 
-// 修改
-export const putSer = async <T>(
+/**
+ * 修改
+ * @param model 更改的数据库model
+ * @param where 过滤条件
+ * @param data 数据
+ * @returns
+ */
+export const putSer = async <T extends Object>(
   model: ModelStatic<any>,
-  where: { [id: string]: string },
+  where: { [id: string]: string | string[] },
   data: T
 ) => {
-  const res = await model.update(data, { where })
-
-  return res[0] > 0
+  await model.update(data, { where })
 }
 
-// 导出列表(excel)
+/**
+ * 导出列表(excel)
+ * @param model 更改的数据库model
+ * @returns
+ */
 export const exportExcelSer = async (model: ModelStatic<any>) => {
   const res = await model.findAndCountAll({
     raw: true // 设置为 true，即可返回源数据
