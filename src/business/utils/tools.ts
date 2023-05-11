@@ -26,15 +26,17 @@ function underline(str: string) {
 
 // sql字段类型与typescript字段类型对比
 const sqlTsContrast = {
-  bigint: 'number',
-  int: 'number',
-  double: 'number',
-  float: 'number',
-  char: 'string',
-  text: 'string',
-  datetime: 'string',
-  bool: 'boolean',
-  boolean: 'boolean'
+  bigint: 'Number',
+  int: 'Number',
+  double: 'Number',
+  float: 'Number',
+  char: 'String',
+  varchar: 'String',
+  text: 'String',
+  datetime: 'Date',
+  bool: 'Boolean',
+  boolean: 'Boolean',
+  time: 'String'
 }
 
 // tool 获取数据表的所有字段及其详细配置信息
