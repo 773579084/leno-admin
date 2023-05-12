@@ -45,3 +45,6 @@ export const dictString = Joi.string().max(50).allow('').allow(null)
 
 // 验证必传字符串
 export const requireString = Joi.string().max(500).required()
+
+// 要求数组不为空
+export const arrayNoNull = Joi.array().min(1).required()

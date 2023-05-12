@@ -59,7 +59,7 @@ export const getUserListMid = async (ctx: Context, next: () => Promise<void>) =>
       try {
         const depts = (await getdeptTreeSer()) as any
         let deptIds = []
-        depts.forEach((item) => {
+        depts.forEach((item: { dataValues: { ancestors: string | string[] }; dept_id: any }) => {
           if (item.dataValues.ancestors.indexOf(`${params.deptId}`) !== -1) {
             deptIds.push(item.dept_id)
           }

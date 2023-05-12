@@ -12,7 +12,8 @@ import {
   putMid,
   delMid,
   importTableMid,
-  getListDbMid
+  getListDbMid,
+  getListSqlMid
 } from '@/business/middleware/tool/gen.middleware'
 import { judgeIdSchema, addEditSchema } from '@/business/schema'
 import IndexCon from '@/business/controller'
@@ -29,6 +30,9 @@ router.post('/gen/importTable/:tables', importTableMid, IndexCon())
 
 // 查询列表
 router.get('/gen/list', getListMid, formatHandle, IndexCon())
+
+// 查询所有sql表及字段名
+router.get('/gen/sql/list', getListSqlMid, formatHandle, IndexCon())
 
 // 新增
 router.post(

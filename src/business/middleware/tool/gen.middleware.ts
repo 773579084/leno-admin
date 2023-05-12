@@ -14,6 +14,7 @@ import ToolGen from '@/mysql/model/tool/gen.model'
 import redis from '@/redis'
 import sequelize from '@/mysql/db/seq.db'
 import { conversionTables } from '@/business/utils/tools'
+import ToolGenColumn from '@/mysql/model/tool/gen_column.model'
 
 // 查询数据库所有的表 -》 并将表数据转换为代码生成表的数据
 export const findAllSqlMid = async (ctx: Context, next: () => Promise<void>) => {
@@ -44,7 +45,7 @@ export const findAllSqlMid = async (ctx: Context, next: () => Promise<void>) => 
   await next()
 }
 
-// 获取列表
+// 获取db列表
 export const getListDbMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { pageNum, pageSize, ...params } = ctx.query as unknown as genQueryType
@@ -90,6 +91,28 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
     params.tableComment ? (newParams.table_comment = params.tableComment) : null
 
     const res = await getListSer<genQuerySerType>(ToolGen, newParams)
+
+    ctx.state.formatData = res
+    await next()
+  } catch (error) {
+    console.error('查询代码生成列表失败', error)
+    return ctx.app.emit('error', getListErr, ctx)
+  }
+}
+
+// 获取Sql列表
+export const getListSqlMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    let newParams = { pageNum: 1, pageSize: 1000 } as genQuerySerType
+
+    const res = await getListSer<genQuerySerType>(ToolGen, newParams, {
+      include: [
+        {
+          model: ToolGenColumn,
+          as: 'columns'
+        }
+      ]
+    })
 
     ctx.state.formatData = res
     await next()
