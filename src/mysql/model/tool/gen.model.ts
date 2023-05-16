@@ -88,6 +88,21 @@ const ToolGen = seq.define(
       defaultValue: '0',
       comment: '其它生成选项'
     },
+    tree_code: {
+      type: DataTypes.CHAR(255),
+      defaultValue: '',
+      comment: '树编码字段'
+    },
+    tree_parent_code: {
+      type: DataTypes.CHAR(255),
+      defaultValue: '',
+      comment: '树父编码字段'
+    },
+    tree_name: {
+      type: DataTypes.CHAR(255),
+      defaultValue: '',
+      comment: '树名称字段'
+    },
     remark: {
       type: DataTypes.CHAR(255),
       defaultValue: '',

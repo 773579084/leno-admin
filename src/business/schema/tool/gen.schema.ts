@@ -1,9 +1,10 @@
 import Joi from 'joi'
 import { remark, requireString, mustId, arrayNoNull } from '../config.schema'
 
-const addEdit = {
+export const putJudg = Joi.object({
+  tableId: mustId,
   tableName: requireString,
-  tableComment: remark,
+  tableComment: requireString,
   className: requireString,
   functionAuthor: requireString,
   tplCategory: requireString,
@@ -11,12 +12,14 @@ const addEdit = {
   moduleName: requireString,
   businessName: requireString,
   functionName: requireString,
-  columns: arrayNoNull
-}
-// 验证新增信息 nick 必传字符串
-export const addJudg = Joi.object(addEdit)
-
-export const putJudg = Joi.object({
-  dictId: mustId,
-  ...addEdit
+  columns: arrayNoNull,
+  remark: remark,
+  options: remark,
+  genType: remark,
+  genPath: remark,
+  treeCode: remark,
+  treeParentCode: remark,
+  treeName: remark,
+  subTableName: remark,
+  subTableFkName: remark
 })

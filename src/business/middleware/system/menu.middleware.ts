@@ -15,7 +15,6 @@ export const conversionMid = async (ctx: Context, next: () => Promise<void>) => 
     const firstRes = await getRoutersSer()
     const newRes = formatHumpLineTransfer(firstRes, 'hump')
     ctx.state.menus = newRes
-    // 按照路由格式存储一级菜单
   } catch (error) {
     console.error('前端路由获取失败', error)
     return ctx.app.emit('error', getRoutersErr, ctx)

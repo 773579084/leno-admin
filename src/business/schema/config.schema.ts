@@ -22,7 +22,7 @@ export const email = Joi.string().email().allow('').allow(null)
 export const checkNum = Joi.number().allow('').allow(null)
 
 // 备注
-export const remark = Joi.string().max(200).allow('').allow(null)
+export const remark = Joi.string().max(255).allow('').allow(null)
 
 // 检查 num数组
 export const checkNumArr = Joi.array().items(Joi.number())

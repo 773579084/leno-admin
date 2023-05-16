@@ -15,12 +15,13 @@ export const addEditSchema = (judge: Joi.ObjectSchema<any>) => {
   return async (ctx: Context, next: () => Promise<void>) => {
     try {
       const list = ctx.request['body']
-      judge.validateAsync(list)
+      await judge.validateAsync(list)
+
+      await next()
     } catch (error) {
       console.error('新增编辑上传参数出错', error)
       return ctx.app.emit('error', uploadParamsErr, ctx)
     }
-    await next()
   }
 }
 

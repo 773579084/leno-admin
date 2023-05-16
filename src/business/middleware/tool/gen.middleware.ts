@@ -6,10 +6,15 @@ import errors from '@/app/err.type'
 import { formatHumpLineTransfer } from '@/business/utils'
 import { excelJsExport } from '@/business/utils/excel'
 import { dictTypeExcelHeader, excelBaseStyle } from '@/business/public/excelMap'
-import SysDictType from '@/mysql/model/system/dict_type.model'
 const { uploadParamsErr, getListErr, sqlErr, delErr, exportExcelErr } = errors
 import { Op } from 'sequelize'
-import { genQueryDbSerType, genQuerySerType, genQueryType } from '@/types/tools/gen'
+import {
+  genQueryDbSerType,
+  genQuerySerType,
+  genQueryType,
+  GenSerType,
+  GenType
+} from '@/types/tools/gen'
 import ToolGen from '@/mysql/model/tool/gen.model'
 import redis from '@/redis'
 import sequelize from '@/mysql/db/seq.db'
@@ -153,12 +158,15 @@ export const delMid = async (ctx: Context, next: () => Promise<void>) => {
 export const putMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { userName } = ctx.state.user as userType
-    const res = ctx.request['body'] as IdictType
-    const newRes = formatHumpLineTransfer(res, 'line') as IdictSerType
-    const { dict_id, ...date } = newRes
+    const res = ctx.request['body'] as GenType
+    const newRes = formatHumpLineTransfer(res, 'line') as GenSerType
 
-    await putSer(SysDictType, { dict_id }, { ...date, updateBy: userName })
+    const { table_id, columns, ...genDate } = newRes
 
+    // 基本信息修改
+    await putSer(ToolGen, { table_id }, { ...genDate, updateBy: userName })
+
+    // 修改表字段信息
     await next()
   } catch (error) {
     console.error('修改失败', error)

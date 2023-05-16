@@ -54,6 +54,7 @@ export const conversionTables = async (tables: string[]) => {
     obj['table_name'] = table.TABLE_NAME
     obj['table_comment'] = table.TABLE_COMMENT
     obj['class_name'] = underlineToCamel(table.TABLE_NAME)
+    obj['function_author'] = 'wen'
     addTables.push(obj)
   })
   // 1-3、写入到 代码生成表
