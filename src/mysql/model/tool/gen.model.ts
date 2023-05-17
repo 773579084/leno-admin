@@ -103,6 +103,10 @@ const ToolGen = seq.define(
       defaultValue: '',
       comment: '树名称字段'
     },
+    parent_id: {
+      type: DataTypes.BIGINT,
+      comment: '上级菜单Id'
+    },
     remark: {
       type: DataTypes.CHAR(255),
       defaultValue: '',

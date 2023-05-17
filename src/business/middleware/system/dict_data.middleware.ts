@@ -99,7 +99,7 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
     const lineData = await formatHumpLineTransfer(res, 'line')
     const { dict_code, ...data } = lineData
 
-    await putSer<IdictDataSer>(SysDictData, { dict_code }, { ...data, updateBy: userName })
+    await putSer<IdictDataSer>(SysDictData, { dict_code }, { ...data, update_by: userName })
 
     await next()
   } catch (error) {

@@ -76,7 +76,7 @@ export const importTableMid = async (ctx: Context, next: () => Promise<void>) =>
   const tables = tableList.split(',')
   const { userName } = ctx.state.user as userType
 
-  await putSer(ToolGen, { table_name: tables }, { is_import: '0', updateBy: userName })
+  await putSer(ToolGen, { table_name: tables }, { is_import: '0', update_by: userName })
 
   await next()
 }
@@ -164,7 +164,14 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
     const { table_id, columns, ...genDate } = newRes
 
     // 基本信息修改
-    await putSer(ToolGen, { table_id }, { ...genDate, updateBy: userName })
+    await putSer(ToolGen, { table_id }, { ...genDate, update_by: userName })
+
+    // 修改字段信息
+    columns.forEach(async (column) => {
+      const { table_id, column_id, created_at, updated_at, create_by, ...data } = column
+
+      await putSer(ToolGenColumn, { column_id }, { ...data, update_by: userName })
+    })
 
     // 修改表字段信息
     await next()

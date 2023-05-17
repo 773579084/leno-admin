@@ -86,7 +86,7 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
     const newRes = formatHumpLineTransfer(res, 'line') as IdictSerType
     const { dict_id, ...date } = newRes
 
-    await putSer(SysDictType, { dict_id }, { ...date, updateBy: userName })
+    await putSer(SysDictType, { dict_id }, { ...date, update_by: userName })
 
     await next()
   } catch (error) {

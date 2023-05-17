@@ -1,5 +1,5 @@
 import Joi from 'joi'
-import { remark, requireString, mustId, arrayNoNull } from '../config.schema'
+import { remark, requireString, mustId, arrayNoNull, noMustId } from '../config.schema'
 
 export const putJudg = Joi.object({
   tableId: mustId,
@@ -21,5 +21,6 @@ export const putJudg = Joi.object({
   treeParentCode: remark,
   treeName: remark,
   subTableName: remark,
-  subTableFkName: remark
+  subTableFkName: noMustId,
+  parentId: noMustId
 })
