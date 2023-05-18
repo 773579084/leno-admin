@@ -1,12 +1,9 @@
 import { Context } from 'koa'
-import { getOptionselectSer } from '@/business/service/system/dict_type.service'
-import { getListSer, addSer, putSer, getDetailSer, delSer } from '@/business/service'
-import { userType, IdictType, IdictSerType } from '@/types'
+import { getListSer, addSer, putSer, getDetailSer } from '@/business/service'
+import { userType, IdictType } from '@/types'
 import errors from '@/app/err.type'
 import { formatHumpLineTransfer } from '@/business/utils'
-import { excelJsExport } from '@/business/utils/excel'
-import { dictTypeExcelHeader, excelBaseStyle } from '@/business/public/excelMap'
-const { uploadParamsErr, getListErr, sqlErr, delErr, exportExcelErr } = errors
+const { uploadParamsErr, getListErr, sqlErr, delErr } = errors
 import { Op } from 'sequelize'
 import {
   genQueryDbSerType,
@@ -18,7 +15,7 @@ import {
 import ToolGen from '@/mysql/model/tool/gen.model'
 import redis from '@/redis'
 import sequelize from '@/mysql/db/seq.db'
-import { conversionTables } from '@/business/utils/tools'
+import { conversionTables, generateCode } from '@/business/utils/tools'
 import ToolGenColumn from '@/mysql/model/tool/gen_column.model'
 
 // 查询数据库所有的表 -》 并将表数据转换为代码生成表的数据
@@ -28,7 +25,7 @@ export const findAllSqlMid = async (ctx: Context, next: () => Promise<void>) => 
     // const existNames = []
     // 1、获取数据库里面所有的sql名字
     const tables = await sequelize.getQueryInterface().showAllTables()
-    // console.log(28, tables)
+
     // 1-1、 判断sql表是否已经生成过数据了
     tables.forEach((name, index) => {
       if (existNames.findIndex((value) => value === name) !== -1) {
@@ -181,38 +178,32 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
   }
 }
 
-// 获取字典选择框列表
-export const getOptionselectMid = async (ctx: Context, next: () => Promise<void>) => {
+// 代码预览
+export const codePreviewMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    const res = (await getOptionselectSer()) as IdictSerType[]
+    const id = ctx.state.ids[0]
+    console.log(183, id)
 
-    ctx.state.formatData = res
+    // 查找 相关表和表字段的所有数据
+    const res = await getDetailSer(
+      ToolGen,
+      { table_id: id },
+      {
+        include: [
+          {
+            model: ToolGenColumn,
+            as: 'columns'
+          }
+        ]
+      }
+    )
+    const newRows = formatHumpLineTransfer(res)
+    const code = generateCode(newRows)
+    ctx.state.formatData = code
+
     await next()
   } catch (error) {
-    console.error('查询字典选择框列表列表失败', error)
-    return ctx.app.emit('error', getListErr, ctx)
-  }
-}
-
-// 导出
-export const exportMid = async (ctx: Context, next: () => Promise<void>) => {
-  try {
-    const list = ctx.state.formatData
-    const dicts = ctx.state.dicts
-
-    // 表格数据
-    const buffer = await excelJsExport({
-      sheetName: '字典管理数据',
-      style: excelBaseStyle,
-      headerColumns: dictTypeExcelHeader,
-      tableData: list,
-      dicts: dicts
-    })
-
-    ctx.state.buffer = buffer
-    await next()
-  } catch (error) {
-    console.error('导出失败', error)
-    return ctx.app.emit('error', exportExcelErr, ctx)
+    console.error('代码预览查询失败', error)
+    return ctx.app.emit('error', sqlErr, ctx)
   }
 }

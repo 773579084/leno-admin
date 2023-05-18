@@ -12,7 +12,8 @@ import {
   delMid,
   importTableMid,
   getListDbMid,
-  getListSqlMid
+  getListSqlMid,
+  codePreviewMid
 } from '@/business/middleware/tool/gen.middleware'
 import { judgeIdSchema, addEditSchema } from '@/business/schema'
 import IndexCon from '@/business/controller'
@@ -40,5 +41,8 @@ router.post('/gen/importTable/:tables', getAddMid, IndexCon())
 
 // 修改
 router.put('/gen', addEditSchema(putJudg), putMid, IndexCon())
+
+// 代码预览
+router.get('/gen/preview/:id', judgeIdSchema(), codePreviewMid, IndexCon())
 
 module.exports = router

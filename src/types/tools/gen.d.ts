@@ -16,6 +16,7 @@ export interface genQuerySerType {
   endTime?: string
   created_at?: any
   is_import?: string
+  table_id?: string
 }
 export interface genQueryDbSerType {
   pageNum: number
@@ -51,6 +52,7 @@ export interface ColumnType {
   tableId: number
   columnName: string
   columnComment: string
+  columnDefaultValue: any
   columnType: string
   tsType: string
   tsField: string

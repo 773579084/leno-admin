@@ -17,6 +17,7 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { pageNum, pageSize, ...params } = ctx.query as unknown as dictDataQueryType
     let newParams = { pageNum, pageSize } as dictDataQuerySerType
+    console.log(20, newParams)
 
     params.dictLabel ? (newParams.dict_label = params.dictLabel) : null
     params.dictType ? (newParams.dict_type = params.dictType) : null

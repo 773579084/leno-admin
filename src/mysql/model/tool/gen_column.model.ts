@@ -32,6 +32,11 @@ const ToolGenColumn = seq.define(
       defaultValue: '',
       comment: '列类型'
     },
+    column_default_value: {
+      type: DataTypes.CHAR(255),
+      defaultValue: '',
+      comment: '字段默认值'
+    },
     ts_type: {
       type: DataTypes.CHAR(255),
       defaultValue: '',

@@ -1,10 +1,12 @@
 import sequelize from '@/mysql/db/seq.db'
 import ToolGen from '@/mysql/model/tool/gen.model'
 import ToolGenColumn from '@/mysql/model/tool/gen_column.model'
-import { sqlTableCoulmnsType } from '@/types/tools/gen'
-import { QueryTypes } from 'sequelize'
+import { ColumnType, GenType, sqlTableCoulmnsType } from '@/types/tools/gen'
+import { DataTypes, QueryTypes } from 'sequelize'
 import { addAllSer } from '../service'
 import { queryGenIdSer } from '../service/tool/gen.service'
+import fs from 'fs'
+import path from 'path'
 
 // 下划线转首字母和下划线后首字母大写，并去掉下划线
 function underlineToCamel(str: string) {
@@ -92,7 +94,8 @@ export const conversionTables = async (tables: string[]) => {
         table_id: tableId,
         column_name: item.name,
         column_comment: item.comment,
-        column_type: item.type,
+        column_type: item.type.toUpperCase(),
+        column_default_value: item.defaultValue,
         ts_type: sqlTsContrast[item.type],
         ts_field: underline(item.name)
       })
@@ -100,4 +103,83 @@ export const conversionTables = async (tables: string[]) => {
   }
   // 2-3、写入到 代码生成表
   await addAllSer(ToolGenColumn, columns)
+}
+
+/**
+ * model 模型字段生成
+ * @param data 表字段数据
+ * @returns obj
+ */
+const generateModel = (data: ColumnType[]) => {
+  let modelObj = ''
+
+  const sqlSequelize = {
+    TINYINT: 'INTEGER',
+    SMALLINT: 'INTEGER',
+    MEDIUMINT: 'INTEGER',
+    INT: 'INTEGER',
+    DATETIME: 'DATE',
+    TIMESTAMP: 'DATETIME',
+    VARCHAR: `STRING`
+  }
+
+  data.forEach((item, index) => {
+    // 第一个为主id
+    if (!index) {
+      modelObj += `${item.columnName}: {
+        type: DataTypes.${
+          sqlSequelize[item.columnType] ? sqlSequelize[item.columnType] : item.columnType
+        },
+        allowNull: false,
+        unique: true,
+        autoIncrement: true,
+        primaryKey: true,
+        comment: ${item.columnComment}
+      },\n`
+    } else {
+      modelObj += `    ${item.columnName}: {
+        type: DataTypes.${
+          sqlSequelize[item.columnType] ? sqlSequelize[item.columnType] : item.columnType
+        },
+        defaultValue: ${item.columnDefaultValue},
+        comment: ${item.columnComment}
+      },\n`
+    }
+  })
+
+  return modelObj
+}
+
+/**
+ * 代码生成
+ * @param data 表数据及表字段数据
+ * @param isZip 是否打包为压缩包 传任意为true的值压缩
+ * @returns
+ */
+export const generateCode = (data: GenType, isZip?: boolean) => {
+  const codes = {}
+
+  // 第一步 生成model模型
+  codes[`${data.tableName}.model.ts`] = `
+import { DataTypes } from 'sequelize'
+import seq from '@/mysql/db/seq.db'
+
+// 创建数据库模型 ${data.tableComment}
+const ${data.className} = seq.define(
+  '${data.tableName}',
+  {
+    ${generateModel(data.columns)}
+  },
+  {
+    tableName: '${data.tableName}', // 强制创建表名
+    freezeTableName: true, // 告诉sequelize不需要自动将表名变成复数
+    comment: '${data.tableComment}'
+  }
+)
+
+export default ${data.className}`
+
+  // 第二步 生成路由
+
+  return codes
 }

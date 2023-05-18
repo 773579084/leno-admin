@@ -91,15 +91,20 @@ export const delSer = async (
  * 获取 详情
  * @param model 更改的数据库model
  * @param where 过滤条件
+ * @param conditions 其他配置项：比如：跨表等
  * @returns Object
  */
 export const getDetailSer = async <T>(
   model: ModelStatic<any>,
-  where: { [id: string]: number }
+  where: { [id: string]: number },
+  conditions?: {
+    otherWhere?: FindOptions
+    include?: Includeable[] | Includeable
+  }
 ): Promise<T> => {
   const res = await model.findOne({
-    raw: true,
-    where
+    where,
+    ...conditions
   })
   return res
 }
