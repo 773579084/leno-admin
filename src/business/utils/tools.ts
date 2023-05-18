@@ -180,6 +180,59 @@ const ${data.className} = seq.define(
 export default ${data.className}`
 
   // 第二步 生成路由
+  codes[`${data.tableName}.router.ts`] = `import Router from 'koa-router'
+// 格式转换
+import { formatHandle } from '@/business/middleware/common/common.middleware'
+import { exportExcelSer } from '@/business/service'
+import IndexCon from '@/business/controller'
+import {
+  getListMid,
+  getAddMid,
+  getDetailMid,
+  putMid,
+  delMid,
+  exportMid
+} from '@/business/middleware/${data.moduleName}/${data.businessName}.middleware'
+import { addEditSchema, judgeIdSchema } from '@/business/schema'
+import { exportExcelMid } from '@/business/middleware/common/common.middleware'
+import ${data.className} from '@/mysql/model/${data.moduleName}/${data.businessName}.model'
+import { addJudg, putJudg } from '@/business/schema/${data.moduleName}/${data.businessName}.schema'
+
+const router = new Router({ prefix: '/${data.moduleName}' })
+// 查询列表
+router.get('/${data.businessName}/list', getListMid, formatHandle, IndexCon())
+
+// 新增
+router.post(
+  '/${data.businessName}',
+  addEditSchema(addJudg),
+  getAddMid,
+  IndexCon()
+)
+
+// 删除
+router.delete('/${data.businessName}/:id', judgeIdSchema(), delMid, IndexCon())
+
+// 获取详细数据
+router.get('/${data.businessName}/:id', judgeIdSchema(), getDetailMid, formatHandle, IndexCon())
+
+// 修改
+router.put(
+  '/${data.businessName}',
+  addEditSchema(putJudg),
+  putMid,
+  IndexCon()
+)
+
+// 导出列表(excel)
+router.post(
+  '/${data.businessName}/export',
+  exportExcelMid(exportExcelSer, ${data.className}, { status: 'sys_normal_disable' }),
+  exportMid,
+  IndexCon()
+)
+
+module.exports = router`
 
   return codes
 }

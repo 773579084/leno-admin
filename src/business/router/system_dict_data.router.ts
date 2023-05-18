@@ -12,7 +12,6 @@ import {
   getAddMid,
   getDetailMid,
   putMid,
-  getDataTypeMid,
   delMid,
   exportMid
 } from '@/business/middleware/system/dict_data.middleware'
@@ -39,9 +38,6 @@ router.delete(`/dict/data/:id`, judgeIdSchema(), delMid, IndexCon())
 
 // 获取详细数据
 router.get(`/dict/data/:id`, judgeIdSchema(), getDetailMid, formatHandle, IndexCon())
-
-// 根据字典类型查询字典数据信息
-router.get(`/dict/data/type/:dictType`, getDataTypeMid, formatHandle, IndexCon())
 
 // 修改
 router.put(

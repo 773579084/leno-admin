@@ -30,8 +30,8 @@ export const checkNumArr = Joi.array().items(Joi.number())
 // 必传id
 export const mustId = Joi.number().required()
 
-// 非必传id
-export const noMustId = Joi.number()
+// 任何都可以
+export const anySche = Joi.any()
 
 // 验证id
 export const IdJudge = Joi.object({
