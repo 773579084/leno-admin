@@ -1,6 +1,3 @@
-/**
- * 字典类型
- */
 import { Context } from 'koa'
 import { getDataTypeSer } from '@/business/service/system/dict_data.service'
 import { getListSer, addSer, putSer, getDetailSer, delSer } from '@/business/service'
@@ -10,6 +7,7 @@ import { formatHumpLineTransfer } from '@/business/utils'
 import { excelJsExport } from '@/business/utils/excel'
 import { dictDataExcelHeader, excelBaseStyle } from '@/business/public/excelMap'
 import SysDictData from '@/mysql/model/system/dict_data.model'
+import { Op } from 'sequelize'
 const { uploadParamsErr, getListErr, sqlErr, delErr, exportExcelErr } = errors
 
 // 获取列表
@@ -17,9 +15,8 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { pageNum, pageSize, ...params } = ctx.query as unknown as dictDataQueryType
     let newParams = { pageNum, pageSize } as dictDataQuerySerType
-    console.log(20, newParams)
 
-    params.dictLabel ? (newParams.dict_label = params.dictLabel) : null
+    params.dictLabel ? (newParams.dict_label = { [Op.like]: params.dictLabel + '%' }) : null
     params.dictType ? (newParams.dict_type = params.dictType) : null
     params.status ? (newParams.status = params.status) : null
 

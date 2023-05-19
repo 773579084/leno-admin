@@ -85,8 +85,8 @@ export interface userQuerySerType {
   pageNum: number
   pageSize: number
   dept_id?: number[]
-  user_name?: string
-  phonenumber?: string
+  user_name?: string | { [OpTypes.like]: string }
+  phonenumber?: string | { [OpTypes.like]: string }
   status?: string
   beginTime?: string
   endTime?: string

@@ -182,7 +182,6 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
 export const codePreviewMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const id = ctx.state.ids[0]
-    console.log(183, id)
 
     // 查找 相关表和表字段的所有数据
     const res = await getDetailSer(

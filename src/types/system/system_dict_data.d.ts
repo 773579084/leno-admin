@@ -9,7 +9,7 @@ export interface dictDataQueryType {
 export interface dictDataQuerySerType {
   pageNum: number
   pageSize: number
-  dict_label?: string
+  dict_label?: string | { [OpTypes.like]: string }
   dict_name?: string
   dict_type?: string
   dict_value?: string
@@ -52,8 +52,4 @@ export interface IdictDataSer {
   remark?: string
   createdAt?: string
   updatedAt?: string
-}
-export interface dictDataListType {
-  count: number
-  rows: IdictType[]
 }

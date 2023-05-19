@@ -40,8 +40,8 @@ const ToolGen = seq.define(
     },
     tpl_category: {
       type: DataTypes.CHAR(255),
-      defaultValue: '',
-      comment: '使用的模板（crud单表操作 tree树表操作）'
+      defaultValue: 'crud',
+      comment: '使用的模板（crud单表操作 tree树表操作 sub主子表）'
     },
     package_name: {
       type: DataTypes.CHAR(255),

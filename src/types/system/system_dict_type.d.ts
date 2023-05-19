@@ -11,8 +11,8 @@ export interface dictTypeQueryType {
 export interface dictTypeQuerySerType {
   pageNum: number
   pageSize: number
-  dict_name?: string
-  dict_type?: string
+  dict_name?: string | { [OpTypes.like]: string }
+  dict_type?: string | { [OpTypes.like]: string }
   status?: string
   beginTime?: string
   endTime?: string

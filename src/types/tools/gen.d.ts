@@ -43,6 +43,7 @@ export interface sqlTableCoulmnsType {
   defaultValue: any
   comment: string
   primaryKey: string
+  autoIncrement: string
 }
 
 export interface ColumnType {

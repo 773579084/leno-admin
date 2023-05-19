@@ -24,8 +24,8 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
         [Op.between]: [params.beginTime, params.endTime]
       }
     }
-    params.dictName ? (newParams.dict_name = params.dictName) : null
-    params.dictType ? (newParams.dict_type = params.dictType) : null
+    params.dictName ? (newParams.dict_name = { [Op.like]: params.dictName + '%' }) : null
+    params.dictType ? (newParams.dict_type = { [Op.like]: params.dictType + '%' }) : null
     params.status ? (newParams.status = params.status) : null
 
     const res = await getListSer<dictTypeQuerySerType>(SysDictType, newParams)

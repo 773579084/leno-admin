@@ -37,6 +37,7 @@ import { formatHumpLineTransfer, timeChange } from '@/business/utils'
 import { excelJsExport } from '@/business/utils/excel'
 import { excelBaseStyle, userExcelHeader, userTemExcelHeader } from '@/business/public/excelMap'
 import SysDept from '@/mysql/model/system/dept.model'
+import { Op } from 'sequelize'
 const {
   checkUserIdErr,
   getDeptTreeErr,
@@ -73,8 +74,8 @@ export const getUserListMid = async (ctx: Context, next: () => Promise<void>) =>
       newParams.beginTime = params.beginTime
       newParams.endTime = params.endTime
     }
-    params.userName ? (newParams.user_name = params.userName) : null
-    params.phonenumber ? (newParams.phonenumber = params.phonenumber) : null
+    params.userName ? (newParams.user_name = { [Op.like]: params.userName + '%' }) : null
+    params.phonenumber ? (newParams.phonenumber = { [Op.like]: params.phonenumber + '%' }) : null
     params.status ? (newParams.status = params.status) : null
 
     const res = (await getUserListSer(newParams)) as userListType

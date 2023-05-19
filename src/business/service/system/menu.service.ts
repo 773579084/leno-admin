@@ -19,7 +19,7 @@ export const getMenusSer = async (params: MenuParamsType) => {
   const whereObj = {}
   const { status, menuName } = params
   status && Object.assign(whereObj, { status })
-  menuName && Object.assign(whereObj, { menu_name: menuName })
+  menuName && Object.assign(whereObj, { menu_name: { [Op.like]: menuName + '%' } })
 
   const res = await SysMenu.findAll({
     raw: true,

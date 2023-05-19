@@ -28,17 +28,17 @@ function underline(str: string) {
 
 // sql字段类型与typescript字段类型对比
 const sqlTsContrast = {
-  bigint: 'Number',
-  int: 'Number',
-  double: 'Number',
-  float: 'Number',
-  char: 'String',
-  varchar: 'String',
-  text: 'String',
-  datetime: 'Date',
-  bool: 'Boolean',
-  boolean: 'Boolean',
-  time: 'String'
+  bigint: 'number',
+  int: 'number',
+  double: 'number',
+  float: 'number',
+  char: 'string',
+  varchar: 'string',
+  text: 'string',
+  datetime: 'date',
+  bool: 'boolean',
+  boolean: 'boolean',
+  time: 'string'
 }
 
 // tool 获取数据表的所有字段及其详细配置信息
@@ -72,7 +72,8 @@ export const conversionTables = async (tables: string[]) => {
        is_nullable AS allowNull,
        column_default AS defaultValue,
        column_comment AS comment,
-       column_key AS primaryKey
+       column_key AS primaryKey,
+       extra AS autoIncrement
      FROM
        information_schema.columns
      WHERE
@@ -97,7 +98,9 @@ export const conversionTables = async (tables: string[]) => {
         column_type: item.type.toUpperCase(),
         column_default_value: item.defaultValue,
         ts_type: sqlTsContrast[item.type],
-        ts_field: underline(item.name)
+        ts_field: underline(item.name),
+        is_pk: item.primaryKey === 'PRI' ? '0' : '1',
+        is_increment: item.autoIncrement === 'auto_increment' ? '0' : '1'
       })
     })
   }
@@ -125,14 +128,14 @@ const generateModel = (data: ColumnType[]) => {
 
   data.forEach((item, index) => {
     // 第一个为主id
-    if (!index) {
+    if (item.isPk === '0') {
       modelObj += `${item.columnName}: {
         type: DataTypes.${
           sqlSequelize[item.columnType] ? sqlSequelize[item.columnType] : item.columnType
         },
         allowNull: false,
         unique: true,
-        autoIncrement: true,
+        autoIncrement: ${item.isIncrement === '0' ? 'true' : 'false'},
         primaryKey: true,
         comment: ${item.columnComment}
       },\n`
@@ -151,6 +154,81 @@ const generateModel = (data: ColumnType[]) => {
 }
 
 /**
+ * dict excel字典映射字段生成
+ * @param data 表字段数据
+ * @returns obj
+ */
+const excelDictConversion = (data: ColumnType[]) => {
+  const dictObj = {}
+  data.forEach((item) => {
+    if (item.dictType) {
+      dictObj[item.columnName] = item.dictType
+    }
+  })
+
+  return JSON.stringify(dictObj)
+}
+
+/**
+ * excel字典header映射字段生成
+ * @param data 表字段数据
+ * @returns []
+ */
+const excelHeaderCreate = (data: ColumnType[]) => {
+  const headers = []
+  data.forEach((item) => {
+    if (item.isList === '0') {
+      const obj = {
+        title: item.columnComment,
+        dataIndex: item.columnName
+      }
+      item.isPk === '0' ? Object.assign(obj, { width: 80 }) : null
+      headers.push(obj)
+    }
+  })
+  return JSON.stringify(headers)
+}
+
+/**
+ * 列表搜索条件生成
+ * @param data 表字段数据
+ * @returns string
+ */
+const listSearch = (data: ColumnType[]) => {
+  let search = ''
+  data.forEach((item) => {
+    if (item.isQuery === '0' && item.queryType !== 'between') {
+      search += `params.${item.tsField} ? (newParams.${item.columnName} = { [Op.${item.queryType}]: params.${item.tsField} + '%' }) : null\n    `
+    }
+    if (item.queryType === 'between') {
+      search += `params.${item.tsField} ? newParams.${item.columnName} = {[Op.between]: [params.${item.tsField}.beginTime, params.${item.tsField}.endTime]} : null\n    `
+    }
+  })
+  return search
+}
+
+/**
+ * schema 新增 编辑
+ * @param data 表字段数据
+ * @returns string
+ */
+const addEditSchema = (data: ColumnType[]) => {
+  let schema = ''
+
+  data.forEach((item) => {
+    schema += `Joi.${item.tsType}()${item.isRequired === '0' ? '.required()' : ''}\n  `
+  })
+
+  return schema
+}
+
+/**
+ * schema 新增 编辑
+ * @param data 表字段数据
+ * @returns string
+ */
+
+/**
  * 代码生成
  * @param data 表数据及表字段数据
  * @param isZip 是否打包为压缩包 传任意为true的值压缩
@@ -160,7 +238,7 @@ export const generateCode = (data: GenType, isZip?: boolean) => {
   const codes = {}
 
   // 第一步 生成model模型
-  codes[`${data.tableName}.model.ts`] = `
+  codes[`${data.businessName}.model.ts`] = `
 import { DataTypes } from 'sequelize'
 import seq from '@/mysql/db/seq.db'
 
@@ -180,7 +258,7 @@ const ${data.className} = seq.define(
 export default ${data.className}`
 
   // 第二步 生成路由
-  codes[`${data.tableName}.router.ts`] = `import Router from 'koa-router'
+  codes[`${data.businessName}.router.ts`] = `import Router from 'koa-router'
 // 格式转换
 import { formatHandle } from '@/business/middleware/common/common.middleware'
 import { exportExcelSer } from '@/business/service'
@@ -227,12 +305,195 @@ router.put(
 // 导出列表(excel)
 router.post(
   '/${data.businessName}/export',
-  exportExcelMid(exportExcelSer, ${data.className}, { status: 'sys_normal_disable' }),
+  exportExcelMid(exportExcelSer, ${data.className}, ${excelDictConversion(data.columns)}),
   exportMid,
   IndexCon()
 )
 
 module.exports = router`
+
+  // 第三步 生成 middleware 业务层
+  codes[`${data.businessName}.middleware.ts`] = `import { Context } from 'koa'
+import { getDataTypeSer } from '@/business/service/${data.moduleName}/${data.businessName}.service'
+import { getListSer, addSer, putSer, getDetailSer, delSer } from '@/business/service'
+import { userType, I${data.className}QueryType, I${data.className}QuerySerType, I${
+    data.className
+  }, I${data.className}Ser } from '@/types'
+import errors from '@/app/err.type'
+import { formatHumpLineTransfer } from '@/business/utils'
+import { excelJsExport } from '@/business/utils/excel'
+import {  excelBaseStyle } from '@/business/public/excelMap'
+import ${data.className} from '@/mysql/model/${data.moduleName}/${data.businessName}.model'
+import { Op } from 'sequelize'
+const { uploadParamsErr, getListErr, sqlErr, delErr, exportExcelErr } = errors
+
+// 获取列表
+export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    const { pageNum, pageSize, ...params } = ctx.query as unknown as I${data.className}QueryType
+    let newParams = { pageNum, pageSize } as I${data.className}QuerySerType
+
+    ${listSearch(data.columns)}
+
+    const res = await getListSer<I${data.className}QuerySerType>(${data.className}, newParams)
+
+    ctx.state.formatData = res
+    await next()
+  } catch (error) {
+    console.error('查询字典类型列表失败', error)
+    return ctx.app.emit('error', getListErr, ctx)
+  }
+}
+
+// 新增
+export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    const { userName } = ctx.state.user as userType
+    const addContent = ctx.request['body'] as I${data.className}
+    const addContent2 = { ...addContent, createBy: userName }
+    const newAddContent = formatHumpLineTransfer(addContent2, 'line')
+
+    await addSer<I${data.className}Ser>(${data.className}, newAddContent)
+    await next()
+  } catch (error) {
+    console.error('新增用户失败', error)
+    return ctx.app.emit('error', uploadParamsErr, ctx)
+  }
+}
+
+// 删除
+export const delMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    await delSer(${data.className}, { ${data.columns[0].columnName}: ctx.state.ids })
+  } catch (error) {
+    console.error('删除用户失败', error)
+    return ctx.app.emit('error', delErr, ctx)
+  }
+
+  await next()
+}
+
+// 获取详细数据
+export const getDetailMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    const res = await getDetailSer<I${data.className}Ser>(${data.className}, { ${
+    data.columns[0].columnName
+  }: ctx.state.ids })
+
+    ctx.state.formatData = res
+  } catch (error) {
+    console.error('用户个人信息查询错误', error)
+    return ctx.app.emit('error', sqlErr, ctx)
+  }
+
+  await next()
+}
+
+// 修改
+export const putMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    const { userName } = ctx.state.user as userType
+    const res = ctx.request['body'] as I${data.className}
+    const lineData = await formatHumpLineTransfer(res, 'line')
+    const { ${data.columns[0].columnName}, ...data } = lineData
+
+    await putSer<I${data.className}Ser>(${data.className}, { ${
+    data.columns[0].columnName
+  } }, { ...data, update_by: userName })
+
+    await next()
+  } catch (error) {
+    console.error('修改失败', error)
+    return ctx.app.emit('error', uploadParamsErr, ctx)
+  }
+}
+
+// 导出
+export const exportMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    const list = ctx.state.formatData
+
+    // 表格数据
+    const buffer = await excelJsExport({
+      sheetName: '${data.tableComment}',
+      style: excelBaseStyle,
+      headerColumns: ${excelHeaderCreate(data.columns)},
+      tableData: list
+    })
+    ctx.state.buffer = buffer
+    await next()
+  } catch (error) {
+    console.error('导出失败', error)
+    return ctx.app.emit('error', exportExcelErr, ctx)
+  }
+}`
+
+  // 第四步 生成 schema 新增编辑字段检测
+  codes[`${data.businessName}.schema.ts`] = `import Joi from 'joi'
+
+// 验证新增信息 nick 必传字符串
+export const addJudg = Joi.object({
+  ${addEditSchema(data.columns)}})
+
+// 验证新增信息 nick 必传字符串
+export const putJudg = Joi.object({
+  ${addEditSchema(data.columns)}})`
+
+  // 第五步 生成 typescript 接口类型文件
+  codes[`${data.businessName}.d.ts`] = `export interface dictDataQueryType {
+    pageNum: number
+    pageSize: number
+    dictLabel?: string
+    dictType?: string
+    status?: string
+  }
+  export interface dictDataQuerySerType {
+    pageNum: number
+    pageSize: number
+    dict_label?: string | { [OpTypes.like]: string }
+    dict_name?: string
+    dict_type?: string
+    dict_value?: string
+    css_class?: string
+    list_class?: string
+    dict_sort?: number
+    status?: string
+    created_at?: any
+  }
+  export interface IdictData {
+    dictCode?: number
+    dictName?: string
+    dictSort?: number
+    dictLabel?: string
+    dictValue?: string
+    dictType?: string
+    cssClass?: string
+    listClass?: string
+    isDefault?: string
+    status?: string
+    createBy?: string
+    updateBy?: string
+    remark?: string
+    createdAt?: string
+    updatedAt?: string
+  }
+  export interface IdictDataSer {
+    dict_code?: number
+    dict_name?: string
+    dict_sort?: number
+    dict_label?: string
+    dict_value?: string
+    dict_type?: string
+    css_class?: string
+    list_class?: string
+    is_default?: string
+    status?: string
+    createBy?: string
+    updateBy?: string
+    remark?: string
+    createdAt?: string
+    updatedAt?: string
+  }`
 
   return codes
 }

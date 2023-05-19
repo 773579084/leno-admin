@@ -40,7 +40,7 @@ const ToolGenColumn = seq.define(
     ts_type: {
       type: DataTypes.CHAR(255),
       defaultValue: '',
-      comment: 'ts数据类型'
+      comment: 'ts类型'
     },
     ts_field: {
       type: DataTypes.CHAR(255),
@@ -50,41 +50,41 @@ const ToolGenColumn = seq.define(
     is_pk: {
       type: DataTypes.CHAR(1),
       defaultValue: '1',
-      comment: '是否主键（1是）'
+      comment: '是否主键（0是）'
     },
     is_increment: {
       type: DataTypes.CHAR(1),
       defaultValue: '1',
-      comment: '是否自增（1是）'
+      comment: '是否自增（0是）'
     },
     is_required: {
       type: DataTypes.CHAR(1),
       defaultValue: '1',
-      comment: '是否必填（1是）'
+      comment: '是否必填（0是）'
     },
     is_insert: {
       type: DataTypes.CHAR(1),
       defaultValue: '1',
-      comment: '是否为插入字段（1是）'
+      comment: '是否为新增字段（0是）'
     },
     is_edit: {
       type: DataTypes.CHAR(1),
       defaultValue: '1',
-      comment: '是否编辑字段（1是）'
+      comment: '是否编辑字段（0是）'
     },
     is_list: {
       type: DataTypes.CHAR(1),
       defaultValue: '1',
-      comment: '是否列表字段（1是）'
+      comment: '是否列表字段（0是）'
     },
     is_query: {
       type: DataTypes.CHAR(1),
       defaultValue: '1',
-      comment: '是否查询字段（1是）'
+      comment: '是否查询字段（0是）'
     },
     query_type: {
       type: DataTypes.CHAR(255),
-      defaultValue: 'EQ',
+      defaultValue: 'eq',
       comment: '查询方式（等于、不等于、大于、小于、范围）'
     },
     html_type: {
