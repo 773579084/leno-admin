@@ -45,7 +45,7 @@ const ToolGenColumn = seq.define(
     ts_field: {
       type: DataTypes.CHAR(255),
       defaultValue: '',
-      comment: 'ts字段名'
+      comment: 'ts属性'
     },
     is_pk: {
       type: DataTypes.CHAR(1),

@@ -198,10 +198,12 @@ const listSearch = (data: ColumnType[]) => {
   let search = ''
   data.forEach((item) => {
     if (item.isQuery === '0' && item.queryType !== 'between') {
-      search += `params.${item.tsField} ? (newParams.${item.columnName} = { [Op.${item.queryType}]: params.${item.tsField} + '%' }) : null\n    `
+      search += `params.${item.tsField} ? (newParams.${item.columnName} = { [Op.${
+        item.queryType
+      }]: params.${item.tsField} ${item.queryType === 'like' ? '+ %' : ''} }) : null\n\0\0\0\0`
     }
     if (item.queryType === 'between') {
-      search += `params.${item.tsField} ? newParams.${item.columnName} = {[Op.between]: [params.${item.tsField}.beginTime, params.${item.tsField}.endTime]} : null\n    `
+      search += `params.${item.tsField} ? newParams.${item.columnName} = {[Op.between]: [params.${item.tsField}.beginTime, params.${item.tsField}.endTime]} : null\n\0\0\0\0`
     }
   })
   return search
@@ -210,23 +212,68 @@ const listSearch = (data: ColumnType[]) => {
 /**
  * schema 新增 编辑
  * @param data 表字段数据
+ * @param isAdd 是否为新增
  * @returns string
  */
-const addEditSchema = (data: ColumnType[]) => {
+const addEditSchema = (data: ColumnType[], isAdd: boolean) => {
   let schema = ''
 
   data.forEach((item) => {
-    schema += `Joi.${item.tsType}()${item.isRequired === '0' ? '.required()' : ''}\n  `
+    if (isAdd && item.isInsert === '0') {
+      schema += `${item.tsField}: Joi.${item.tsType}()${
+        item.isRequired === '0' ? '.required()' : ''
+      }\n\0\0`
+    }
+    if (!isAdd && item.isEdit === '0') {
+      schema += `${item.tsField}: Joi.${item.tsType}()${
+        item.isRequired === '0' ? '.required()' : ''
+      }\n\0\0`
+    }
   })
 
   return schema
 }
 
 /**
- * schema 新增 编辑
+ * typescript 接口类型生成
  * @param data 表字段数据
+ * @param type 生成type的种类判断
  * @returns string
  */
+const typeCreate = (data: ColumnType[], type: string) => {
+  let typeString = ''
+
+  data.forEach((item) => {
+    if (type === 'Query' && item.isQuery === '0') {
+      switch (item.queryType) {
+        case 'between':
+          typeString += `${item.tsField}?: {
+      beginTime: ${item.tsType}
+      endTime: ${item.tsType}
+    }\n\0\0\0\0`
+          break
+
+        default:
+          typeString += `${item.tsField}?: ${item.tsType}\n\0\0\0\0`
+          break
+      }
+    }
+    if (type === 'QuerySer' && item.isQuery === '0') {
+      typeString += `${item.columnName}?: { [OpTypes.${item.tsType}]: string }\n\0\0\0\0`
+    }
+    if ((type === 'List' && item.isInsert === '0') || (type === 'List' && item.isEdit === '0')) {
+      typeString += `${item.tsField}?: ${item.tsType}\n\0\0\0\0`
+    }
+    if (
+      (type === 'ListSer' && item.isInsert === '0') ||
+      (type === 'ListSer' && item.isEdit === '0')
+    ) {
+      typeString += `${item.columnName}?: ${item.tsType}\n\0\0\0\0`
+    }
+  })
+
+  return typeString
+}
 
 /**
  * 代码生成
@@ -316,9 +363,10 @@ module.exports = router`
   codes[`${data.businessName}.middleware.ts`] = `import { Context } from 'koa'
 import { getDataTypeSer } from '@/business/service/${data.moduleName}/${data.businessName}.service'
 import { getListSer, addSer, putSer, getDetailSer, delSer } from '@/business/service'
+import { userType} from '@/types'
 import { userType, I${data.className}QueryType, I${data.className}QuerySerType, I${
     data.className
-  }, I${data.className}Ser } from '@/types'
+  }, I${data.className}Ser } from '@/types/${data.moduleName}/${data.businessName}.d.ts'
 import errors from '@/app/err.type'
 import { formatHumpLineTransfer } from '@/business/utils'
 import { excelJsExport } from '@/business/utils/excel'
@@ -433,67 +481,28 @@ export const exportMid = async (ctx: Context, next: () => Promise<void>) => {
 
 // 验证新增信息 nick 必传字符串
 export const addJudg = Joi.object({
-  ${addEditSchema(data.columns)}})
+  ${addEditSchema(data.columns, true)}})
 
-// 验证新增信息 nick 必传字符串
+// 验证编辑信息 nick 必传字符串
 export const putJudg = Joi.object({
-  ${addEditSchema(data.columns)}})`
+  ${addEditSchema(data.columns, false)}})`
 
   // 第五步 生成 typescript 接口类型文件
-  codes[`${data.businessName}.d.ts`] = `export interface dictDataQueryType {
+  codes[`${data.businessName}.d.ts`] = `export interface I${data.className}QueryType {
     pageNum: number
     pageSize: number
-    dictLabel?: string
-    dictType?: string
-    status?: string
-  }
-  export interface dictDataQuerySerType {
+    ${typeCreate(data.columns, 'Query')}}
+
+  export interface I${data.className}QuerySerType {
     pageNum: number
     pageSize: number
-    dict_label?: string | { [OpTypes.like]: string }
-    dict_name?: string
-    dict_type?: string
-    dict_value?: string
-    css_class?: string
-    list_class?: string
-    dict_sort?: number
-    status?: string
-    created_at?: any
-  }
-  export interface IdictData {
-    dictCode?: number
-    dictName?: string
-    dictSort?: number
-    dictLabel?: string
-    dictValue?: string
-    dictType?: string
-    cssClass?: string
-    listClass?: string
-    isDefault?: string
-    status?: string
-    createBy?: string
-    updateBy?: string
-    remark?: string
-    createdAt?: string
-    updatedAt?: string
-  }
-  export interface IdictDataSer {
-    dict_code?: number
-    dict_name?: string
-    dict_sort?: number
-    dict_label?: string
-    dict_value?: string
-    dict_type?: string
-    css_class?: string
-    list_class?: string
-    is_default?: string
-    status?: string
-    createBy?: string
-    updateBy?: string
-    remark?: string
-    createdAt?: string
-    updatedAt?: string
-  }`
+    ${typeCreate(data.columns, 'QuerySer')}}
+
+  export interface I${data.className} {
+    ${typeCreate(data.columns, 'List')}}
+
+  export interface I${data.className}Ser {
+    ${typeCreate(data.columns, 'ListSer')}}`
 
   return codes
 }
