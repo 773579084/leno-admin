@@ -163,14 +163,13 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
     // 基本信息修改
     await putSer(ToolGen, { table_id }, { ...genDate, update_by: userName })
 
-    // 修改字段信息
+    // 修改信息
     columns.forEach(async (column) => {
       const { table_id, column_id, created_at, updated_at, create_by, ...data } = column
 
       await putSer(ToolGenColumn, { column_id }, { ...data, update_by: userName })
     })
 
-    // 修改表字段信息
     await next()
   } catch (error) {
     console.error('修改失败', error)
