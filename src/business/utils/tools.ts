@@ -350,18 +350,21 @@ const createTableData = (data: ColumnType[]) => {
   let tableData = ''
   data.forEach((item) => {
     if (item.isList === '0') {
-      tableData += `{
-      title: '${item.columnComment}',
-      dataIndex: '${item.tsField}',
-      key: '${item.tsField}',
-      align: 'center',
-      ${
-        item.dictType
-          ? 'render: (value) => <DictTag options={dict' +
-            underlineToCamel(item.columnName) +
-            '} value={value} />,'
-          : ''
-      }},\n\0\0\0\0`
+      if (item.htmlType !== 'imageUpload') {
+        tableData += `{
+          title: '${item.columnComment}',
+          dataIndex: '${item.tsField}',
+          key: '${item.tsField}',
+          align: 'center',
+          ${
+            item.dictType
+              ? 'render: (value) => <DictTag options={dict' +
+                underlineToCamel(item.columnName) +
+                '} value={value} />,'
+              : ''
+          }},\n\0\0\0\0`
+      } else {
+      }
     }
   })
 
@@ -379,16 +382,6 @@ const createHtmlSearch = (data: ColumnType[]) => {
   data.forEach((item) => {
     if (item.isQuery === '0') {
       switch (item.htmlType) {
-        case 'input':
-          htmlSearch += `<Form.Item label="${item.columnComment}" name="${item.tsField}">
-           <Input
-             style={{ width: 240 }}
-             placeholder="请输入${item.columnComment}"
-             allowClear
-             onPressEnter={searchQueryFn}
-           />
-         </Form.Item>\n\0\0\0\0\0\0\0\0`
-          break
         case 'select':
           if (item.dictType) {
             htmlSearch += `<Form.Item name="${item.tsField}" label="${item.columnComment}">
@@ -411,6 +404,14 @@ const createHtmlSearch = (data: ColumnType[]) => {
           break
 
         default:
+          htmlSearch += `<Form.Item label="${item.columnComment}" name="${item.tsField}">
+          <Input
+            style={{ width: 240 }}
+            placeholder="请输入${item.columnComment}"
+            allowClear
+            onPressEnter={searchQueryFn}
+          />
+         </Form.Item>\n\0\0\0\0\0\0\0\0`
           break
       }
     }
@@ -431,17 +432,74 @@ const createHtmlAddEdit = (data: ColumnType[]) => {
       switch (item.htmlType) {
         case 'input':
           addEdit += `<Form.Item
-          label="${item.columnComment}"
-          name="${item.tsField}"
-          hidden={${item.isEdit === '1'}}
-          ${
-            item.isRequired === '0'
-              ? 'rules={[{ required: true, message: 请输入' + item.columnComment + '! }]}'
-              : ''
-          }
-        >
+           label="${item.columnComment}"
+           name="${item.tsField}"
+           hidden={${item.isEdit === '1'}}
+           ${
+             item.isRequired === '0'
+               ? 'rules={[{ required: true, message: 请输入' + item.columnComment + '! }]}'
+               : ''
+           }>
           <Input placeholder="请输入字典类型" />
-        </Form.Item>`
+        </Form.Item>\n\0\0\0\0\0\0\0\0\0\0`
+          break
+        case 'textarea':
+          addEdit += `<Form.Item
+           label="${item.columnComment}"
+           name="${item.tsField}"
+           rules={[{ max: 200, message: '请输入内容(200字以内)!' }]}
+          >
+          <TextArea showCount placeholder="请输入内容(200字以内)"/>
+         </Form.Item>\n\0\0\0\0\0\0\0\0\0\0`
+          break
+        case 'radio':
+          if (item.dictType) {
+            addEdit += `<Form.Item label="${item.columnComment}" name="${item.tsField}">
+            <Radio.Group
+              options={dict${underlineToCamel(item.columnName)}.map((item) => ({
+                value: item.dictValue,
+                label: item.dictLabel,
+              }))}
+            />
+           </Form.Item>\n\0\0\0\0\0\0\0\0\0\0`
+          }
+          break
+        case 'select':
+          if (item.dictType) {
+            addEdit += `<Form.Item label="${item.columnComment}" name="${item.tsField}">
+            <Select
+             placeholder="${item.columnComment}"
+             allowClear
+             options={dict${underlineToCamel(item.columnName)}.map((item) => ({
+               value: item.dictValue,
+               label: item.dictLabel,
+             }))}
+            />
+           </Form.Item>\n\0\0\0\0\0\0\0\0\0\0`
+          }
+          break
+        case 'checkbox':
+          if (item.dictType) {
+            addEdit += `<Form.Item label="${item.columnComment}" name="${item.tsField}">
+            <Checkbox.Group
+              options={dict${underlineToCamel(item.columnName)}.map((item) => ({
+                value: item.dictValue,
+                label: item.dictLabel,
+              }))}
+            />
+           </Form.Item>\n\0\0\0\0\0\0\0\0\0\0`
+          }
+          break
+        case 'datetime':
+          addEdit += `<Form.Item label="${item.columnComment}"    name="${item.tsField}">
+              <RangePicker style={{ width: 240 }} />
+            </Form.Item>\n\0\0\0\0\0\0\0\0`
+          break
+        case 'imageUpload':
+          break
+        case 'fileUpload':
+          break
+        case 'editor':
           break
 
         default:
@@ -685,15 +743,14 @@ export const putJudg = Joi.object({
   // 第六步 前端 生成api接口
   codes[`api.ts`] = `import { http } from '@/api'
 import {
-  IgetListAPI,
-  ILimitAPI,
+  I${data.businessName}Type,
   IsuccessTypeAPI,
-  addType,
   IgetDetailTypeAPI,
+  IgetListAPI
 } from '@/type/modules/${data.moduleName}/${data.businessName}'
 
 // 查询列表
-export const getListAPI = (data: ILimitAPI) => {
+export const getListAPI = (data: I${data.businessName}Type) => {
   return http<IgetListAPI>('GET', '/${data.moduleName}/${data.businessName}/list', data)
 }
 
@@ -703,7 +760,7 @@ export function delAPI(ids: string) {
 }
 
 // 新增
-export const addAPI = (data: addType) => {
+export const addAPI = (data: I${data.businessName}Type) => {
   return http<IsuccessTypeAPI>('POST', '/${data.moduleName}/${data.businessName}', data)
 }
 
@@ -713,7 +770,7 @@ export const getDetailAPI = (id: number) => {
 }
 
 // 修改
-export const putAPI = (data: addType) => {
+export const putAPI = (data: I${data.businessName}Type) => {
   return http<IsuccessTypeAPI>('PUT', '/${data.moduleName}/${data.businessName}', data)
 }`
 
@@ -721,8 +778,9 @@ export const putAPI = (data: addType) => {
   const mainIdKey = data.columns.find((item) => item.isPk === '0').tsField
   const total = '`共 ${total} 条`'
   const ids = '`是否确认删除字典编号为"${ids}"的数据项？`'
-
-  codes[`index.tsx`] = `import React, { useState, useEffect } from 'react'
+  codes[
+    data.tplCategory === 'tree' ? 'index-tree.tsx' : 'index.tsx'
+  ] = `import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Button,
@@ -730,6 +788,7 @@ import {
   Input,
   Select,
   ${data.columns.find((item) => item.htmlType === 'datetime') ? 'DatePicker' : ''}
+  ${data.columns.find((item) => item.htmlType === 'checkbox') ? 'Checkbox' : ''}
   Col,
   Row,
   Tooltip,
@@ -757,9 +816,7 @@ import {
 } from '@/api/modules/${data.moduleName}/${data.businessName}'
 import { getDictsApi } from '@/api/modules/system/dictData'
 import { download } from '@/api'
-import { ILimitAPI, I${data.businessName}TableType} from '@/type/modules/${data.moduleName}/${
-    data.businessName
-  }'
+import { I${data.businessName}Type } from '@/type/modules/${data.moduleName}/${data.businessName}'
 ${
   data.columns.find((item) => item.htmlType === 'datetime')
     ? 'const { RangePicker } = DatePicker'
@@ -769,6 +826,7 @@ import ColorBtn from '@/components/ColorBtn'
 import dayjs from 'dayjs'
 import { IdictType } from '@/type/modules/system/sysDictData'
 ${data.columns.find((item) => item.dictType) ? "import DictTag from '@/components/DictTag'" : ''}
+${data.tplCategory === 'tree' ? `import { treeDataFn } from '@/utils/smallUtils'` : ''}
 
 const ${stringFirst(data.className)}: React.FC = () => {
   ${data.columns.find((item) => item.htmlType === 'textarea') ? 'const { TextArea } = Input' : ''}
@@ -777,11 +835,11 @@ const ${stringFirst(data.className)}: React.FC = () => {
   const { confirm } = Modal
 
   // 分页
-  const [queryParams, setQueryParams] = useState<ILimitAPI>({ pageNum: 1, pageSize: 10 })
-  // 列表数据
-  const [dataList, setDataList] = useState({ count: 0, rows: [] as I${
+  const [queryParams, setQueryParams] = useState<I${
     data.businessName
-  }TableType[] })
+  }API>({ pageNum: 1, pageSize: 10 })
+  // 列表数据
+  const [dataList, setDataList] = useState({ count: 0, rows: [] as I${data.businessName}Type[] })
   // table loading
   const [loading, setLoading] = useState(true)
   // 新增编辑 model显隐
@@ -798,6 +856,12 @@ const ${stringFirst(data.className)}: React.FC = () => {
   const [selectKeys, setSelectKeys] = useState<React.Key[]>([])
   //  table 后台使用的key
   const [rowKeys, setRowKeys] = useState('')
+  ${
+    data.tplCategory === 'tree'
+      ? `  //  行展开
+  const [expandKeys, setExpandKeys] = useState<any>({})`
+      : ''
+  }
   ${getDictsState(data.columns)}
   useEffect(() => {
     const getDictsFn = async () => {
@@ -812,7 +876,12 @@ const ${stringFirst(data.className)}: React.FC = () => {
   // 查询列表
   const getList = async () => {
     const { data } = await getListAPI(queryParams)
-    setDataList({ ...data.result })
+    ${
+      data.tplCategory === 'tree'
+        ? `const treeData = treeDataFn<menusType>(data.result)
+    setDataList(treeData)`
+        : 'setDataList({ ...data.result })'
+    }
     setLoading(false)
   }
 
@@ -836,7 +905,7 @@ const ${stringFirst(data.className)}: React.FC = () => {
   // row-select
   const rowSelection = {
     selectedRowKeys: selectKeys,
-    onChange: (selectedRowKeys: React.Key[], selectedRows: I${data.businessName}TableType[]) => {
+    onChange: (selectedRowKeys: React.Key[], selectedRows: I${data.businessName}Type[]) => {
       if (!selectedRowKeys.length || selectedRowKeys.length > 1) {
         setSingle(true)
       } else {
@@ -853,11 +922,11 @@ const ${stringFirst(data.className)}: React.FC = () => {
     setIsModalOpen(true)
     setIsAdd(false)
     const { data } = await getDetailAPI(id)
-    AddEditForm.setFieldsValue(data.result as unknown as I${data.businessName}TableType)
+    AddEditForm.setFieldsValue(data.result as unknown as I${data.businessName}Type)
   }
 
   // 编辑
-  const handleFormFinish = async (values: I${data.businessName}TableType}) => {
+  const handleFormFinish = async (values: I${data.businessName}Type}) => {
     try {
       if (isAdd) {
         await addAPI(values)
@@ -870,7 +939,6 @@ const ${stringFirst(data.className)}: React.FC = () => {
     setIsModalOpen(false)
   }
 
-  //#region table
   // 分页
   const onPagChange = async (pageNum: number, pageSize: number) => {
     setQueryParams({ pageNum, pageSize })
@@ -891,6 +959,37 @@ const ${stringFirst(data.className)}: React.FC = () => {
     })
   }
 
+  ${
+    data.tplCategory === 'tree'
+      ? `  // 行展开
+  const expandFn = () => {
+    if (expandKeys['expandedRowKeys'] && expandKeys['expandedRowKeys'].length) {
+      setExpandKeys({
+        expandedRowKeys: [],
+      })
+    } else {
+      setExpandKeys({
+        expandedRowKeys: [],
+      })
+      const ids: number[] = []
+      function checkChild(list: menusType[]) {
+        list.forEach((item) => {
+          if (item.children?.length) {
+            ids.push(item.${mainIdKey} as number)
+
+            checkChild(item.children)
+          }
+        })
+      }
+      checkChild(dataList)
+      setExpandKeys({
+        expandedRowKeys: ids,
+      })
+    }
+  }`
+      : ''
+  }
+
   // table
   let columns = [
     {
@@ -905,7 +1004,7 @@ const ${stringFirst(data.className)}: React.FC = () => {
       key: 'operation',
       align: 'center',
       fixed: 'right',
-      render: (_: any, record: I${data.businessName}TableType) => (
+      render: (_: any, record: I${data.businessName}Type) => (
         <div>
           <Button
             onClick={() => handleEditForm(record.${mainIdKey} as number)}
@@ -926,7 +1025,7 @@ const ${stringFirst(data.className)}: React.FC = () => {
         </div>
       ),
     },
-  ] as ColumnsType<I${data.businessName}TableType>
+  ] as ColumnsType<I${data.businessName}Type>
 
   // table 数据源
   const tableData = dataList.rows
@@ -1031,11 +1130,17 @@ const ${stringFirst(data.className)}: React.FC = () => {
           <Table
             rowSelection={{ type: 'checkbox', fixed: 'left', ...rowSelection }}
             columns={columns}
-            dataSource={tableData as unknown as I${data.businessName}TableType[]}
+            dataSource={tableData as unknown as I${data.businessName}Type[]}
             pagination={false}
             rowKey="${mainIdKey}"
             size="middle"
             loading={loading}
+            ${
+              data.tplCategory === 'tree'
+                ? `expandable={expandKeys}
+            onExpand={() => setExpandKeys({})}`
+                : ''
+            }
           />
           <Pagination
             className="pagination"
@@ -1062,42 +1167,9 @@ const ${stringFirst(data.className)}: React.FC = () => {
           <Form
             form={AddEditForm}
             labelCol={{ span: 6 }}
-            initialValues={{
-              status: '0',
-            }}
             onFinish={handleFormFinish}
           >
-            <Form.Item
-              label="字典名称"
-              name="dictName"
-              rules={[{ required: true, message: '请输入字典名称!' }]}
-            >
-              <Input placeholder="请输入字典名称" />
-            </Form.Item>
-
-            <Form.Item
-              label="字典类型"
-              name="dictType"
-              rules={[{ required: true, message: '请输入字典类型!' }]}
-            >
-              <Input placeholder="请输入字典类型" />
-            </Form.Item>
-
-            <Form.Item label="状态" name="status">
-              <Radio.Group
-                options={dictStatus.map((item) => ({
-                  value: item.dictValue,
-                  label: item.dictLabel,
-                }))}
-              />
-            </Form.Item>
-            <Form.Item
-              label="备注"
-              name="remark"
-              rules={[{ max: 200, message: '请输入内容(200字以内)!' }]}
-            >
-              <TextArea showCount placeholder="请输入内容(200字以内)" rows={3} />
-            </Form.Item>
+            ${createHtmlAddEdit(data.columns)}
           </Form>
         </Modal>
       </Col>
@@ -1106,6 +1178,59 @@ const ${stringFirst(data.className)}: React.FC = () => {
 }
 
 export default ${stringFirst(data.className)}`
+
+  // 第八步 前端 生成typescript类型标注
+  codes['react.d.ts'] = `
+// 所有数据通用
+export interface I${data.businessName}Type {
+  pageNum?: number
+  pageSize?: number
+  dictName?: string
+  status?: string
+  beginTime?: string
+  endTime?: string
+  dictType?: string
+}
+
+// 数据列表
+export interface IgetListAPI {
+  code: number
+  message: string
+  result: {
+    count: number
+    rows: I${data.businessName}Type[]
+  }
+}
+
+// 获取详细数据
+export interface IgetDetailTypeAPI {
+  code: number
+  message: string
+  result: I${data.businessName}Type
+}
+
+// 新增，修改，删除 成功返回
+export interface IsuccessTypeAPI {
+  code: number
+  message: string
+  result?: null
+}`
+
+  // 第九步 后端 生成父子表绑定
+  if (data.tplCategory === 'sub') {
+    codes['sub-domain.ts'] = `
+    // 此父子表数据库绑定关系需剪切放置到后端文件 src/mysql/db/index.ts initRelation
+        
+    // ${data.tableComment}模块
+    ${underlineToCamel(data.subTableName)}.hasOne(${underlineToCamel(
+      data.tableName
+    )}, { foreignKey: '${data.subTableFkName}', sourceKey: '${data.subTableFkName}' })
+    ${underlineToCamel(data.tableName)}.belongsTo( ${underlineToCamel(
+      data.subTableName
+    )}, { foreignKey: '${data.subTableFkName}', targetKey: '${
+      data.subTableFkName
+    }', as: '${underline(data.subTableName)}' })`
+  }
 
   return codes
 }

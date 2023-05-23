@@ -124,7 +124,7 @@ export const getListSqlMid = async (ctx: Context, next: () => Promise<void>) => 
   }
 }
 
-// 新增
+// 导入生成表模板
 export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { userName } = ctx.state.user as userType
@@ -204,4 +204,30 @@ export const codePreviewMid = async (ctx: Context, next: () => Promise<void>) =>
     console.error('代码预览查询失败', error)
     return ctx.app.emit('error', sqlErr, ctx)
   }
+}
+
+// 生成代码（压缩包）
+export const batchGenCodeMid = async (ctx: Context, next: () => Promise<void>) => {
+  const ids = ctx.state.ids
+  console.log(212, ids)
+
+  const { rows } = await getListSer<genQuerySerType>(
+    ToolGen,
+    { pageNum: 1, pageSize: 1000, table_id: ids },
+    {
+      include: [
+        {
+          model: ToolGenColumn,
+          as: 'columns'
+        }
+      ]
+    }
+  )
+  ctx.state.formatData = rows
+  await next()
+}
+
+// 生成代码（写到指定文件夹）
+export const genCodeMid = async (ctx: Context, next: () => Promise<void>) => {
+  await next()
 }

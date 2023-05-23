@@ -1,6 +1,3 @@
-/**
- * 字典类型
- */
 import Router from 'koa-router'
 // 格式转换
 import { formatHandle } from '@/business/middleware/common/common.middleware'
@@ -13,7 +10,9 @@ import {
   importTableMid,
   getListDbMid,
   getListSqlMid,
-  codePreviewMid
+  codePreviewMid,
+  genCodeMid,
+  batchGenCodeMid
 } from '@/business/middleware/tool/gen.middleware'
 import { judgeIdSchema, addEditSchema } from '@/business/schema'
 import IndexCon from '@/business/controller'
@@ -44,5 +43,11 @@ router.put('/gen', addEditSchema(putJudg), putMid, IndexCon())
 
 // 代码预览
 router.get('/gen/preview/:id', judgeIdSchema(), codePreviewMid, IndexCon())
+
+// 生成代码（压缩包）
+router.get('/gen/batchGenCode/:ids', judgeIdSchema(), batchGenCodeMid, IndexCon())
+
+// 生成代码（写到指定文件夹）
+router.get('/gen/genCode/:ids', judgeIdSchema(), genCodeMid, IndexCon())
 
 module.exports = router
