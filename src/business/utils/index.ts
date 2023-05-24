@@ -7,7 +7,7 @@ import { dictMapListType, dictMapType } from '@/types'
  * @param {string} filename
  * @return {boolean}
  */
-export const removeSpecifyFile = (filename) => {
+export const removeSpecifyFile = (filename: string) => {
   const filePath = path.join(__dirname, '../upload')
   if (fs.existsSync(filePath)) {
     fs.unlinkSync(filePath + '/' + filename)

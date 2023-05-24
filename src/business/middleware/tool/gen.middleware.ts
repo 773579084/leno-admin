@@ -17,6 +17,9 @@ import redis from '@/redis'
 import sequelize from '@/mysql/db/seq.db'
 import { conversionTables, generateCode } from '@/business/utils/tools'
 import ToolGenColumn from '@/mysql/model/tool/gen_column.model'
+import fs from 'fs'
+import zlib from 'zlib'
+import path from 'path'
 
 // 查询数据库所有的表 -》 并将表数据转换为代码生成表的数据
 export const findAllSqlMid = async (ctx: Context, next: () => Promise<void>) => {
@@ -206,25 +209,139 @@ export const codePreviewMid = async (ctx: Context, next: () => Promise<void>) =>
   }
 }
 
-// 生成代码（压缩包）
-export const batchGenCodeMid = async (ctx: Context, next: () => Promise<void>) => {
+// 生成文件
+export const createFileMid = async (ctx: Context, next: () => Promise<void>) => {
   const ids = ctx.state.ids
-  console.log(212, ids)
 
-  const { rows } = await getListSer<genQuerySerType>(
-    ToolGen,
-    { pageNum: 1, pageSize: 1000, table_id: ids },
-    {
-      include: [
-        {
-          model: ToolGenColumn,
-          as: 'columns'
+  try {
+    const { rows } = await getListSer<genQuerySerType>(
+      ToolGen,
+      { pageNum: 1, pageSize: 1000, table_id: ids },
+      {
+        include: [
+          {
+            model: ToolGenColumn,
+            as: 'columns'
+          }
+        ]
+      }
+    )
+
+    const newRows = formatHumpLineTransfer(rows)
+
+    // 1 创建放置前端代码和后端代码的文件夹
+    const createFile = ['node', 'react']
+    createFile.forEach((fileName) => {
+      fs.mkdir(`src/${fileName}`, (err) => {
+        if (err) console.log(236, err)
+      })
+    })
+    // 2 遍历生成页面代码写入到文件夹里，然后统一打包成压缩包发送给前端
+    newRows.forEach((row: GenType) => {
+      const frontFile = ['api.ts', 'index.tsx', 'index-tree.tsx', 'react.d.ts']
+      const code = generateCode(row)
+      // 3 创建业务模块 文件
+      createFile.forEach((fileName) => {
+        fs.mkdir(`src/${fileName}/${row.businessName}`, (err) => {
+          if (err) console.log(246, err)
+        })
+      })
+
+      // 4、将业务文件分别写入 node 和 react 文件夹下
+      for (const key in code) {
+        if (!frontFile.includes(key)) {
+          let newKey = ''
+          if (key.indexOf('node') !== -1) {
+            const keyList = key.split('.')
+            keyList.splice(0, 1)
+            newKey = keyList.join('.')
+          } else {
+            newKey = key
+          }
+
+          fs.writeFile(
+            `src/node/${row.businessName}/${row.businessName}.${newKey}`,
+            code[key],
+            (err) => {
+              if (err) console.log(266, err)
+            }
+          )
+        } else {
+          let newKey = ''
+          if (key.indexOf('react') !== -1) {
+            const keyList = key.split('.')
+            keyList.splice(0, 1)
+            newKey = keyList.join('.')
+          } else {
+            newKey = key
+          }
+          fs.writeFile(
+            `src/react/${row.businessName}/${row.businessName}.${newKey}`,
+            code[key],
+            (err) => {
+              if (err) console.log(282, err)
+            }
+          )
         }
-      ]
-    }
-  )
-  ctx.state.formatData = rows
-  await next()
+      }
+    })
+
+    await next()
+  } catch (error) {
+    console.error('生成代码）', error)
+    return ctx.app.emit('error', sqlErr, ctx)
+  }
+}
+
+// 生成压缩包
+export const batchGenCodeMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    // 5 压缩刚刚创建的代码文件
+    const basePath = __dirname.split('src')[0]
+    const filePaths = ['src\\node', 'src\\react']
+    const folderPaths = filePaths.map((folder) => path.join(basePath, folder))
+    const writable = zlib.createGzip()
+
+    // 要添加的多个文件路径数组
+    folderPaths.forEach((folderPath) => {
+      console.log(296, folderPath)
+
+      const folders = fs.readdirSync(folderPath)
+      folders.forEach((name) => {
+        console.log(299, name)
+
+        const files = fs.readdirSync(folderPath + '\\' + name)
+        console.log(301, files)
+        files.forEach((file) => {
+          const filePath = path.join(folderPath, file)
+          const readable = fs.createReadStream(filePath)
+          readable.pipe(writable, { end: false })
+        })
+      })
+    })
+
+    writable.end()
+
+    // 将压缩后的数据转换为Buffer
+    const bufferData = []
+    writable.on('data', (data) => bufferData.push(data))
+    writable.on('end', async () => {
+      const buffer = Buffer.concat(bufferData)
+      console.log(304, buffer)
+
+      ctx.state.buffer = buffer
+      await next()
+
+      // 6 删除刚刚生成的文件
+      console.log(320)
+      // filePaths.forEach((fileName) => {
+      //   fs.unlinkSync(basePath + fileName)
+      // })
+    })
+  } catch (error) {
+    console.error('生成压缩包', error)
+    return ctx.app.emit('error', sqlErr, ctx)
+  }
 }
 
 // 生成代码（写到指定文件夹）

@@ -12,7 +12,8 @@ import {
   getListSqlMid,
   codePreviewMid,
   genCodeMid,
-  batchGenCodeMid
+  batchGenCodeMid,
+  createFileMid
 } from '@/business/middleware/tool/gen.middleware'
 import { judgeIdSchema, addEditSchema } from '@/business/schema'
 import IndexCon from '@/business/controller'
@@ -45,7 +46,7 @@ router.put('/gen', addEditSchema(putJudg), putMid, IndexCon())
 router.get('/gen/preview/:id', judgeIdSchema(), codePreviewMid, IndexCon())
 
 // 生成代码（压缩包）
-router.get('/gen/batchGenCode/:ids', judgeIdSchema(), batchGenCodeMid, IndexCon())
+router.get('/gen/batchGenCode/:ids', judgeIdSchema(), createFileMid, batchGenCodeMid, IndexCon())
 
 // 生成代码（写到指定文件夹）
 router.get('/gen/genCode/:ids', judgeIdSchema(), genCodeMid, IndexCon())

@@ -5,6 +5,8 @@ import { Context } from 'koa'
 
 const IndexCon = (message?: string) => {
   return async (ctx: Context, next: () => Promise<void>) => {
+    console.log(8, ctx.state.buffer)
+
     if (ctx.state.buffer) {
       ctx.body = ctx.state.buffer
     } else {

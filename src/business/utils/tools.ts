@@ -5,8 +5,6 @@ import { ColumnType, GenType, sqlTableCoulmnsType } from '@/types/tools/gen'
 import { QueryTypes } from 'sequelize'
 import { addAllSer } from '../service'
 import { queryGenIdSer } from '../service/tool/gen.service'
-import fs from 'fs'
-import path from 'path'
 
 // 下划线转首字母和下划线后首字母大写，并去掉下划线
 function underlineToCamel(str: string) {
@@ -724,7 +722,9 @@ export const putJudg = Joi.object({
   ${addEditSchema(data.columns, false)}})`
 
   // 第五步 生成 typescript 接口类型文件
-  codes[`node.d.ts`] = `export interface I${data.className}QueryType {
+  codes[`node.d.ts`] = `
+  // 后端 类型文件
+  export interface I${data.className}QueryType {
     pageNum: number
     pageSize: number
     ${typeCreate(data.columns, 'Query')}}
@@ -1181,16 +1181,12 @@ export default ${stringFirst(data.className)}`
 
   // 第八步 前端 生成typescript类型标注
   codes['react.d.ts'] = `
+// 前端 类型文件
 // 所有数据通用
 export interface I${data.businessName}Type {
   pageNum?: number
   pageSize?: number
-  dictName?: string
-  status?: string
-  beginTime?: string
-  endTime?: string
-  dictType?: string
-}
+  ${typeCreate(data.columns, 'ListSer')}}
 
 // 数据列表
 export interface IgetListAPI {
