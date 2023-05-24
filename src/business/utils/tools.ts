@@ -135,7 +135,7 @@ const generateModel = (data: ColumnType[]) => {
         unique: true,
         autoIncrement: ${item.isIncrement === '0' ? 'true' : 'false'},
         primaryKey: true,
-        comment: ${item.columnComment}
+        comment: "${item.columnComment}"
       },\n`
     } else {
       modelObj += `    ${item.columnName}: {
@@ -143,7 +143,7 @@ const generateModel = (data: ColumnType[]) => {
           sqlSequelize[item.columnType] ? sqlSequelize[item.columnType] : item.columnType
         },
         defaultValue: ${item.columnDefaultValue},
-        comment: ${item.columnComment}
+        comment: "${item.columnComment}"
       },\n`
     }
   })
@@ -198,10 +198,10 @@ const listSearch = (data: ColumnType[]) => {
     if (item.isQuery === '0' && item.queryType !== 'between') {
       search += `params.${item.tsField} ? (newParams.${item.columnName} = { [Op.${
         item.queryType
-      }]: params.${item.tsField} ${item.queryType === 'like' ? '+ %' : ''} }) : null\n\0\0\0\0`
+      }]: params.${item.tsField} ${item.queryType === 'like' ? '+ "%"' : ''} }) : null\n    `
     }
     if (item.queryType === 'between') {
-      search += `params.${item.tsField} ? newParams.${item.columnName} = {[Op.between]: [params.${item.tsField}.beginTime, params.${item.tsField}.endTime]} : null\n\0\0\0\0`
+      search += `params.${item.tsField} ? newParams.${item.columnName} = {[Op.between]: [params.${item.tsField}.beginTime, params.${item.tsField}.endTime]} : null\n    `
     }
   })
   return search
@@ -219,13 +219,13 @@ const addEditSchema = (data: ColumnType[], isAdd: boolean) => {
   data.forEach((item) => {
     if (isAdd && item.isInsert === '0') {
       schema += `${item.tsField}: Joi.${item.tsType}()${
-        item.isRequired === '0' ? '.required()' : ''
-      }\n\0\0`
+        item.isRequired === '0' ? '.required(),' : ','
+      }\n  `
     }
     if (!isAdd && item.isEdit === '0') {
       schema += `${item.tsField}: Joi.${item.tsType}()${
-        item.isRequired === '0' ? '.required()' : ''
-      }\n\0\0`
+        item.isRequired === '0' ? '.required(),' : ','
+      }\n  `
     }
   })
 
@@ -248,25 +248,25 @@ const typeCreate = (data: ColumnType[], type: string) => {
           typeString += `${item.tsField}?: {
       beginTime: ${item.tsType}
       endTime: ${item.tsType}
-    }\n\0\0\0\0`
+    }\n   `
           break
 
         default:
-          typeString += `${item.tsField}?: ${item.tsType}\n\0\0\0\0`
+          typeString += `${item.tsField}?: ${item.tsType}\n`
           break
       }
     }
     if (type === 'QuerySer' && item.isQuery === '0') {
-      typeString += `${item.columnName}?: { [OpTypes.${item.queryType}]: string }\n\0\0\0\0`
+      typeString += `${item.columnName}?: { [OpTypes.${item.queryType}]: string }\n   `
     }
     if ((type === 'List' && item.isInsert === '0') || (type === 'List' && item.isEdit === '0')) {
-      typeString += `${item.tsField}?: ${item.tsType}\n\0\0\0\0`
+      typeString += `${item.tsField}?: ${item.tsType}\n    `
     }
     if (
       (type === 'ListSer' && item.isInsert === '0') ||
       (type === 'ListSer' && item.isEdit === '0')
     ) {
-      typeString += `${item.columnName}?: ${item.tsType}\n\0\0\0\0`
+      typeString += `${item.columnName}?: ${item.tsType}\n    `
     }
   })
 
@@ -289,10 +289,12 @@ const stringFirst = (string: string) => {
  */
 const getDicts = (data: ColumnType[]) => {
   let getDicts = ''
+  const completeDicts = []
   data.forEach((item) => {
-    if (item.dictType) {
-      getDicts += `const res = await getDictsApi('${item.dictType}')
-    set${stringFirst(item.tsField)}(res.data.result)\n\0\0\0\0`
+    if (item.dictType && !completeDicts.includes(item.dictType)) {
+      getDicts += `const ${item.dictType} = await getDictsApi('${item.dictType}')
+      setDict${underlineToCamel(item.columnName)}(${item.dictType}.data.result)\n    `
+      completeDicts.push(item.dictType)
     }
   })
   return getDicts
@@ -305,11 +307,13 @@ const getDicts = (data: ColumnType[]) => {
  */
 const getDictsState = (data: ColumnType[]) => {
   let dictState = ''
+  const completeDicts = []
   data.forEach((item) => {
-    if (item.dictType) {
+    if (item.dictType && !completeDicts.includes(item.dictType)) {
       dictState += `const [dict${underlineToCamel(item.columnName)}, setDict${underlineToCamel(
         item.columnName
-      )}] = useState<IdictType[]>([])\n\0\0`
+      )}] = useState<IdictType[]>([])\n    `
+      completeDicts.push(item.dictType)
     }
   })
   return dictState
@@ -360,7 +364,7 @@ const createTableData = (data: ColumnType[]) => {
                 underlineToCamel(item.columnName) +
                 '} value={value} />,'
               : ''
-          }},\n\0\0\0\0`
+          }},\n    `
       } else {
       }
     }
@@ -392,13 +396,13 @@ const createHtmlSearch = (data: ColumnType[]) => {
                 label: item.dictLabel,
               }))}
             />
-          </Form.Item>\n\0\0\0\0\0\0\0\0`
+          </Form.Item>\n        `
           }
           break
         case 'datetime':
           htmlSearch += `<Form.Item label="${item.columnComment}"  name="${item.tsField}">
            <RangePicker style={{ width: 240 }} />
-         </Form.Item>\n\0\0\0\0\0\0\0\0`
+         </Form.Item>\n        `
           break
 
         default:
@@ -409,7 +413,7 @@ const createHtmlSearch = (data: ColumnType[]) => {
             allowClear
             onPressEnter={searchQueryFn}
           />
-         </Form.Item>\n\0\0\0\0\0\0\0\0`
+         </Form.Item>\n        `
           break
       }
     }
@@ -439,7 +443,7 @@ const createHtmlAddEdit = (data: ColumnType[]) => {
                : ''
            }>
           <Input placeholder="请输入字典类型" />
-        </Form.Item>\n\0\0\0\0\0\0\0\0\0\0`
+        </Form.Item>\n        `
           break
         case 'textarea':
           addEdit += `<Form.Item
@@ -448,7 +452,7 @@ const createHtmlAddEdit = (data: ColumnType[]) => {
            rules={[{ max: 200, message: '请输入内容(200字以内)!' }]}
           >
           <TextArea showCount placeholder="请输入内容(200字以内)"/>
-         </Form.Item>\n\0\0\0\0\0\0\0\0\0\0`
+         </Form.Item>\n        `
           break
         case 'radio':
           if (item.dictType) {
@@ -459,7 +463,7 @@ const createHtmlAddEdit = (data: ColumnType[]) => {
                 label: item.dictLabel,
               }))}
             />
-           </Form.Item>\n\0\0\0\0\0\0\0\0\0\0`
+           </Form.Item>\n        `
           }
           break
         case 'select':
@@ -473,7 +477,7 @@ const createHtmlAddEdit = (data: ColumnType[]) => {
                label: item.dictLabel,
              }))}
             />
-           </Form.Item>\n\0\0\0\0\0\0\0\0\0\0`
+           </Form.Item>\n        `
           }
           break
         case 'checkbox':
@@ -485,13 +489,13 @@ const createHtmlAddEdit = (data: ColumnType[]) => {
                 label: item.dictLabel,
               }))}
             />
-           </Form.Item>\n\0\0\0\0\0\0\0\0\0\0`
+           </Form.Item>\n        `
           }
           break
         case 'datetime':
           addEdit += `<Form.Item label="${item.columnComment}"    name="${item.tsField}">
               <RangePicker style={{ width: 240 }} />
-            </Form.Item>\n\0\0\0\0\0\0\0\0`
+            </Form.Item>\n        `
           break
         case 'imageUpload':
           break
@@ -595,12 +599,11 @@ module.exports = router`
 
   // 第三步 生成 middleware 业务层
   codes[`middleware.ts`] = `import { Context } from 'koa'
-import { getDataTypeSer } from '@/business/service/${data.moduleName}/${data.businessName}.service'
 import { getListSer, addSer, putSer, getDetailSer, delSer } from '@/business/service'
 import { userType} from '@/types'
-import { userType, I${data.className}QueryType, I${data.className}QuerySerType, I${
+import {  I${data.className}QueryType, I${data.className}QuerySerType, I${data.className}, I${
     data.className
-  }, I${data.className}Ser } from '@/types/${data.moduleName}/${data.businessName}.d.ts'
+  }Ser } from '@/types/${data.moduleName}/${data.businessName}'
 import errors from '@/app/err.type'
 import { formatHumpLineTransfer } from '@/business/utils'
 import { excelJsExport } from '@/business/utils/excel'
@@ -724,20 +727,20 @@ export const putJudg = Joi.object({
   // 第五步 生成 typescript 接口类型文件
   codes[`node.d.ts`] = `
   // 后端 类型文件
-  export interface I${data.className}QueryType {
+  export interface I${data.businessName}QueryType {
     pageNum: number
     pageSize: number
     ${typeCreate(data.columns, 'Query')}}
 
-  export interface I${data.className}QuerySerType {
+  export interface I${data.businessName}QuerySerType {
     pageNum: number
     pageSize: number
     ${typeCreate(data.columns, 'QuerySer')}}
 
-  export interface I${data.className} {
+  export interface I${data.businessName} {
     ${typeCreate(data.columns, 'List')}}
 
-  export interface I${data.className}Ser {
+  export interface I${data.businessName}Ser {
     ${typeCreate(data.columns, 'ListSer')}}`
 
   // 第六步 前端 生成api接口
@@ -787,8 +790,8 @@ import {
   Form,
   Input,
   Select,
-  ${data.columns.find((item) => item.htmlType === 'datetime') ? 'DatePicker' : ''}
-  ${data.columns.find((item) => item.htmlType === 'checkbox') ? 'Checkbox' : ''}
+  ${data.columns.find((item) => item.htmlType === 'datetime') ? 'DatePicker,' : ''}
+  ${data.columns.find((item) => item.htmlType === 'checkbox') ? 'Checkbox,' : ''}
   Col,
   Row,
   Tooltip,
@@ -816,7 +819,9 @@ import {
 } from '@/api/modules/${data.moduleName}/${data.businessName}'
 import { getDictsApi } from '@/api/modules/system/dictData'
 import { download } from '@/api'
-import { I${data.businessName}Type } from '@/type/modules/${data.moduleName}/${data.businessName}'
+import { I${data.businessName}Type  ${
+    data.tplCategory === 'tree' ? ',ITreeType' : ''
+  }} from '@/type/modules/${data.moduleName}/${data.businessName}'
 ${
   data.columns.find((item) => item.htmlType === 'datetime')
     ? 'const { RangePicker } = DatePicker'
@@ -837,7 +842,7 @@ const ${stringFirst(data.className)}: React.FC = () => {
   // 分页
   const [queryParams, setQueryParams] = useState<I${
     data.businessName
-  }API>({ pageNum: 1, pageSize: 10 })
+  }Type>({ pageNum: 1, pageSize: 10 })
   // 列表数据
   const [dataList, setDataList] = useState({ count: 0, rows: [] as I${data.businessName}Type[] })
   // table loading
@@ -926,7 +931,7 @@ const ${stringFirst(data.className)}: React.FC = () => {
   }
 
   // 编辑
-  const handleFormFinish = async (values: I${data.businessName}Type}) => {
+  const handleFormFinish = async (values: I${data.businessName}Type) => {
     try {
       if (isAdd) {
         await addAPI(values)
@@ -1203,6 +1208,15 @@ export interface IgetDetailTypeAPI {
   code: number
   message: string
   result: I${data.businessName}Type
+}
+
+${
+  data.tplCategory === 'tree'
+    ? `export interface ITreeType {
+      ${typeCreate(data.columns, 'ListSer')}
+      children?: any[]
+    }`
+    : ''
 }
 
 // 新增，修改，删除 成功返回

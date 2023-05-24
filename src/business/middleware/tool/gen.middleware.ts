@@ -18,8 +18,8 @@ import sequelize from '@/mysql/db/seq.db'
 import { conversionTables, generateCode } from '@/business/utils/tools'
 import ToolGenColumn from '@/mysql/model/tool/gen_column.model'
 import fs from 'fs'
-import zlib from 'zlib'
 import path from 'path'
+import archiver from 'archiver'
 
 // 查询数据库所有的表 -》 并将表数据转换为代码生成表的数据
 export const findAllSqlMid = async (ctx: Context, next: () => Promise<void>) => {
@@ -249,6 +249,8 @@ export const createFileMid = async (ctx: Context, next: () => Promise<void>) => 
 
       // 4、将业务文件分别写入 node 和 react 文件夹下
       for (const key in code) {
+        console.log(252, key)
+
         if (!frontFile.includes(key)) {
           let newKey = ''
           if (key.indexOf('node') !== -1) {
@@ -299,45 +301,31 @@ export const batchGenCodeMid = async (ctx: Context, next: () => Promise<void>) =
     // 5 压缩刚刚创建的代码文件
     const basePath = __dirname.split('src')[0]
     const filePaths = ['src\\node', 'src\\react']
-    const folderPaths = filePaths.map((folder) => path.join(basePath, folder))
-    const writable = zlib.createGzip()
 
-    // 要添加的多个文件路径数组
-    folderPaths.forEach((folderPath) => {
-      console.log(296, folderPath)
-
-      const folders = fs.readdirSync(folderPath)
-      folders.forEach((name) => {
-        console.log(299, name)
-
-        const files = fs.readdirSync(folderPath + '\\' + name)
-        console.log(301, files)
-        files.forEach((file) => {
-          const filePath = path.join(folderPath, file)
-          const readable = fs.createReadStream(filePath)
-          readable.pipe(writable, { end: false })
-        })
-      })
+    const output = fs.createWriteStream('leno-admin.zip')
+    const archive = archiver('zip', {
+      zlib: { level: 9 } // 设置压缩级别
     })
 
-    writable.end()
-
-    // 将压缩后的数据转换为Buffer
-    const bufferData = []
-    writable.on('data', (data) => bufferData.push(data))
-    writable.on('end', async () => {
-      const buffer = Buffer.concat(bufferData)
-      console.log(304, buffer)
-
-      ctx.state.buffer = buffer
-      await next()
-
-      // 6 删除刚刚生成的文件
-      console.log(320)
-      // filePaths.forEach((fileName) => {
-      //   fs.unlinkSync(basePath + fileName)
-      // })
+    archive.on('error', function (err) {
+      throw err
     })
+
+    archive.pipe(output)
+    for (const i of filePaths) {
+      archive.directory(i, 'leno-admin\\' + i.split('\\')[1])
+    }
+    output.on('close', () => {
+      fs.unlinkSync('leno-admin.zip')
+    })
+    archive.finalize()
+    ctx.state.buffer = archive
+    await next()
+    // 6 删除刚刚生成的文件
+    // console.log(320)
+    // filePaths.forEach((fileName) => {
+    //   fs.unlinkSync(fileName)
+    // })
   } catch (error) {
     console.error('生成压缩包', error)
     return ctx.app.emit('error', sqlErr, ctx)

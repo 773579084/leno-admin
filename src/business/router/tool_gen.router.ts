@@ -46,9 +46,9 @@ router.put('/gen', addEditSchema(putJudg), putMid, IndexCon())
 router.get('/gen/preview/:id', judgeIdSchema(), codePreviewMid, IndexCon())
 
 // 生成代码（压缩包）
-router.get('/gen/batchGenCode/:ids', judgeIdSchema(), createFileMid, batchGenCodeMid, IndexCon())
+router.post('/gen/batchGenCode/:ids', judgeIdSchema(), batchGenCodeMid, IndexCon())
 
 // 生成代码（写到指定文件夹）
-router.get('/gen/genCode/:ids', judgeIdSchema(), genCodeMid, IndexCon())
+router.post('/gen/genCode/:ids', judgeIdSchema(), genCodeMid, IndexCon())
 
 module.exports = router
