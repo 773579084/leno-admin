@@ -2,7 +2,7 @@ import { Context } from 'koa'
 import { getListSer, addSer, putSer, getDetailSer } from '@/business/service'
 import { userType, IdictType } from '@/types'
 import errors from '@/app/err.type'
-import { formatHumpLineTransfer } from '@/business/utils'
+import { formatHumpLineTransfer, removeFolder } from '@/business/utils'
 const { uploadParamsErr, getListErr, sqlErr, delErr } = errors
 import { Op } from 'sequelize'
 import {
@@ -296,7 +296,6 @@ export const createFileMid = async (ctx: Context, next: () => Promise<void>) => 
 export const batchGenCodeMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     // 5 压缩刚刚创建的代码文件
-    const basePath = __dirname.split('src')[0]
     const filePaths = ['src\\node', 'src\\react']
 
     const output = fs.createWriteStream('leno-admin.zip')
@@ -305,7 +304,7 @@ export const batchGenCodeMid = async (ctx: Context, next: () => Promise<void>) =
     })
 
     archive.on('error', function (err) {
-      throw err
+      if (err) err
     })
 
     archive.pipe(output)
@@ -315,12 +314,15 @@ export const batchGenCodeMid = async (ctx: Context, next: () => Promise<void>) =
     // 生成完后将zip文件删除
     output.on('close', () => {
       fs.unlinkSync('leno-admin.zip')
+      // 6 删除刚刚生成的文件
+      filePaths.forEach((path) => {
+        removeFolder(path)
+      })
     })
     archive.finalize()
     ctx.state.buffer = archive
 
     await next()
-    // 6 删除刚刚生成的文件
   } catch (error) {
     console.error('生成压缩包', error)
     return ctx.app.emit('error', sqlErr, ctx)

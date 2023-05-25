@@ -17,12 +17,35 @@ export const removeSpecifyFile = (filename: string) => {
   return true
 }
 
+/**
+ * 删除文件夹及文件内所有的文件夹及文件
+ * @param folderPath
+ */
+export const removeFolder = (folderPath: string) => {
+  // 查询文件夹下面的所有文件
+  const files = fs.readdirSync(folderPath)
+
+  for (let item of files) {
+    const stats = fs.statSync(`${folderPath}\\${item}`)
+    // 检查是否为文件夹
+    if (stats.isDirectory()) {
+      // 为文件夹就递归
+      removeFolder(`${folderPath}\\${item}`)
+    } else {
+      // 为文件就用删除文件方式删除
+      fs.unlinkSync(`${folderPath}\\${item}`)
+    }
+  }
+  // 文件夹内部文件删除完后，就用删除文件夹的方式删除文件夹
+  fs.rmdirSync(folderPath)
+}
+
 /** 返回数据下划线转化为驼峰命名
  * @param {data} 'obj或ary'
  * @param {type} 'hump' 为下划线转驼峰，'line' 为驼峰转下划线
  * @return {Array||Object}
  */
-export const formatHumpLineTransfer = (data, type = 'hump') => {
+export const formatHumpLineTransfer = (data: any, type = 'hump') => {
   // 判断传入的值是对象还是数组
   const newData =
     Object.prototype.toString.call(data) === '[object Object]'
