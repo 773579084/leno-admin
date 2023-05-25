@@ -18,7 +18,6 @@ import sequelize from '@/mysql/db/seq.db'
 import { conversionTables, generateCode } from '@/business/utils/tools'
 import ToolGenColumn from '@/mysql/model/tool/gen_column.model'
 import fs from 'fs'
-import path from 'path'
 import archiver from 'archiver'
 
 // 查询数据库所有的表 -》 并将表数据转换为代码生成表的数据
@@ -249,8 +248,6 @@ export const createFileMid = async (ctx: Context, next: () => Promise<void>) => 
 
       // 4、将业务文件分别写入 node 和 react 文件夹下
       for (const key in code) {
-        console.log(252, key)
-
         if (!frontFile.includes(key)) {
           let newKey = ''
           if (key.indexOf('node') !== -1) {
@@ -315,17 +312,15 @@ export const batchGenCodeMid = async (ctx: Context, next: () => Promise<void>) =
     for (const i of filePaths) {
       archive.directory(i, 'leno-admin\\' + i.split('\\')[1])
     }
+    // 生成完后将zip文件删除
     output.on('close', () => {
       fs.unlinkSync('leno-admin.zip')
     })
     archive.finalize()
     ctx.state.buffer = archive
+
     await next()
     // 6 删除刚刚生成的文件
-    // console.log(320)
-    // filePaths.forEach((fileName) => {
-    //   fs.unlinkSync(fileName)
-    // })
   } catch (error) {
     console.error('生成压缩包', error)
     return ctx.app.emit('error', sqlErr, ctx)
