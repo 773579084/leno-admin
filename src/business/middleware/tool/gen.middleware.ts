@@ -208,8 +208,8 @@ export const codePreviewMid = async (ctx: Context, next: () => Promise<void>) =>
   }
 }
 
-// 生成文件
-export const createFileMid = async (ctx: Context, next: () => Promise<void>) => {
+// 生成压缩包
+export const batchGenCodeMid = async (ctx: Context, next: () => Promise<void>) => {
   const ids = ctx.state.ids
 
   try {
@@ -284,16 +284,11 @@ export const createFileMid = async (ctx: Context, next: () => Promise<void>) => 
         }
       }
     })
-
-    await next()
   } catch (error) {
     console.error('生成代码）', error)
     return ctx.app.emit('error', sqlErr, ctx)
   }
-}
 
-// 生成压缩包
-export const batchGenCodeMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     // 5 压缩刚刚创建的代码文件
     const filePaths = ['src\\node', 'src\\react']
@@ -331,5 +326,88 @@ export const batchGenCodeMid = async (ctx: Context, next: () => Promise<void>) =
 
 // 生成代码（写到指定文件夹）
 export const genCodeMid = async (ctx: Context, next: () => Promise<void>) => {
+  const ids = ctx.state.ids
+
+  try {
+    const { rows } = await getListSer<genQuerySerType>(
+      ToolGen,
+      { pageNum: 1, pageSize: 1000, table_id: ids },
+      {
+        include: [
+          {
+            model: ToolGenColumn,
+            as: 'columns'
+          }
+        ]
+      }
+    )
+
+    const newRows = formatHumpLineTransfer(rows)
+
+    // 统一生成业务文件夹
+    newRows.forEach((row: GenType) => {
+      // 创建业务文件夹
+      const genPath = row.genPath === '/' ? 'src' : row.genPath
+
+      fs.mkdir(`${genPath}/${row.businessName}`, (err) => {
+        if (err) console.log(246, err)
+      })
+    })
+    // 遍历生成页面代码写入到文件夹里，然后统一打包成压缩包发送给前端
+    newRows.forEach((row: GenType) => {
+      const frontFile = ['api.ts', 'index.tsx', 'index-tree.tsx', 'react.d.ts']
+      const code = generateCode(row)
+      const genPath = row.genPath === '/' ? 'src' : row.genPath
+
+      // 在业务文件内创建 node 和 react 文件夹
+      const createFile = ['node', 'react']
+      createFile.forEach((fileName) => {
+        fs.mkdir(`${genPath}/${row.businessName}/${fileName}`, (err) => {
+          if (err) console.log(236, err)
+        })
+      })
+
+      // 将业务文件分别写入 node 和 react 文件夹下
+      for (const key in code) {
+        if (!frontFile.includes(key)) {
+          let newKey = ''
+          if (key.indexOf('node') !== -1) {
+            const keyList = key.split('.')
+            keyList.splice(0, 1)
+            newKey = keyList.join('.')
+          } else {
+            newKey = key
+          }
+
+          fs.writeFile(
+            `${genPath}/${row.businessName}/node/${row.businessName}.${newKey}`,
+            code[key],
+            (err) => {
+              if (err) console.log(266, err)
+            }
+          )
+        } else {
+          let newKey = ''
+          if (key.indexOf('react') !== -1) {
+            const keyList = key.split('.')
+            keyList.splice(0, 1)
+            newKey = keyList.join('.')
+          } else {
+            newKey = key
+          }
+          fs.writeFile(
+            `${genPath}/${row.businessName}/react/${row.businessName}.${newKey}`,
+            code[key],
+            (err) => {
+              if (err) console.log(282, err)
+            }
+          )
+        }
+      }
+    })
+  } catch (error) {
+    console.error('生成代码', error)
+    return ctx.app.emit('error', sqlErr, ctx)
+  }
   await next()
 }
