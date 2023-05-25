@@ -274,13 +274,14 @@ export const batchGenCodeMid = async (ctx: Context, next: () => Promise<void>) =
           } else {
             newKey = key
           }
-          fs.writeFile(
-            `src/react/${row.businessName}/${row.businessName}.${newKey}`,
-            code[key],
-            (err) => {
-              if (err) console.log(282, err)
-            }
-          )
+          const businessName =
+            newKey.indexOf('d.ts') !== -1
+              ? `${row.businessName}.${newKey}`
+              : row.businessName + '.' + newKey.split('.')[newKey.split('.').length - 1]
+
+          fs.writeFile(`src/react/${row.businessName}/${businessName}`, code[key], (err) => {
+            if (err) console.log(282, err)
+          })
         }
       }
     })
@@ -360,11 +361,11 @@ export const genCodeMid = async (ctx: Context, next: () => Promise<void>) => {
       const genPath = row.genPath === '/' ? 'src' : row.genPath
 
       // 在业务文件内创建 node 和 react 文件夹
-      const createFile = ['node', 'react']
-      createFile.forEach((fileName) => {
-        fs.mkdir(`${genPath}/${row.businessName}/${fileName}`, (err) => {
-          if (err) console.log(236, err)
-        })
+      fs.mkdir(`${genPath}/${row.businessName}/node`, (err) => {
+        if (err) console.log(236, err)
+      })
+      fs.mkdir(`${genPath}/${row.businessName}/react`, (err) => {
+        if (err) console.log(236, err)
       })
 
       // 将业务文件分别写入 node 和 react 文件夹下
@@ -395,13 +396,14 @@ export const genCodeMid = async (ctx: Context, next: () => Promise<void>) => {
           } else {
             newKey = key
           }
-          fs.writeFile(
-            `${genPath}/${row.businessName}/react/${row.businessName}.${newKey}`,
-            code[key],
-            (err) => {
-              if (err) console.log(282, err)
-            }
-          )
+          const businessName =
+            newKey.indexOf('d.ts') !== -1
+              ? `${row.businessName}.${newKey}`
+              : row.businessName + '.' + newKey.split('.')[newKey.split('.').length - 1]
+
+          fs.writeFile(`${genPath}/${row.businessName}/react/${businessName}`, code[key], (err) => {
+            if (err) console.log(282, err)
+          })
         }
       }
     })

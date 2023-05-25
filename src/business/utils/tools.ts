@@ -33,7 +33,7 @@ const sqlTsContrast = {
   char: 'string',
   varchar: 'string',
   text: 'string',
-  datetime: 'date',
+  datetime: 'string',
   bool: 'boolean',
   boolean: 'boolean',
   time: 'string'
@@ -242,7 +242,8 @@ const typeCreate = (data: ColumnType[], type: string) => {
   let typeString = ''
 
   data.forEach((item) => {
-    if (type === 'Query' && item.isQuery === '0') {
+    // 当等于 Query 时默认渲染表所有的type类型
+    if (type === 'Query') {
       switch (item.queryType) {
         case 'between':
           typeString += `${item.tsField}?: {
@@ -439,10 +440,10 @@ const createHtmlAddEdit = (data: ColumnType[]) => {
            hidden={${item.isEdit === '1'}}
            ${
              item.isRequired === '0'
-               ? 'rules={[{ required: true, message: 请输入' + item.columnComment + '! }]}'
+               ? 'rules={[{ required: true, message: "请输入' + item.columnComment + '!" }]}'
                : ''
            }>
-          <Input placeholder="请输入字典类型" />
+          <Input placeholder= "请输入"+${item.columnComment} />
         </Form.Item>\n        `
           break
         case 'textarea':
@@ -601,9 +602,9 @@ module.exports = router`
   codes[`middleware.ts`] = `import { Context } from 'koa'
 import { getListSer, addSer, putSer, getDetailSer, delSer } from '@/business/service'
 import { userType} from '@/types'
-import {  I${data.className}QueryType, I${data.className}QuerySerType, I${data.className}, I${
-    data.className
-  }Ser } from '@/types/${data.moduleName}/${data.businessName}'
+import {  I${data.businessName}QueryType, I${data.businessName}QuerySerType, I${
+    data.businessName
+  }, I${data.businessName}Ser } from '@/types/${data.moduleName}/${data.businessName}'
 import errors from '@/app/err.type'
 import { formatHumpLineTransfer } from '@/business/utils'
 import { excelJsExport } from '@/business/utils/excel'
@@ -1171,7 +1172,7 @@ const ${stringFirst(data.className)}: React.FC = () => {
         >
           <Form
             form={AddEditForm}
-            labelCol={{ span: 6 }}
+            labelCol={{ span: 5 }}
             onFinish={handleFormFinish}
           >
             ${createHtmlAddEdit(data.columns)}
@@ -1191,7 +1192,7 @@ export default ${stringFirst(data.className)}`
 export interface I${data.businessName}Type {
   pageNum?: number
   pageSize?: number
-  ${typeCreate(data.columns, 'ListSer')}}
+  ${typeCreate(data.columns, 'Query')}}
 
 // 数据列表
 export interface IgetListAPI {
@@ -1213,7 +1214,7 @@ export interface IgetDetailTypeAPI {
 ${
   data.tplCategory === 'tree'
     ? `export interface ITreeType {
-      ${typeCreate(data.columns, 'ListSer')}
+      ${typeCreate(data.columns, 'Query')}
       children?: any[]
     }`
     : ''
