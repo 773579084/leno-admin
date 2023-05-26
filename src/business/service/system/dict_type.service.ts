@@ -1,6 +1,3 @@
-/**
- * 字典类型
- */
 import SysDictType from '@/mysql/model/system/dict_type.model'
 
 // 获取列表

@@ -66,6 +66,7 @@ const SysRole = seq.define(
     },
     remark: {
       type: DataTypes.CHAR(255),
+      defaultValue: '',
       comment: '备注'
     }
   },

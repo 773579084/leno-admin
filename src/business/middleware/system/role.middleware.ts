@@ -1,13 +1,21 @@
 import { Context } from 'koa'
-import { getListSer, addSer, putSer, getDetailSer, delSer } from '@/business/service'
+import { getListSer, addSer, putSer, getDetailSer, delSer, addAllSer } from '@/business/service'
 import { userType } from '@/types'
-import { IroleQueryType, IroleQuerySerType, Irole, IroleSer } from '@/types/system/role'
+import {
+  IroleQueryType,
+  IroleQuerySerType,
+  Irole,
+  IroleSer,
+  IroleMenuType
+} from '@/types/system/role'
 import errors from '@/app/err.type'
 import { formatHumpLineTransfer } from '@/business/utils'
 import { excelJsExport } from '@/business/utils/excel'
 import { excelBaseStyle } from '@/business/public/excelMap'
 import SysRole from '@/mysql/model/system/role.model'
 import { Op } from 'sequelize'
+import SysRoleMenu from '@/mysql/model/system/sys_role_menu.model'
+import { getRoleMenuIdSer } from '@/business/service/system/role.service'
 const { uploadParamsErr, getListErr, sqlErr, delErr, exportExcelErr } = errors
 
 // 获取列表
@@ -15,6 +23,7 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { pageNum, pageSize, ...params } = ctx.query as unknown as IroleQueryType
     let newParams = { pageNum, pageSize, del_flag: '0' } as IroleQuerySerType
+    if (params.createdAt) params.createdAt = JSON.parse(params.createdAt as unknown as string)
 
     params.roleName ? (newParams.role_name = { [Op.like]: params.roleName + '%' }) : null
     params.roleKey ? (newParams.role_key = { [Op.like]: params.roleKey + '%' }) : null
@@ -41,9 +50,19 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
     const { userName } = ctx.state.user as userType
     const addContent = ctx.request['body'] as Irole
     const addContent2 = { ...addContent, createBy: userName }
-    const newAddContent = formatHumpLineTransfer(addContent2, 'line')
+    const newAddContent = formatHumpLineTransfer(addContent2, 'line') as Irole
 
-    await addSer<IroleSer>(SysRole, newAddContent)
+    const res = await addSer<IroleSer>(SysRole, newAddContent)
+
+    // 批量 建立角色与菜单关系
+    const RoleMenu = []
+    addContent.menuIds.forEach((menuId) => {
+      RoleMenu.push({
+        role_id: res.role_id,
+        menu_id: menuId
+      })
+    })
+    await addAllSer(SysRoleMenu, RoleMenu)
     await next()
   } catch (error) {
     console.error('新增用户失败', error)
@@ -61,7 +80,7 @@ export const delMid = async (ctx: Context, next: () => Promise<void>) => {
       { del_flag: '1', update_by: userName }
     )
   } catch (error) {
-    console.error('删除用户失败', error)
+    console.error('删除角色失败', error)
     return ctx.app.emit('error', delErr, ctx)
   }
 
@@ -73,9 +92,15 @@ export const getDetailMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const res = await getDetailSer<IroleSer>(SysRole, { role_id: ctx.state.ids })
 
-    ctx.state.formatData = res
+    const roleMenus = await getRoleMenuIdSer(ctx.state.ids)
+    const ids = [] as number[]
+    roleMenus.forEach((item) => {
+      ids.push(item.menu_id)
+    })
+
+    ctx.state.formatData = { ...res, menuIds: ids }
   } catch (error) {
-    console.error('用户个人信息查询错误', error)
+    console.error('角色信息查询错误', error)
     return ctx.app.emit('error', sqlErr, ctx)
   }
 
@@ -92,6 +117,23 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
 
     await putSer<IroleSer>(SysRole, { role_id }, { ...data, update_by: userName })
 
+    // 删除原 角色菜单关系
+    const roleMenus = await getRoleMenuIdSer(role_id)
+    const ids = [] as number[]
+    roleMenus.forEach((item) => {
+      ids.push(item.id)
+    })
+    await delSer(SysRoleMenu, { id: ids })
+
+    // 批量 建立角色与菜单关系
+    const RoleMenu = []
+    res.menuIds.forEach((menuId) => {
+      RoleMenu.push({
+        role_id,
+        menu_id: menuId
+      })
+    })
+    await addAllSer(SysRoleMenu, RoleMenu)
     await next()
   } catch (error) {
     console.error('修改失败', error)
@@ -109,7 +151,7 @@ export const putRoleStatusMid = async (ctx: Context, next: () => Promise<void>) 
 
     await next()
   } catch (error) {
-    console.error('修改用户状态失败', error)
+    console.error('修改角色状态失败', error)
     return ctx.app.emit('error', uploadParamsErr, ctx)
   }
 }

@@ -37,6 +37,7 @@ export interface Irole {
   roleSort?: number
   status?: string
   remark?: string
+  menuIds?: number[]
 }
 
 export interface IroleSer {
@@ -47,4 +48,10 @@ export interface IroleSer {
   status?: string
   remark?: string
   update_by?: string
+}
+
+export interface IroleMenuType {
+  id: number
+  role_id: number
+  menu_id: number
 }

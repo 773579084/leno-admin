@@ -201,7 +201,7 @@ const listSearch = (data: ColumnType[]) => {
       }]: params.${item.tsField} ${item.queryType === 'like' ? '+ "%"' : ''} }) : null\n    `
     }
     if (item.queryType === 'between') {
-      search += `params.${item.tsField} ? newParams.${item.columnName} = {[Op.between]: [params.${item.tsField}.beginTime, params.${item.tsField}.endTime]} : null\n    `
+      search += ` if (params.${item.tsField}) params.${item.tsField} = JSON.parse(params.${item.tsField} as unknown as string)\n    params.${item.tsField} ? newParams.${item.columnName} = {[Op.between]: [params.${item.tsField}.beginTime, params.${item.tsField}.endTime]} : null\n    `
     }
   })
   return search
@@ -519,7 +519,7 @@ const createHtmlAddEdit = (data: ColumnType[]) => {
  */
 export const generateCode = (data: GenType, isZip?: boolean) => {
   const codes = {}
-
+  const mainIdKey = data.columns.find((item) => item.isPk === '0').tsField
   // 第一步 生成model模型
   codes[`model.ts`] = `
 import { DataTypes } from 'sequelize'
@@ -623,7 +623,7 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
     ctx.state.formatData = res
     await next()
   } catch (error) {
-    console.error('查询字典类型列表失败', error)
+    console.error('查询列表失败', error)
     return ctx.app.emit('error', getListErr, ctx)
   }
 }
@@ -639,7 +639,7 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
     await addSer<I${data.className}Ser>(${data.className}, newAddContent)
     await next()
   } catch (error) {
-    console.error('新增用户失败', error)
+    console.error('新增失败', error)
     return ctx.app.emit('error', uploadParamsErr, ctx)
   }
 }
@@ -649,7 +649,7 @@ export const delMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     await delSer(${data.className}, { ${data.columns[0].columnName}: ctx.state.ids })
   } catch (error) {
-    console.error('删除用户失败', error)
+    console.error('删除失败', error)
     return ctx.app.emit('error', delErr, ctx)
   }
 
@@ -665,7 +665,7 @@ export const getDetailMid = async (ctx: Context, next: () => Promise<void>) => {
 
     ctx.state.formatData = res
   } catch (error) {
-    console.error('用户个人信息查询错误', error)
+    console.error('详细数据查询错误', error)
     return ctx.app.emit('error', sqlErr, ctx)
   }
 
@@ -720,6 +720,7 @@ export const addJudg = Joi.object({
 
 // 验证编辑信息 nick 必传字符串
 export const putJudg = Joi.object({
+  ${mainIdKey}:Joi.number().required(),
   ${addEditSchema(data.columns, false)}})`
 
   // 第五步 生成 typescript 接口类型文件
@@ -776,7 +777,6 @@ export const putAPI = (data: I${data.businessName}Type) => {
 }`
 
   // 第七步 前端 生成dom结构
-  const mainIdKey = data.columns.find((item) => item.isPk === '0').tsField
   const total = '`共 ${total} 条`'
   const ids = '`是否确认删除字典编号为"${ids}"的数据项？`'
   codes[
@@ -859,6 +859,8 @@ const ${stringFirst(data.className)}: React.FC = () => {
   const [selectKeys, setSelectKeys] = useState<React.Key[]>([])
   //  table 后台使用的key
   const [rowKeys, setRowKeys] = useState('')
+  // 当前编辑的id
+  const [currentId, setCurrentId] = useState<number>()
   ${
     data.tplCategory === 'tree'
       ? `  //  行展开
@@ -922,10 +924,11 @@ const ${stringFirst(data.className)}: React.FC = () => {
 
   // 获取详情
   const handleEditForm = async (id: number) => {
-    setIsModalOpen(true)
-    setIsAdd(false)
     const { data } = await getDetailAPI(id)
     AddEditForm.setFieldsValue(data.result as unknown as I${data.businessName}Type)
+    setCurrentId(id)
+    setIsModalOpen(true)
+    setIsAdd(false)
   }
 
   // 编辑
@@ -934,7 +937,7 @@ const ${stringFirst(data.className)}: React.FC = () => {
       if (isAdd) {
         await addAPI(values)
       } else {
-        await putAPI({ ...values, ${mainIdKey}: values.${mainIdKey} })
+        await putAPI({ ...values, ${mainIdKey}: currentId })
       }
     } catch (error) {}
     AddEditForm.resetFields()

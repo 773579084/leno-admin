@@ -1,6 +1,3 @@
-/**
- * 字典类型
- */
 import SysDictData from '@/mysql/model/system/dict_data.model'
 
 // 获取 字典数据信息

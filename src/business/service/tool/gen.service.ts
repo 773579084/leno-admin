@@ -1,7 +1,3 @@
-/**
- * 代码生成
- */
-
 import ToolGen from '@/mysql/model/tool/gen.model'
 
 // 查询字段 的表id

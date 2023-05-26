@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize'
 import seq from '@/mysql/db/seq.db'
 
-// 创建数据库模型 用户与岗位关联
+// 创建数据库模型 用户与角色关联
 const SysUserRole = seq.define(
   'sys_user_role',
   {

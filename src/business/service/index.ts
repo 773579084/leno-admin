@@ -54,13 +54,13 @@ export const getListSer = async <T extends { pageNum?: number; pageSize?: number
 export const addSer = async <T extends Optional<any, any>>(model: ModelStatic<any>, data: T) => {
   const res = await model.create(data)
 
-  return res
+  return res.dataValues
 }
 
 /**
  * 批量 新增
  * @param model 更改的数据库model
- * @param data []
+ * @param data [{}] 数组对象格式
  * @returns
  */
 export const addAllSer = async <T extends Optional<any, string>[]>(
@@ -81,7 +81,7 @@ export const addAllSer = async <T extends Optional<any, string>[]>(
 export const delSer = async (
   model: ModelStatic<any>,
   where: {
-    [id: string]: string[]
+    [id: string]: string[] | number[]
   }
 ) => {
   await model.destroy({ where })
@@ -106,7 +106,7 @@ export const getDetailSer = async <T>(
     where,
     ...conditions
   })
-  return res
+  return res.dataValues
 }
 
 /**
