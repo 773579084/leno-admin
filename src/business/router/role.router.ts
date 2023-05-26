@@ -9,7 +9,8 @@ import {
   getDetailMid,
   putMid,
   delMid,
-  exportMid
+  exportMid,
+  putRoleStatusMid
 } from '@/business/middleware/system/role.middleware'
 import { addEditSchema, judgeIdSchema } from '@/business/schema'
 import { exportExcelMid } from '@/business/middleware/common/common.middleware'
@@ -31,6 +32,9 @@ router.get('/role/:id', judgeIdSchema(), getDetailMid, formatHandle, IndexCon())
 
 // 修改
 router.put('/role', addEditSchema(putJudg), putMid, IndexCon())
+
+// 修改角色状态
+router.put('/role/status', putRoleStatusMid, IndexCon())
 
 // 导出列表(excel)
 router.post(

@@ -263,10 +263,7 @@ const typeCreate = (data: ColumnType[], type: string) => {
     if ((type === 'List' && item.isInsert === '0') || (type === 'List' && item.isEdit === '0')) {
       typeString += `${item.tsField}?: ${item.tsType}\n    `
     }
-    if (
-      (type === 'ListSer' && item.isInsert === '0') ||
-      (type === 'ListSer' && item.isEdit === '0')
-    ) {
+    if (type === 'ListSer') {
       typeString += `${item.columnName}?: ${item.tsType}\n    `
     }
   })

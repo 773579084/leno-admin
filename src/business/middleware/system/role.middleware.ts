@@ -14,7 +14,7 @@ const { uploadParamsErr, getListErr, sqlErr, delErr, exportExcelErr } = errors
 export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { pageNum, pageSize, ...params } = ctx.query as unknown as IroleQueryType
-    let newParams = { pageNum, pageSize } as IroleQuerySerType
+    let newParams = { pageNum, pageSize, del_flag: '0' } as IroleQuerySerType
 
     params.roleName ? (newParams.role_name = { [Op.like]: params.roleName + '%' }) : null
     params.roleKey ? (newParams.role_key = { [Op.like]: params.roleKey + '%' }) : null
@@ -54,7 +54,12 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
 // 删除
 export const delMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    await delSer(SysRole, { role_id: ctx.state.ids })
+    const { userName } = ctx.state.user as userType
+    await putSer<IroleSer>(
+      SysRole,
+      { role_id: ctx.state.ids },
+      { del_flag: '1', update_by: userName }
+    )
   } catch (error) {
     console.error('删除用户失败', error)
     return ctx.app.emit('error', delErr, ctx)
@@ -90,6 +95,21 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
     await next()
   } catch (error) {
     console.error('修改失败', error)
+    return ctx.app.emit('error', uploadParamsErr, ctx)
+  }
+}
+
+// 修改用户状态
+export const putRoleStatusMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    const { userName } = ctx.state.user as userType
+    let { id, status } = ctx.request['body'] as { status: string; id: string }
+
+    await putSer<IroleSer>(SysRole, { role_id: id }, { status, update_by: userName })
+
+    await next()
+  } catch (error) {
+    console.error('修改用户状态失败', error)
     return ctx.app.emit('error', uploadParamsErr, ctx)
   }
 }

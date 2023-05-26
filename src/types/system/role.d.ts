@@ -24,6 +24,7 @@ export interface IroleQueryType {
 export interface IroleQuerySerType {
   pageNum: number
   pageSize: number
+  del_flag?: string
   role_name?: { [OpTypes.like]: string }
   role_key?: { [OpTypes.like]: string }
   status?: { [OpTypes.eq]: string }
@@ -41,7 +42,9 @@ export interface Irole {
 export interface IroleSer {
   role_name?: string
   role_key?: string
+  del_flag?: string
   role_sort?: number
   status?: string
   remark?: string
+  update_by?: string
 }
