@@ -613,12 +613,12 @@ const { uploadParamsErr, getListErr, sqlErr, delErr, exportExcelErr } = errors
 // 获取列表
 export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    const { pageNum, pageSize, ...params } = ctx.query as unknown as I${data.className}QueryType
-    let newParams = { pageNum, pageSize } as I${data.className}QuerySerType
+    const { pageNum, pageSize, ...params } = ctx.query as unknown as I${data.businessName}QueryType
+    let newParams = { pageNum, pageSize } as I${data.businessName}QuerySerType
 
     ${listSearch(data.columns)}
 
-    const res = await getListSer<I${data.className}QuerySerType>(${data.className}, newParams)
+    const res = await getListSer<I${data.businessName}QuerySerType>(${data.className}, newParams)
 
     ctx.state.formatData = res
     await next()
@@ -632,11 +632,11 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
 export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { userName } = ctx.state.user as userType
-    const addContent = ctx.request['body'] as I${data.className}
+    const addContent = ctx.request['body'] as I${data.businessName}
     const addContent2 = { ...addContent, createBy: userName }
     const newAddContent = formatHumpLineTransfer(addContent2, 'line')
 
-    await addSer<I${data.className}Ser>(${data.className}, newAddContent)
+    await addSer<I${data.businessName}Ser>(${data.className}, newAddContent)
     await next()
   } catch (error) {
     console.error('新增失败', error)
@@ -659,7 +659,7 @@ export const delMid = async (ctx: Context, next: () => Promise<void>) => {
 // 获取详细数据
 export const getDetailMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    const res = await getDetailSer<I${data.className}Ser>(${data.className}, { ${
+    const res = await getDetailSer<I${data.businessName}Ser>(${data.className}, { ${
     data.columns[0].columnName
   }: ctx.state.ids })
 
@@ -676,11 +676,11 @@ export const getDetailMid = async (ctx: Context, next: () => Promise<void>) => {
 export const putMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { userName } = ctx.state.user as userType
-    const res = ctx.request['body'] as I${data.className}
+    const res = ctx.request['body'] as I${data.businessName}
     const lineData = await formatHumpLineTransfer(res, 'line')
     const { ${data.columns[0].columnName}, ...data } = lineData
 
-    await putSer<I${data.className}Ser>(${data.className}, { ${
+    await putSer<I${data.businessName}Ser>(${data.className}, { ${
     data.columns[0].columnName
   } }, { ...data, update_by: userName })
 
@@ -954,7 +954,7 @@ const ${stringFirst(data.className)}: React.FC = () => {
   const delFn = (ids: string) => {
     confirm({
       icon: <ExclamationCircleOutlined />,
-      content: ${ids},
+      content: 是否删除${ids}?,
       centered: true,
       async onOk() {
         try {
@@ -999,7 +999,7 @@ const ${stringFirst(data.className)}: React.FC = () => {
   // table
   let columns = [
     {
-      title: '字典编码',
+      title: '编码',
       dataIndex: 'index',
       key: 'index',
       align: 'center',
@@ -1136,7 +1136,7 @@ const ${stringFirst(data.className)}: React.FC = () => {
           <Table
             rowSelection={{ type: 'checkbox', fixed: 'left', ...rowSelection }}
             columns={columns}
-            dataSource={tableData as unknown as I${data.businessName}Type[]}
+            dataSource={tableData}
             pagination={false}
             rowKey="${mainIdKey}"
             size="middle"
