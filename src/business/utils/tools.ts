@@ -575,7 +575,9 @@ router.post(
 router.delete('/${data.businessName}/:id', judgeIdSchema(), delMid, IndexCon())
 
 // 获取详细数据
-router.get('/${data.businessName}/:id', judgeIdSchema(), getDetailMid, formatHandle, IndexCon())
+router.get('/${
+    data.businessName
+  }/detail/:id', judgeIdSchema(), getDetailMid, formatHandle, IndexCon())
 
 // 修改
 router.put(
@@ -786,9 +788,9 @@ import {
   Button,
   Form,
   Input,
-  Select,
-  ${data.columns.find((item) => item.htmlType === 'datetime') ? 'DatePicker,' : ''}
-  ${data.columns.find((item) => item.htmlType === 'checkbox') ? 'Checkbox,' : ''}
+  Select,${data.columns.find((item) => item.htmlType === 'datetime') ? '\nDatePicker,' : ''}${
+    data.columns.find((item) => item.htmlType === 'checkbox') ? '\nCheckbox,' : ''
+  }
   Col,
   Row,
   Tooltip,
@@ -803,8 +805,8 @@ import {
   PlusOutlined,
   EditOutlined,
   DeleteOutlined,
-  VerticalAlignBottomOutlined,
   ExclamationCircleOutlined,
+  ${data.tplCategory === 'tree' ? `SwapOutlined,` : 'VerticalAlignBottomOutlined,'}
 } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 import {
@@ -815,7 +817,7 @@ import {
   putAPI,
 } from '@/api/modules/${data.moduleName}/${data.businessName}'
 import { getDictsApi } from '@/api/modules/system/dictData'
-import { download } from '@/api'
+${data.tplCategory === 'tree' ? `` : `import { download } from '@/api'`}
 import { I${data.businessName}Type  ${
     data.tplCategory === 'tree' ? ',ITreeType' : ''
   }} from '@/type/modules/${data.moduleName}/${data.businessName}'
@@ -827,7 +829,7 @@ ${
 import ColorBtn from '@/components/ColorBtn'
 import { IdictType } from '@/type/modules/system/sysDictData'
 ${data.columns.find((item) => item.dictType) ? "import DictTag from '@/components/DictTag'" : ''}
-${data.tplCategory === 'tree' ? `import { treeDataFn } from '@/utils/smallUtils'` : ''}
+${data.tplCategory === 'tree' ? `import { generalTreeFn } from '@/utils/smallUtils'` : ''}
 
 const ${stringFirst(data.className)}: React.FC = () => {
   ${data.columns.find((item) => item.htmlType === 'textarea') ? 'const { TextArea } = Input' : ''}
@@ -840,23 +842,32 @@ const ${stringFirst(data.className)}: React.FC = () => {
     data.businessName
   }Type>({ pageNum: 1, pageSize: 10 })
   // 列表数据
-  const [dataList, setDataList] = useState({ count: 0, rows: [] as I${data.businessName}Type[] })
+ 
+  ${
+    data.tplCategory === 'tree'
+      ? `const [dataList, setDataList] = useState([])`
+      : `const [dataList, setDataList] = useState({ count: 0, rows: [] as I${data.businessName}Type[] })`
+  }
   // table loading
   const [loading, setLoading] = useState(true)
   // 新增编辑 model显隐
   const [isModalOpen, setIsModalOpen] = useState(false)
   // 新增编辑判断
   const [isAdd, setIsAdd] = useState(true)
-  // 非单个禁用
-  const [single, setSingle] = useState(true)
-  // 非多个禁用
-  const [multiple, setMultiple] = useState(true)
+  ${
+    data.tplCategory === 'tree'
+      ? ``
+      : `// 非单个禁用
+      const [single, setSingle] = useState(true)
+      // 非多个禁用
+      const [multiple, setMultiple] = useState(true)
+      // 保存table 选择的key
+      const [selectKeys, setSelectKeys] = useState<React.Key[]>([])
+      //  table 后台使用的key
+      const [rowKeys, setRowKeys] = useState('')`
+  }
   // 控制搜索隐藏显示
   const [searchShow, setSearchShow] = useState(true)
-  // 保存table 选择的key
-  const [selectKeys, setSelectKeys] = useState<React.Key[]>([])
-  //  table 后台使用的key
-  const [rowKeys, setRowKeys] = useState('')
   // 当前编辑的id
   const [currentId, setCurrentId] = useState<number>()
   ${
@@ -881,9 +892,9 @@ const ${stringFirst(data.className)}: React.FC = () => {
     const { data } = await getListAPI(queryParams)
     ${
       data.tplCategory === 'tree'
-        ? `const treeData = treeDataFn<${
-            data.tplCategory === 'tree' ? ',ITreeType' : ''
-          }>(data.result)
+        ? `const treeData = generalTreeFn(data.result.rows, '${underline(
+            data.treeParentCode
+          )}', '${underline(data.treeCode)}') as any
     setDataList(treeData)`
         : 'setDataList({ ...data.result })'
     }
@@ -903,11 +914,14 @@ const ${stringFirst(data.className)}: React.FC = () => {
   // 重置
   const resetQueryFn = () => {
     queryForm.resetFields()
-    setSelectKeys([])
+    ${data.tplCategory === 'tree' ? `` : `setSelectKeys([])`}
     setQueryParams({ pageNum: 1, pageSize: 10 })
   }
 
-  // row-select
+  ${
+    data.tplCategory === 'tree'
+      ? ``
+      : `  // row-select
   const rowSelection = {
     selectedRowKeys: selectKeys,
     onChange: (selectedRowKeys: React.Key[], selectedRows: I${data.businessName}Type[]) => {
@@ -916,11 +930,13 @@ const ${stringFirst(data.className)}: React.FC = () => {
       } else {
         setSingle(false)
       }
-      setSelectKeys(selectedRowKeys)
       selectedRowKeys.length ? setMultiple(false) : setMultiple(true)
+      setSelectKeys(selectedRowKeys)
       setRowKeys(selectedRowKeys.join(','))
     },
+  }`
   }
+
 
   // 获取详情
   const handleEditForm = async (id: number) => {
@@ -946,9 +962,14 @@ const ${stringFirst(data.className)}: React.FC = () => {
   }
 
   // 分页
-  const onPagChange = async (pageNum: number, pageSize: number) => {
+  ${
+    data.tplCategory === 'tree'
+      ? ``
+      : `const onPagChange = async (pageNum: number, pageSize: number) => {
     setQueryParams({ pageNum, pageSize })
+  }`
   }
+
 
   // 删除
   const delFn = (ids: string) => {
@@ -978,7 +999,7 @@ const ${stringFirst(data.className)}: React.FC = () => {
         expandedRowKeys: [],
       })
       const ids: number[] = []
-      function checkChild(list: menusType[]) {
+      function checkChild(list: ITreeType[]) {
         list.forEach((item) => {
           if (item.children?.length) {
             ids.push(item.${mainIdKey} as number)
@@ -1071,37 +1092,47 @@ const ${stringFirst(data.className)}: React.FC = () => {
                   新增
                 </ColorBtn>
               </Col>
-              <Col>
-                <ColorBtn
-                  disabled={single}
-                  color="success"
-                  icon={<EditOutlined />}
-                  onClick={() => handleEditForm(Number(rowKeys))}
-                >
-                  修改
-                </ColorBtn>
-              </Col>
-              <Col>
-                <ColorBtn
-                  onClick={() => delFn(rowKeys)}
-                  disabled={multiple}
-                  color="danger"
-                  icon={<DeleteOutlined />}
-                >
-                  删除
-                </ColorBtn>
-              </Col>
-              <Col>
-                <ColorBtn
-                  color="warning"
-                  icon={<VerticalAlignBottomOutlined />}
-                  onClick={() => download('/${data.moduleName}/${
-    data.businessName
-  }/export', 'sys_dict_type')}
-                >
-                  导出
-                </ColorBtn>
-              </Col>
+              ${
+                data.tplCategory === 'tree'
+                  ? `              <Col>
+              <ColorBtn
+                color="info"
+                icon={<SwapOutlined rotate={90} />}
+                onClick={() => expandFn()}
+              >
+                展开/折叠
+              </ColorBtn>
+            </Col>`
+                  : `              <Col>
+                  <ColorBtn
+                    disabled={single}
+                    color="success"
+                    icon={<EditOutlined />}
+                    onClick={() => handleEditForm(Number(rowKeys))}
+                  >
+                    修改
+                  </ColorBtn>
+                </Col>
+                <Col>
+                  <ColorBtn
+                    onClick={() => delFn(rowKeys)}
+                    disabled={multiple}
+                    color="danger"
+                    icon={<DeleteOutlined />}
+                  >
+                    删除
+                  </ColorBtn>
+                </Col>
+                <Col>
+                  <ColorBtn
+                    color="warning"
+                    icon={<VerticalAlignBottomOutlined />}
+                    onClick={() => download('/${data.moduleName}/${data.businessName}/export', 'sys_dict_type')}
+                  >
+                    导出
+                  </ColorBtn>
+                </Col>`
+              }
             </Row>
           </Col>
           <Col span={8}>
@@ -1124,7 +1155,9 @@ const ${stringFirst(data.className)}: React.FC = () => {
                     icon={<SyncOutlined />}
                     onClick={() => {
                       searchQueryFn()
-                      setSelectKeys([])
+                      ${
+                        data.tplCategory === 'tree' ? `` : `                      setSelectKeys([])`
+                      }
                     }}
                   />
                 </Tooltip>
@@ -1134,7 +1167,6 @@ const ${stringFirst(data.className)}: React.FC = () => {
         </Row>
         <div className="leno-table">
           <Table
-            rowSelection={{ type: 'checkbox', fixed: 'left', ...rowSelection }}
             columns={columns}
             dataSource={tableData}
             pagination={false}
@@ -1145,18 +1177,23 @@ const ${stringFirst(data.className)}: React.FC = () => {
               data.tplCategory === 'tree'
                 ? `expandable={expandKeys}
             onExpand={() => setExpandKeys({})}`
-                : ''
+                : `rowSelection={{ type: 'checkbox', fixed: 'left', ...rowSelection }}`
             }
           />
-          <Pagination
-            className="pagination"
-            onChange={onPagChange}
-            total={dataList.count}
-            showSizeChanger
-            showQuickJumper
-            current={queryParams.pageNum}
-            showTotal={(total) => ${total}}
-          />
+          ${
+            data.tplCategory === 'tree'
+              ? ``
+              : `<Pagination
+          className="pagination"
+          onChange={onPagChange}
+          total={dataList.count}
+          showSizeChanger
+          showQuickJumper
+          current={queryParams.pageNum}
+          showTotal={(total) => ${total}}
+        />`
+          }
+
         </div>
 
         {/* 添加 编辑 用户 */}

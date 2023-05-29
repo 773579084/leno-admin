@@ -21,31 +21,21 @@ const router = new Router({ prefix: '/system' })
 router.get('/dept/list', getListMid, formatHandle, IndexCon())
 
 // 新增
-router.post(
-  '/dept',
-  addEditSchema(addJudg),
-  getAddMid,
-  IndexCon()
-)
+router.post('/dept', addEditSchema(addJudg), getAddMid, IndexCon())
 
 // 删除
 router.delete('/dept/:id', judgeIdSchema(), delMid, IndexCon())
 
 // 获取详细数据
-router.get('/dept/:id', judgeIdSchema(), getDetailMid, formatHandle, IndexCon())
+router.get('/dept/detail/:id', judgeIdSchema(), getDetailMid, formatHandle, IndexCon())
 
 // 修改
-router.put(
-  '/dept',
-  addEditSchema(putJudg),
-  putMid,
-  IndexCon()
-)
+router.put('/dept', addEditSchema(putJudg), putMid, IndexCon())
 
 // 导出列表(excel)
 router.post(
   '/dept/export',
-  exportExcelMid(exportExcelSer, SysDept, {"status":"sys_normal_disable"}),
+  exportExcelMid(exportExcelSer, SysDept, { status: 'sys_normal_disable' }),
   exportMid,
   IndexCon()
 )
