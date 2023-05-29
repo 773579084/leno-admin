@@ -437,7 +437,7 @@ const createHtmlAddEdit = (data: ColumnType[]) => {
            hidden={${item.isEdit === '1'}}
            ${
              item.isRequired === '0'
-               ? 'rules={[{ required: true, message: "请输入' + item.columnComment + '!" }]}'
+               ? `rules={[{ required: true, message: 请输入${item.columnComment}! }]}`
                : ''
            }>
           <Input placeholder= "请输入"+${item.columnComment} />
@@ -778,11 +778,10 @@ export const putAPI = (data: I${data.businessName}Type) => {
 
   // 第七步 前端 生成dom结构
   const total = '`共 ${total} 条`'
-  const ids = '`是否确认删除字典编号为"${ids}"的数据项？`'
+  const ids = '`是否确认删除编号为"${ids}"的数据项？`'
   codes[
     data.tplCategory === 'tree' ? 'index-tree.tsx' : 'index.tsx'
   ] = `import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import {
   Button,
   Form,
@@ -826,7 +825,6 @@ ${
     : ''
 }
 import ColorBtn from '@/components/ColorBtn'
-import dayjs from 'dayjs'
 import { IdictType } from '@/type/modules/system/sysDictData'
 ${data.columns.find((item) => item.dictType) ? "import DictTag from '@/components/DictTag'" : ''}
 ${data.tplCategory === 'tree' ? `import { treeDataFn } from '@/utils/smallUtils'` : ''}
@@ -883,7 +881,9 @@ const ${stringFirst(data.className)}: React.FC = () => {
     const { data } = await getListAPI(queryParams)
     ${
       data.tplCategory === 'tree'
-        ? `const treeData = treeDataFn<menusType>(data.result)
+        ? `const treeData = treeDataFn<${
+            data.tplCategory === 'tree' ? ',ITreeType' : ''
+          }>(data.result)
     setDataList(treeData)`
         : 'setDataList({ ...data.result })'
     }
@@ -954,7 +954,7 @@ const ${stringFirst(data.className)}: React.FC = () => {
   const delFn = (ids: string) => {
     confirm({
       icon: <ExclamationCircleOutlined />,
-      content: 是否删除${ids}?,
+      content: ${ids},
       centered: true,
       async onOk() {
         try {
