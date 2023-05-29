@@ -3,6 +3,7 @@ export interface IroleUserQueryType {
   pageNum: number
   pageSize: number
   userId?: number
+  roleId?: string
   deptId?: number
   userName?: string
   nickName?: string
@@ -24,6 +25,7 @@ export interface IroleUserQueryType {
 }
 
 export interface IroleUserQuerySerType {
+  user_id?: { [OpTypes.in]: string[] }
   pageNum: number
   pageSize: number
   user_name?: { [OpTypes.like]: string }
@@ -63,4 +65,24 @@ export interface IaddUserRoleType {
 export interface IaddUserRoleSerType {
   role_id: string
   user_id: string
+}
+
+// 获取角色 绑定的用户
+export interface IRoleBindUserType {
+  pageNum: number
+  pageSize: number
+  role_id: string
+}
+
+// sys_user query
+export interface ISelectUserQueryType {
+  pageNum: number
+  pageSize: number
+  roleId?: string
+  deptId?: number
+  userName?: string
+  phonenumber?: string
+  status?: string
+  beginTime?: string
+  endTime?: string
 }
