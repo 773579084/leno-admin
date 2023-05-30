@@ -50,13 +50,17 @@ export const conversionTables = async (tables: string[]) => {
   // 1-2、将表数据 处理
   const addTables = []
   tableDetails[0].forEach((table) => {
-    const obj = {}
-    obj['table_name'] = table.TABLE_NAME
-    obj['table_comment'] = table.TABLE_COMMENT
-    obj['class_name'] = underlineToCamel(table.TABLE_NAME)
-    obj['function_author'] = 'wen'
-    addTables.push(obj)
+    // 1-2-1 找出新增表
+    if (tables.includes(table.TABLE_NAME)) {
+      const obj = {}
+      obj['table_name'] = table.TABLE_NAME
+      obj['table_comment'] = table.TABLE_COMMENT
+      obj['class_name'] = underlineToCamel(table.TABLE_NAME)
+      obj['function_author'] = 'wen'
+      addTables.push(obj)
+    }
   })
+
   // 1-3、写入到 代码生成表
   await addAllSer(ToolGen, addTables)
 

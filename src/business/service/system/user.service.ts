@@ -59,13 +59,21 @@ export const getdeptTreeSer = async () => {
 
 // 获取岗位信息
 export const getPostSer = async () => {
-  const res = await SysPost.findAll({})
+  const res = await SysPost.findAll({
+    where: {
+      del_flag: '0'
+    }
+  })
   return res || null
 }
 
 // 获取角色信息
 export const getRoleSer = async () => {
-  const res = await SysRole.findAll()
+  const res = await SysRole.findAll({
+    where: {
+      del_flag: '0'
+    }
+  })
   return res || null
 }
 

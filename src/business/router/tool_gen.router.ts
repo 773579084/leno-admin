@@ -20,7 +20,7 @@ import { putJudg } from '@/business/schema/tool/gen.schema'
 
 const router = new Router({ prefix: '/tool' })
 
-// 查询数据库存在的表
+// 查询数据库未导入的表
 router.get('/gen/db/list', findAllSqlMid, getListDbMid, formatHandle, IndexCon())
 
 // 导入表

@@ -29,25 +29,25 @@ export const findAllSqlMid = async (ctx: Context, next: () => Promise<void>) => 
     // 1、获取数据库里面所有的sql名字
     const tables = await sequelize.getQueryInterface().showAllTables()
 
+    // 将新增 sql 表的表面存储到 newAddRedisNames
+    const newAddRedisNames = []
     // 1-1、 判断sql表是否已经生成过数据了
     tables.forEach((name, index) => {
-      if (existNames.findIndex((value) => value === name) !== -1) {
-        tables.splice(index)
+      if (!existNames.includes(name)) {
+        // 1-1-1、将新增tables表名存储到redis做缓存
+        newAddRedisNames.push(name)
+        redis.sadd('tool_sql_names', name)
       } else {
-        // 1-1-1、将tables表名存储到redis做缓存
-        tables.forEach((name) => {
-          redis.sadd('tool_sql_names', name)
-        })
       }
     })
 
-    if (tables.length > 0) conversionTables(tables)
+    if (newAddRedisNames.length > 0) await conversionTables(newAddRedisNames)
+
+    await next()
   } catch (error) {
     console.error('查询数据库所有的表', error)
     return ctx.app.emit('error', sqlErr, ctx)
   }
-
-  await next()
 }
 
 // 获取db列表
