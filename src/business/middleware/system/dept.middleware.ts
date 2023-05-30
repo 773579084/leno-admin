@@ -1,14 +1,12 @@
 import { Context } from 'koa'
 import { getListSer, addSer, putSer, getDetailSer, delSer } from '@/business/service'
-import { userType} from '@/types'
-import {  IdeptQueryType, IdeptQuerySerType, Idept, IdeptSer } from '@/types/system/dept'
+import { userType } from '@/types'
+import { IdeptQueryType, IdeptQuerySerType, Idept, IdeptSer } from '@/types/system/dept'
 import errors from '@/app/err.type'
 import { formatHumpLineTransfer } from '@/business/utils'
-import { excelJsExport } from '@/business/utils/excel'
-import {  excelBaseStyle } from '@/business/public/excelMap'
 import SysDept from '@/mysql/model/system/dept.model'
 import { Op } from 'sequelize'
-const { uploadParamsErr, getListErr, sqlErr, delErr, exportExcelErr } = errors
+const { uploadParamsErr, getListErr, sqlErr, delErr } = errors
 
 // 获取列表
 export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
@@ -16,9 +14,8 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
     const { pageNum, pageSize, ...params } = ctx.query as unknown as IdeptQueryType
     let newParams = { pageNum, pageSize } as IdeptQuerySerType
 
-    params.deptName ? (newParams.dept_name = { [Op.like]: params.deptName + "%" }) : null
-    params.status ? (newParams.status = { [Op.eq]: params.status  }) : null
-    
+    params.deptName ? (newParams.dept_name = { [Op.like]: params.deptName + '%' }) : null
+    params.status ? (newParams.status = { [Op.eq]: params.status }) : null
 
     const res = await getListSer<IdeptQuerySerType>(SysDept, newParams)
 
@@ -86,25 +83,5 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
   } catch (error) {
     console.error('修改失败', error)
     return ctx.app.emit('error', uploadParamsErr, ctx)
-  }
-}
-
-// 导出
-export const exportMid = async (ctx: Context, next: () => Promise<void>) => {
-  try {
-    const list = ctx.state.formatData
-
-    // 表格数据
-    const buffer = await excelJsExport({
-      sheetName: '部门表',
-      style: excelBaseStyle,
-      headerColumns: [{"title":"区域名称","dataIndex":"dept_name"},{"title":"显示顺序","dataIndex":"order_num"},{"title":"部门状态（0正常 1停用）","dataIndex":"status"},{"title":"创建时间","dataIndex":"created_at"}],
-      tableData: list
-    })
-    ctx.state.buffer = buffer
-    await next()
-  } catch (error) {
-    console.error('导出失败', error)
-    return ctx.app.emit('error', exportExcelErr, ctx)
   }
 }

@@ -1,19 +1,15 @@
 import Router from 'koa-router'
 // 格式转换
 import { formatHandle } from '@/business/middleware/common/common.middleware'
-import { exportExcelSer } from '@/business/service'
 import IndexCon from '@/business/controller'
 import {
   getListMid,
   getAddMid,
   getDetailMid,
   putMid,
-  delMid,
-  exportMid
+  delMid
 } from '@/business/middleware/system/dept.middleware'
 import { addEditSchema, judgeIdSchema } from '@/business/schema'
-import { exportExcelMid } from '@/business/middleware/common/common.middleware'
-import SysDept from '@/mysql/model/system/dept.model'
 import { addJudg, putJudg } from '@/business/schema/system/dept.schema'
 
 const router = new Router({ prefix: '/system' })
@@ -31,13 +27,5 @@ router.get('/dept/detail/:id', judgeIdSchema(), getDetailMid, formatHandle, Inde
 
 // 修改
 router.put('/dept', addEditSchema(putJudg), putMid, IndexCon())
-
-// 导出列表(excel)
-router.post(
-  '/dept/export',
-  exportExcelMid(exportExcelSer, SysDept, { status: 'sys_normal_disable' }),
-  exportMid,
-  IndexCon()
-)
 
 module.exports = router

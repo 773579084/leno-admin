@@ -544,7 +544,6 @@ export default ${data.className}`
   codes[`router.ts`] = `import Router from 'koa-router'
 // 格式转换
 import { formatHandle } from '@/business/middleware/common/common.middleware'
-import { exportExcelSer } from '@/business/service'
 import IndexCon from '@/business/controller'
 import {
   getListMid,
@@ -555,8 +554,13 @@ import {
   exportMid
 } from '@/business/middleware/${data.moduleName}/${data.businessName}.middleware'
 import { addEditSchema, judgeIdSchema } from '@/business/schema'
-import { exportExcelMid } from '@/business/middleware/common/common.middleware'
-import ${data.className} from '@/mysql/model/${data.moduleName}/${data.businessName}.model'
+${
+  data.tplCategory === 'tree'
+    ? `import { exportExcelMid } from '@/business/middleware/common/common.middleware'
+  import ${data.className} from '@/mysql/model/${data.moduleName}/${data.businessName}.model'
+  import { exportExcelSer } from '@/business/service'`
+    : ``
+}
 import { addJudg, putJudg } from '@/business/schema/${data.moduleName}/${data.businessName}.schema'
 
 const router = new Router({ prefix: '/${data.moduleName}' })
@@ -587,13 +591,17 @@ router.put(
   IndexCon()
 )
 
-// 导出列表(excel)
-router.post(
-  '/${data.businessName}/export',
-  exportExcelMid(exportExcelSer, ${data.className}, ${excelDictConversion(data.columns)}),
-  exportMid,
-  IndexCon()
-)
+${
+  data.tplCategory === 'tree'
+    ? `// 导出列表(excel)
+  router.post(
+    '/${data.businessName}/export',
+    exportExcelMid(exportExcelSer, ${data.className}, ${excelDictConversion(data.columns)}),
+    exportMid,
+    IndexCon()
+  )`
+    : ``
+}
 
 module.exports = router`
 
@@ -606,11 +614,17 @@ import {  I${data.businessName}QueryType, I${data.businessName}QuerySerType, I${
   }, I${data.businessName}Ser } from '@/types/${data.moduleName}/${data.businessName}'
 import errors from '@/app/err.type'
 import { formatHumpLineTransfer } from '@/business/utils'
-import { excelJsExport } from '@/business/utils/excel'
-import {  excelBaseStyle } from '@/business/public/excelMap'
+${
+  data.tplCategory === 'tree'
+    ? `import { excelJsExport } from '@/business/utils/excel'
+  import {  excelBaseStyle } from '@/business/public/excelMap'`
+    : ``
+}
 import ${data.className} from '@/mysql/model/${data.moduleName}/${data.businessName}.model'
 import { Op } from 'sequelize'
-const { uploadParamsErr, getListErr, sqlErr, delErr, exportExcelErr } = errors
+const { uploadParamsErr, getListErr, sqlErr, delErr, ${
+    data.tplCategory === 'tree' ? `exportExcelErr` : ``
+  }} = errors
 
 // 获取列表
 export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
@@ -693,7 +707,10 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
   }
 }
 
-// 导出
+${
+  data.tplCategory === 'tree'
+    ? ``
+    : `// 导出
 export const exportMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const list = ctx.state.formatData
@@ -711,6 +728,7 @@ export const exportMid = async (ctx: Context, next: () => Promise<void>) => {
     console.error('导出失败', error)
     return ctx.app.emit('error', exportExcelErr, ctx)
   }
+}`
 }`
 
   // 第四步 生成 schema 新增编辑字段检测
