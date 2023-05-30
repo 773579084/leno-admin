@@ -1,5 +1,5 @@
 import { Context } from 'koa'
-import { getListSer, addSer, putSer, getDetailSer, delSer } from '@/business/service'
+import { getListSer, addSer, putSer, getDetailSer } from '@/business/service'
 import { userType } from '@/types'
 import { IdeptQueryType, IdeptQuerySerType, Idept, IdeptSer } from '@/types/system/dept'
 import errors from '@/app/err.type'
@@ -16,6 +16,7 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
 
     params.deptName ? (newParams.dept_name = { [Op.like]: params.deptName + '%' }) : null
     params.status ? (newParams.status = { [Op.eq]: params.status }) : null
+    newParams.del_flag = { [Op.eq]: '0' }
 
     const res = await getListSer<IdeptQuerySerType>(SysDept, newParams)
 
@@ -46,7 +47,7 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
 // 删除
 export const delMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    await delSer(SysDept, { dept_id: ctx.state.ids })
+    await putSer(SysDept, { dept_id: ctx.state.ids }, { del_flag: '2' })
   } catch (error) {
     console.error('删除失败', error)
     return ctx.app.emit('error', delErr, ctx)

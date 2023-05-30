@@ -556,10 +556,10 @@ import {
 import { addEditSchema, judgeIdSchema } from '@/business/schema'
 ${
   data.tplCategory === 'tree'
-    ? `import { exportExcelMid } from '@/business/middleware/common/common.middleware'
-  import ${data.className} from '@/mysql/model/${data.moduleName}/${data.businessName}.model'
-  import { exportExcelSer } from '@/business/service'`
-    : ``
+    ? ``
+    : `import { exportExcelMid } from '@/business/middleware/common/common.middleware'
+    import ${data.className} from '@/mysql/model/${data.moduleName}/${data.businessName}.model'
+    import { exportExcelSer } from '@/business/service'`
 }
 import { addJudg, putJudg } from '@/business/schema/${data.moduleName}/${data.businessName}.schema'
 
@@ -593,14 +593,14 @@ router.put(
 
 ${
   data.tplCategory === 'tree'
-    ? `// 导出列表(excel)
-  router.post(
-    '/${data.businessName}/export',
-    exportExcelMid(exportExcelSer, ${data.className}, ${excelDictConversion(data.columns)}),
-    exportMid,
-    IndexCon()
-  )`
-    : ``
+    ? ``
+    : `// 导出列表(excel)
+    router.post(
+      '/${data.businessName}/export',
+      exportExcelMid(exportExcelSer, ${data.className}, ${excelDictConversion(data.columns)}),
+      exportMid,
+      IndexCon()
+    )`
 }
 
 module.exports = router`
@@ -616,14 +616,14 @@ import errors from '@/app/err.type'
 import { formatHumpLineTransfer } from '@/business/utils'
 ${
   data.tplCategory === 'tree'
-    ? `import { excelJsExport } from '@/business/utils/excel'
-  import {  excelBaseStyle } from '@/business/public/excelMap'`
-    : ``
+    ? ``
+    : `import { excelJsExport } from '@/business/utils/excel'
+    import {  excelBaseStyle } from '@/business/public/excelMap'`
 }
 import ${data.className} from '@/mysql/model/${data.moduleName}/${data.businessName}.model'
 import { Op } from 'sequelize'
 const { uploadParamsErr, getListErr, sqlErr, delErr, ${
-    data.tplCategory === 'tree' ? `exportExcelErr` : ``
+    data.tplCategory === 'tree' ? `` : `exportExcelErr`
   }} = errors
 
 // 获取列表
@@ -806,8 +806,8 @@ import {
   Button,
   Form,
   Input,
-  Select,${data.columns.find((item) => item.htmlType === 'datetime') ? '\nDatePicker,' : ''}${
-    data.columns.find((item) => item.htmlType === 'checkbox') ? '\nCheckbox,' : ''
+  Select,${data.columns.find((item) => item.htmlType === 'datetime') ? '\n\0\0DatePicker,' : ''}${
+    data.columns.find((item) => item.htmlType === 'checkbox') ? '\n\0\0Checkbox,' : ''
   }
   Col,
   Row,
@@ -1116,7 +1116,7 @@ const ${stringFirst(data.className)}: React.FC = () => {
               <ColorBtn
                 color="info"
                 icon={<SwapOutlined rotate={90} />}
-                onClick={() => expandFn()}
+                onClick={expandFn}
               >
                 展开/折叠
               </ColorBtn>

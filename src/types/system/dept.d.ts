@@ -22,6 +22,7 @@ export interface IdeptQuerySerType {
   pageNum: number
   pageSize: number
   dept_name?: { [OpTypes.like]: string }
+  del_flag?: { [OpTypes.eq]: string }
   status?: { [OpTypes.eq]: string }
 }
 

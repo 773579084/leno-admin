@@ -96,6 +96,7 @@ export interface GenType {
   treeName: string
   createBy?: any
   updateBy?: any
+  parentId?: number
   createdAt: string
   updatedAt: string
 }

@@ -19,6 +19,7 @@ import { conversionTables, generateCode } from '@/business/utils/tools'
 import ToolGenColumn from '@/mysql/model/tool/gen_column.model'
 import fs from 'fs'
 import archiver from 'archiver'
+import SysMenu from '@/mysql/model/system/menu.model'
 
 // 查询数据库所有的表 -》 并将表数据转换为代码生成表的数据
 export const findAllSqlMid = async (ctx: Context, next: () => Promise<void>) => {
@@ -348,17 +349,19 @@ export const genCodeMid = async (ctx: Context, next: () => Promise<void>) => {
     // 统一生成业务文件夹
     newRows.forEach((row: GenType) => {
       // 创建业务文件夹
-      const genPath = row.genPath === '/' ? 'src' : row.genPath
+      const packageName = row.packageName.split('.').join('/')
+      const genPath = row.genPath === '/' ? `src/${packageName}` : row.genPath
 
       fs.mkdir(`${genPath}/${row.businessName}`, (err) => {
         if (err) console.log(246, err)
       })
     })
     // 遍历生成页面代码写入到文件夹里，然后统一打包成压缩包发送给前端
-    newRows.forEach((row: GenType) => {
+    newRows.forEach(async (row: GenType) => {
       const frontFile = ['api.ts', 'index.tsx', 'index-tree.tsx', 'react.d.ts']
       const code = generateCode(row)
-      const genPath = row.genPath === '/' ? 'src' : row.genPath
+      const packageName = row.packageName.split('.').join('/')
+      const genPath = row.genPath === '/' ? `src/${packageName}` : row.genPath
 
       // 在业务文件内创建 node 和 react 文件夹
       fs.mkdir(`${genPath}/${row.businessName}/node`, (err) => {
@@ -406,10 +409,29 @@ export const genCodeMid = async (ctx: Context, next: () => Promise<void>) => {
           })
         }
       }
+
+      // 判断是否选择了 上级菜单
+      if (row.parentId) {
+        await addSer(SysMenu, {
+          menu_type: 'C',
+          icon: row.businessName,
+          menu_name: row.functionName + '管理',
+          order_num: 0,
+          is_cache: 0,
+          is_frame: 1,
+          parent_id: row.parentId,
+          path: row.businessName,
+          perms: `${row.moduleName}:${row.businessName}:list`,
+          component: `/${row.moduleName}/${row.businessName}`,
+          status: '0',
+          visible: '0'
+        })
+      }
     })
+
+    await next()
   } catch (error) {
     console.error('生成代码', error)
     return ctx.app.emit('error', sqlErr, ctx)
   }
-  await next()
 }
