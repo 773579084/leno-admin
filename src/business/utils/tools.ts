@@ -146,7 +146,7 @@ const generateModel = (data: ColumnType[]) => {
         type: DataTypes.${
           sqlSequelize[item.columnType] ? sqlSequelize[item.columnType] : item.columnType
         },
-        defaultValue: ${item.columnDefaultValue},
+        defaultValue:${item.columnDefaultValue},
         comment: "${item.columnComment}"
       },\n`
     }
@@ -810,8 +810,8 @@ import {
   Button,
   Form,
   Input,
-  Select,${data.columns.find((item) => item.htmlType === 'datetime') ? '\n\0\0DatePicker,' : ''}${
-    data.columns.find((item) => item.htmlType === 'checkbox') ? '\n\0\0Checkbox,' : ''
+  Select,${data.columns.find((item) => item.htmlType === 'datetime') ? '\nDatePicker,' : ''}${
+    data.columns.find((item) => item.htmlType === 'checkbox') ? '\nCheckbox,' : ''
   }
   Col,
   Row,
@@ -852,6 +852,7 @@ import ColorBtn from '@/components/ColorBtn'
 import { IdictType } from '@/type/modules/system/sysDictData'
 ${data.columns.find((item) => item.dictType) ? "import DictTag from '@/components/DictTag'" : ''}
 ${data.tplCategory === 'tree' ? `import { generalTreeFn } from '@/utils/smallUtils'` : ''}
+${data.columns.find((item) => item.htmlType === 'datetime') ? `import dayjs from 'dayjs'` : ``}
 
 const ${stringFirst(data.className)}: React.FC = () => {
   ${data.columns.find((item) => item.htmlType === 'textarea') ? 'const { TextArea } = Input' : ''}

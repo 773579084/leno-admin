@@ -415,7 +415,7 @@ export const genCodeMid = async (ctx: Context, next: () => Promise<void>) => {
         await addSer(SysMenu, {
           menu_type: 'C',
           icon: row.businessName,
-          menu_name: row.functionName + '管理',
+          menu_name: row.functionName,
           order_num: 0,
           is_cache: 0,
           is_frame: 1,
