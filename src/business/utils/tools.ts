@@ -223,7 +223,7 @@ const addEditSchema = (data: ColumnType[], isAdd: boolean) => {
       }\n  `
     }
     if (!isAdd && item.isEdit === '0') {
-      schema += `${item.tsField}: Joi.${item.tsType}()${
+      schema += `${item.tsField}: Joi.${item.tsField === 'remark' ? 'any' : item.tsType}()${
         item.isRequired === '0' ? '.required(),' : ','
       }\n  `
     }
@@ -437,10 +437,10 @@ const createHtmlAddEdit = (data: ColumnType[]) => {
            hidden={${item.isEdit === '1'}}
            ${
              item.isRequired === '0'
-               ? `rules={[{ required: true, message: 请输入${item.columnComment}! }]}`
+               ? `rules={[{ required: true, message: '请输入${item.columnComment}!' }]}`
                : ''
            }>
-          <Input placeholder= "请输入"+${item.columnComment} />
+          <Input placeholder= "请输入${item.columnComment}"/>
         </Form.Item>\n        `
           break
         case 'textarea':
@@ -788,7 +788,7 @@ export const addAPI = (data: I${data.businessName}Type) => {
 
 // 获取详细数据
 export const getDetailAPI = (id: number) => {
-  return http<IgetDetailTypeAPI>('GET', '/${data.moduleName}/${data.businessName}/' + id)
+  return http<IgetDetailTypeAPI>('GET', '/${data.moduleName}/${data.businessName}/detail/' + id)
 }
 
 // 修改
