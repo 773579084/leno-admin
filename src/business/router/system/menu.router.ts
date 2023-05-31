@@ -15,7 +15,7 @@ import {
   putMid
 } from '@/business/middleware/system/menu.middleware'
 import { judgeIdSchema, addEditSchema } from '@/business/schema'
-import { addJudg, putJudg } from '../schema/system/sys_menus.schema'
+import { addJudg, putJudg } from '../../schema/system/sys_menus.schema'
 
 const router = new Router({ prefix: '/system' })
 // 查询routers菜单

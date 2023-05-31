@@ -1,6 +1,3 @@
-/**
- * 字典类型
- */
 import Router from 'koa-router'
 // 格式转换
 import { formatHandle } from '@/business/middleware/common/common.middleware'

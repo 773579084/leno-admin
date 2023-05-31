@@ -19,7 +19,7 @@ import { exportExcelMid } from '@/business/middleware/common/common.middleware'
 import { judgeIdSchema, addEditSchema } from '@/business/schema'
 import IndexCon from '@/business/controller'
 import SysDictType from '@/mysql/model/system/dict_type.model'
-import { addJudg, putJudg } from '../schema/system/sys_dict_type.schema'
+import { addJudg, putJudg } from '../../schema/system/sys_dict_type.schema'
 
 const router = new Router({ prefix: '/system' })
 // 查询列表
