@@ -1,33 +1,37 @@
 import { Context } from 'koa'
-import { getListSer, addSer, getDetailSer, delSer } from '@/business/service'
+import { getListSer, addSer, putSer, getDetailSer, delSer } from '@/business/service'
 import { userType } from '@/types'
 import {
-  IoperlogQueryType,
-  IoperlogQuerySerType,
-  Ioperlog,
-  IoperlogSer
-} from '@/types/system/operlog'
+  IlogininforQueryType,
+  IlogininforQuerySerType,
+  Ilogininfor,
+  IlogininforSer
+} from '@/types/system/logininfor'
 import errors from '@/app/err.type'
 import { formatHumpLineTransfer } from '@/business/utils'
 import { excelJsExport } from '@/business/utils/excel'
 import { excelBaseStyle } from '@/business/public/excelMap'
-import SysOperLog from '@/mysql/model/system/operlog.model'
+import SysLogininfor from '@/mysql/model/system/logininfor.model'
 import { Op } from 'sequelize'
 const { uploadParamsErr, getListErr, sqlErr, delErr, exportExcelErr } = errors
 
 // 获取列表
 export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    const { pageNum, pageSize, ...params } = ctx.query as unknown as IoperlogQueryType
-    let newParams = { pageNum, pageSize } as IoperlogQuerySerType
+    const { pageNum, pageSize, ...params } = ctx.query as unknown as IlogininforQueryType
+    let newParams = { pageNum, pageSize } as IlogininforQuerySerType
 
-    params.title ? (newParams.title = { [Op.like]: params.title + '%' }) : null
-    params.businessType ? (newParams.business_type = { [Op.eq]: params.businessType }) : null
-    params.operName ? (newParams.oper_name = { [Op.eq]: params.operName }) : null
+    params.userName ? (newParams.user_name = { [Op.like]: params.userName }) : null
+    params.ipaddr ? (newParams.ipaddr = { [Op.like]: params.ipaddr }) : null
     params.status ? (newParams.status = { [Op.eq]: params.status }) : null
-    params.operTime ? (newParams.oper_time = { [Op.eq]: params.operTime }) : null
+    if (params.loginTime) params.loginTime = JSON.parse(params.loginTime as unknown as string)
+    params.loginTime
+      ? (newParams.login_time = {
+          [Op.between]: [params.loginTime.beginTime, params.loginTime.endTime]
+        })
+      : null
 
-    const res = await getListSer<IoperlogQuerySerType>(SysOperLog, newParams)
+    const res = await getListSer<IlogininforQuerySerType>(SysLogininfor, newParams)
 
     ctx.state.formatData = res
     await next()
@@ -41,11 +45,11 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
 export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { userName } = ctx.state.user as userType
-    const addContent = ctx.request['body'] as Ioperlog
+    const addContent = ctx.request['body'] as Ilogininfor
     const addContent2 = { ...addContent, createBy: userName }
     const newAddContent = formatHumpLineTransfer(addContent2, 'line')
 
-    await addSer<IoperlogSer>(SysOperLog, newAddContent)
+    await addSer<IlogininforSer>(SysLogininfor, newAddContent)
     await next()
   } catch (error) {
     console.error('新增失败', error)
@@ -56,7 +60,7 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
 // 删除
 export const delMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    await delSer(SysOperLog, { oper_id: ctx.state.ids })
+    await delSer(SysLogininfor, { info_id: ctx.state.ids })
   } catch (error) {
     console.error('删除失败', error)
     return ctx.app.emit('error', delErr, ctx)
@@ -68,7 +72,7 @@ export const delMid = async (ctx: Context, next: () => Promise<void>) => {
 // 获取详细数据
 export const getDetailMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    const res = await getDetailSer<IoperlogSer>(SysOperLog, { oper_id: ctx.state.ids })
+    const res = await getDetailSer<IlogininforSer>(SysLogininfor, { info_id: ctx.state.ids })
 
     ctx.state.formatData = res
   } catch (error) {
@@ -86,17 +90,18 @@ export const exportMid = async (ctx: Context, next: () => Promise<void>) => {
 
     // 表格数据
     const buffer = await excelJsExport({
-      sheetName: '操作日志记录',
+      sheetName: '登录日志',
       style: excelBaseStyle,
       headerColumns: [
-        { title: '日志主键', dataIndex: 'oper_id', width: 80 },
-        { title: '模块标题', dataIndex: 'title' },
-        { title: '操作类型（0其它 1新增 2修改 3删除）', dataIndex: 'business_type' },
-        { title: '操作人员', dataIndex: 'oper_name' },
-        { title: '主机地址', dataIndex: 'oper_ip' },
-        { title: '操作地点', dataIndex: 'oper_location' },
-        { title: '操作状态（0正常 1异常）', dataIndex: 'status' },
-        { title: '操作时间', dataIndex: 'oper_time' }
+        { title: '访问ID', dataIndex: 'info_id', width: 80 },
+        { title: '用户账号', dataIndex: 'user_name' },
+        { title: '登录IP地址', dataIndex: 'ipaddr' },
+        { title: '登录地点', dataIndex: 'login_location' },
+        { title: '浏览器类型', dataIndex: 'browser' },
+        { title: '操作系统', dataIndex: 'os' },
+        { title: '登录状态（0成功 1失败）', dataIndex: 'status' },
+        { title: '提示消息', dataIndex: 'msg' },
+        { title: '访问时间', dataIndex: 'login_time' }
       ],
       tableData: list
     })
