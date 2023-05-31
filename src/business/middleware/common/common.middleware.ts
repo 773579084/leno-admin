@@ -1,11 +1,11 @@
 import { Context } from 'koa'
-import { dictMapListType } from '@/types'
+import { dictMapListType, imgType } from '@/types'
 import errors from '@/app/err.type'
 import { getExcelAddress, parsingExcel } from '@/business/utils/excel'
 import { getDataTypeSer } from '@/business/service/system/dict_data.service'
 import { formatHumpLineTransfer, removeSpecifyFile, timeChange } from '@/business/utils'
 import path from 'path'
-const { importUserListErr, sqlErr, verifyErr, exportUserListErr } = errors
+const { importUserListErr, sqlErr, verifyErr, uploadImageErr, exportUserListErr } = errors
 import { userExcelHeader } from '@/business/public/excelMap'
 import bcrypt from 'bcryptjs'
 import XLSX from 'exceljs'
@@ -218,5 +218,17 @@ export const importExcelDictMapMid = (maps?: { [key: string]: string }) => {
       return ctx.app.emit('error', exportUserListErr, ctx)
     }
     await next()
+  }
+}
+
+// 上传头像
+export const updateAvatarMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    const { avatar } = (ctx.request as any).files
+    const { filepath } = avatar as imgType
+    const basePath = path.basename(filepath) as string
+  } catch (error) {
+    console.error('用户头像上传失败')
+    return ctx.app.emit('error', uploadImageErr, ctx)
   }
 }

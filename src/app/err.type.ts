@@ -191,5 +191,10 @@ export default {
     code: '500',
     message: '导出excel失败',
     result: ''
+  },
+  uploadImageErr: {
+    code: '500',
+    message: '上传图片失败',
+    result: ''
   }
 }

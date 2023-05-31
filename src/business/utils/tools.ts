@@ -1228,7 +1228,6 @@ const ${stringFirst(data.className)}: React.FC = () => {
             setIsModalOpen(false)
             AddEditForm.resetFields()
           }}
-          forceRender
         >
           <Form
             form={AddEditForm}
