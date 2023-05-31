@@ -1,19 +1,12 @@
 import { Context } from 'koa'
-import { getListSer, addSer, putSer, getDetailSer, delSer } from '@/business/service'
-import { userType } from '@/types'
-import {
-  IoperlogQueryType,
-  IoperlogQuerySerType,
-  Ioperlog,
-  IoperlogSer
-} from '@/types/system/operlog'
+import { getListSer, getDetailSer, delSer } from '@/business/service'
+import { IoperlogQueryType, IoperlogQuerySerType, IoperlogSer } from '@/types/system/operlog'
 import errors from '@/app/err.type'
-import { formatHumpLineTransfer } from '@/business/utils'
 import { excelJsExport } from '@/business/utils/excel'
 import { excelBaseStyle } from '@/business/public/excelMap'
 import SysOperLog from '@/mysql/model/system/operlog.model'
 import { Op } from 'sequelize'
-const { uploadParamsErr, getListErr, sqlErr, delErr, exportExcelErr } = errors
+const { getListErr, sqlErr, delErr, exportExcelErr } = errors
 
 // 获取列表
 export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
@@ -34,22 +27,6 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
   } catch (error) {
     console.error('查询列表失败', error)
     return ctx.app.emit('error', getListErr, ctx)
-  }
-}
-
-// 新增
-export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
-  try {
-    const { userName } = ctx.state.user as userType
-    const addContent = ctx.request['body'] as Ioperlog
-    const addContent2 = { ...addContent, createBy: userName }
-    const newAddContent = formatHumpLineTransfer(addContent2, 'line')
-
-    await addSer<IoperlogSer>(SysOperLog, newAddContent)
-    await next()
-  } catch (error) {
-    console.error('新增失败', error)
-    return ctx.app.emit('error', uploadParamsErr, ctx)
   }
 }
 
@@ -77,23 +54,6 @@ export const getDetailMid = async (ctx: Context, next: () => Promise<void>) => {
   }
 
   await next()
-}
-
-// 修改
-export const putMid = async (ctx: Context, next: () => Promise<void>) => {
-  try {
-    const { userName } = ctx.state.user as userType
-    const res = ctx.request['body'] as Ioperlog
-    const lineData = await formatHumpLineTransfer(res, 'line')
-    const { oper_id, ...data } = lineData
-
-    await putSer<IoperlogSer>(SysOperLog, { oper_id }, { ...data, update_by: userName })
-
-    await next()
-  } catch (error) {
-    console.error('修改失败', error)
-    return ctx.app.emit('error', uploadParamsErr, ctx)
-  }
 }
 
 // 导出
