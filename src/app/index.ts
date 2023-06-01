@@ -4,6 +4,7 @@ import KoaBody from 'koa-body'
 import errHandlerFn from './errHandler'
 import path from 'path'
 import koaStatic from 'koa-static'
+import os from 'os'
 
 // 引入路由
 import router from '@/business/router'
@@ -39,6 +40,7 @@ app.use(koaStatic(path.join(__dirname, '../upload')))
 
 // 统一权限判断
 app.use(auth)
+
 // 路由
 app.use(router.routes()).use(router.allowedMethods())
 

@@ -1,8 +1,8 @@
 // 此为公用
 import Router from 'koa-router'
 import IndexCon from '@/business/controller'
-import { updateAvatarMid } from '@/business/middleware/user.middleware'
 import { contrastFileSizeSchema, judImgFormatSchema } from '@/business/schema'
+import { commondUploadImgMid } from '../middleware/common/common.middleware'
 
 const router = new Router({ prefix: '/common' })
 
@@ -11,8 +11,8 @@ router.post(
   '/image',
   contrastFileSizeSchema(),
   judImgFormatSchema(),
-  updateAvatarMid,
-  IndexCon('用户上传头像成功！')
+  commondUploadImgMid,
+  IndexCon('图片上传成功！')
 )
 
 module.exports = router

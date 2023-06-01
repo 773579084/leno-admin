@@ -224,7 +224,7 @@ export const updateUserInfoMid = async (ctx: Context, next: () => Promise<void>)
 }
 
 // 上传头像
-export const updateAvatarMid = async (ctx: Context, next: () => Promise<void>) => {
+export const uploadAvatarMid = async (ctx: Context, next: () => Promise<void>) => {
   const { avatar } = (ctx.request as any).files
   const { filepath } = avatar as imgType
   const basePath = path.basename(filepath) as string

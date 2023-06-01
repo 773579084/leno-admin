@@ -10,6 +10,7 @@ import { userExcelHeader } from '@/business/public/excelMap'
 import bcrypt from 'bcryptjs'
 import XLSX from 'exceljs'
 import { ModelStatic, Op } from 'sequelize'
+import os from 'os'
 
 // 下划线转驼峰
 export const formatHandle = async (ctx: Context, next: () => Promise<void>) => {
@@ -221,12 +222,19 @@ export const importExcelDictMapMid = (maps?: { [key: string]: string }) => {
   }
 }
 
-// 上传头像
-export const updateAvatarMid = async (ctx: Context, next: () => Promise<void>) => {
+// 公用图片上传
+export const commondUploadImgMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { avatar } = (ctx.request as any).files
     const { filepath } = avatar as imgType
     const basePath = path.basename(filepath) as string
+    const { APP_PORT } = process.env
+    const ip = os.networkInterfaces()['WLAN'][1].address
+
+    ctx.state.formatData = {
+      imgUrl: `http://${ip}:${APP_PORT}/${basePath}`
+    }
+    await next()
   } catch (error) {
     console.error('用户头像上传失败')
     return ctx.app.emit('error', uploadImageErr, ctx)

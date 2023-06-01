@@ -857,7 +857,7 @@ ${data.columns.find((item) => item.htmlType === 'datetime') ? `import dayjs from
 const ${stringFirst(data.className)}: React.FC = () => {
   ${data.columns.find((item) => item.htmlType === 'textarea') ? 'const { TextArea } = Input' : ''}
   const [queryForm] = Form.useForm()
-  const [AddEditForm] = Form.useForm()
+  const [addEditForm] = Form.useForm()
   const { confirm } = Modal
 
   // 分页
@@ -964,7 +964,7 @@ const ${stringFirst(data.className)}: React.FC = () => {
   // 获取详情
   const handleEditForm = async (id: number) => {
     const { data } = await getDetailAPI(id)
-    AddEditForm.setFieldsValue(data.result as unknown as I${data.businessName}Type)
+    addEditForm.setFieldsValue(data.result as unknown as I${data.businessName}Type)
     setCurrentId(id)
     setIsModalOpen(true)
     setIsAdd(false)
@@ -979,7 +979,7 @@ const ${stringFirst(data.className)}: React.FC = () => {
         await putAPI({ ...values, ${mainIdKey}: currentId })
       }
     } catch (error) {}
-    AddEditForm.resetFields()
+    addEditForm.resetFields()
     getList()
     setIsModalOpen(false)
   }
@@ -1223,14 +1223,14 @@ const ${stringFirst(data.className)}: React.FC = () => {
         <Modal
           title={isAdd ? '添加${data.functionName}' : '编辑${data.functionName}'}
           open={isModalOpen}
-          onOk={() => AddEditForm.submit()}
+          onOk={() => addEditForm.submit()}
           onCancel={() => {
             setIsModalOpen(false)
-            AddEditForm.resetFields()
+            addEditForm.resetFields()
           }}
         >
           <Form
-            form={AddEditForm}
+            form={addEditForm}
             labelCol={{ span: 5 }}
             onFinish={handleFormFinish}
           >

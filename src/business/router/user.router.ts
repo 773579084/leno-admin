@@ -9,7 +9,7 @@ import {
   getUserInfoMid,
   updatePwdMid,
   updateUserInfoMid,
-  updateAvatarMid,
+  uploadAvatarMid,
   refreshTokenMid
 } from '@/business/middleware/user.middleware'
 import IndexCon from '@/business/controller'
@@ -52,7 +52,7 @@ router.post(
   '/profile/avatar',
   contrastFileSizeSchema(),
   judImgFormatSchema(),
-  updateAvatarMid,
+  uploadAvatarMid,
   IndexCon('用户上传头像成功！')
 )
 
