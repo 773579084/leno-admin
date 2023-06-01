@@ -7,8 +7,8 @@ import { dictMapListType, dictMapType } from '@/types'
  * @param {string} filename
  * @return {boolean}
  */
-export const removeSpecifyFile = (filename: string) => {
-  const filePath = path.join(__dirname, '../upload')
+export const removeSpecifyFile = (filename: string): boolean => {
+  const filePath = path.join(__dirname, '../../upload')
   if (fs.existsSync(filePath)) {
     fs.unlinkSync(filePath + '/' + filename)
   } else {
@@ -45,7 +45,7 @@ export const removeFolder = (folderPath: string) => {
  * @param {type} 'hump' 为下划线转驼峰，'line' 为驼峰转下划线
  * @return {Array||Object}
  */
-export const formatHumpLineTransfer = (data: any, type = 'hump') => {
+export const formatHumpLineTransfer = (data: any, type = 'hump'): Array<any> => {
   // 判断传入的值是对象还是数组
   const newData =
     Object.prototype.toString.call(data) === '[object Object]'
@@ -119,7 +119,7 @@ export const formatHumpLineTransfer = (data: any, type = 'hump') => {
  * @param {type}
  * @return {Array||Object}
  */
-export const timeChange = (data) => {
+export const timeChange = (data): Array<any> => {
   // 判断传入的值是对象还是数组
   const newData =
     Object.prototype.toString.call(data) === '[object Object]'

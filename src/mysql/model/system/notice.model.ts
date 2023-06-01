@@ -24,7 +24,7 @@ const SysNotice = seq.define(
       comment: '公告类型（1通知 2公告）'
     },
     notice_content: {
-      type: DataTypes.BLOB,
+      type: DataTypes.TEXT,
       defaultValue: null,
       comment: '公告内容'
     },

@@ -5,7 +5,7 @@ import { getExcelAddress, parsingExcel } from '@/business/utils/excel'
 import { getDataTypeSer } from '@/business/service/system/dict_data.service'
 import { formatHumpLineTransfer, removeSpecifyFile, timeChange } from '@/business/utils'
 import path from 'path'
-const { importUserListErr, sqlErr, verifyErr, uploadImageErr, exportUserListErr } = errors
+const { importUserListErr, sqlErr, verifyErr, uploadImageErr, exportUserListErr, delErr } = errors
 import { userExcelHeader } from '@/business/public/excelMap'
 import bcrypt from 'bcryptjs'
 import XLSX from 'exceljs'
@@ -236,7 +236,23 @@ export const commondUploadImgMid = async (ctx: Context, next: () => Promise<void
     }
     await next()
   } catch (error) {
-    console.error('用户头像上传失败')
+    console.error('公用图片上传失败')
     return ctx.app.emit('error', uploadImageErr, ctx)
+  }
+}
+
+// 公用删除图片
+export const commondDelImgMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    const data = (ctx.request as any).body
+    console.log(249, data)
+
+    data.forEach((item: string) => {
+      removeSpecifyFile(item)
+    })
+    await next()
+  } catch (error) {
+    console.error('公用删除图片失败')
+    return ctx.app.emit('error', delErr, ctx)
   }
 }
