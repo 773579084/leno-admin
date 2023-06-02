@@ -823,6 +823,7 @@ import {
   Pagination,
   Modal,
   Radio,
+  message,
 } from 'antd'
 import {
   SyncOutlined,
@@ -938,6 +939,7 @@ const ${stringFirst(data.className)}: React.FC = () => {
     setDataList(treeData)`
         : 'setDataList({ ...data.result })'
     }
+    message.success('查询成功')
     setLoading(false)
   }
 
@@ -1031,8 +1033,10 @@ const ${stringFirst(data.className)}: React.FC = () => {
     try {
       if (isAdd) {
         await addAPI(values)
+        message.success('新增成功')
       } else {
         await putAPI({ ...values, ${mainIdKey}: currentId })
+        message.success('修改成功')
       }
     } catch (error) {}
     addEditForm.resetFields()
@@ -1059,6 +1063,7 @@ const ${stringFirst(data.className)}: React.FC = () => {
       async onOk() {
         try {
           await delAPI(ids)
+          message.success('删除成功')
           getList()
         } catch (error) {}
       },

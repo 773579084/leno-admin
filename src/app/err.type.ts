@@ -196,5 +196,10 @@ export default {
     code: '500',
     message: '上传图片失败',
     result: ''
+  },
+  uploadFilesErr: {
+    code: '500',
+    message: '上传文件失败',
+    result: ''
   }
 }

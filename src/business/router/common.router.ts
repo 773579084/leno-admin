@@ -2,7 +2,11 @@
 import Router from 'koa-router'
 import IndexCon from '@/business/controller'
 import { contrastFileSizeSchema, judImgFormatSchema } from '@/business/schema'
-import { commondDelImgMid, commondUploadImgMid } from '../middleware/common/common.middleware'
+import {
+  commondDelImgMid,
+  commondUploadFilesMid,
+  commondUploadImgMid
+} from '../middleware/common/common.middleware'
 
 const router = new Router({ prefix: '/common' })
 
@@ -17,5 +21,8 @@ router.post(
 
 // 公用删除图片
 router.post('/delImage', commondDelImgMid, IndexCon())
+
+// 公用文件上传
+router.post('/files', commondUploadFilesMid, IndexCon())
 
 module.exports = router

@@ -5,7 +5,15 @@ import { getExcelAddress, parsingExcel } from '@/business/utils/excel'
 import { getDataTypeSer } from '@/business/service/system/dict_data.service'
 import { formatHumpLineTransfer, removeSpecifyFile, timeChange } from '@/business/utils'
 import path from 'path'
-const { importUserListErr, sqlErr, verifyErr, uploadImageErr, exportUserListErr, delErr } = errors
+const {
+  importUserListErr,
+  sqlErr,
+  verifyErr,
+  uploadImageErr,
+  exportUserListErr,
+  uploadFilesErr,
+  delErr
+} = errors
 import { userExcelHeader } from '@/business/public/excelMap'
 import bcrypt from 'bcryptjs'
 import XLSX from 'exceljs'
@@ -222,7 +230,7 @@ export const importExcelDictMapMid = (maps?: { [key: string]: string }) => {
   }
 }
 
-// 公用图片上传
+// 公用图片上传 会给下一级图片名 sting
 export const commondUploadImgMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { avatar } = (ctx.request as any).files
@@ -232,7 +240,8 @@ export const commondUploadImgMid = async (ctx: Context, next: () => Promise<void
     const ip = os.networkInterfaces()['WLAN'][1].address
 
     ctx.state.formatData = {
-      imgUrl: `http://${ip}:${APP_PORT}/${basePath}`
+      imgUrl: `http://${ip}:${APP_PORT}/${basePath}`,
+      imgName: basePath
     }
     await next()
   } catch (error) {
@@ -252,5 +261,29 @@ export const commondDelImgMid = async (ctx: Context, next: () => Promise<void>) 
   } catch (error) {
     console.error('公用删除图片失败')
     return ctx.app.emit('error', delErr, ctx)
+  }
+}
+
+// 公用文件上传 会给下一级图片名 sting[]
+export const commondUploadFilesMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    const { files } = (ctx.request as any).files
+
+    if (Object.prototype.toString.call(files) === '[object Object]') {
+      const { newFilename } = files
+      ctx.state.filesSrc = [newFilename]
+    } else {
+      const fileNames = []
+      files.forEach((file: any) => {
+        const { newFilename } = file
+        fileNames.push(newFilename)
+      })
+      ctx.state.formatData = fileNames
+    }
+
+    await next()
+  } catch (error) {
+    console.error('公用文件上传')
+    return ctx.app.emit('error', uploadFilesErr, ctx)
   }
 }

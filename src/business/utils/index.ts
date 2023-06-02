@@ -52,7 +52,7 @@ export const formatHumpLineTransfer = (data: any, type = 'hump'): Array<any> => 
       ? [JSON.parse(JSON.stringify(data))]
       : JSON.parse(JSON.stringify(data))
 
-  function toggleFn(list) {
+  function toggleFn(list: any[]) {
     list.forEach((item) => {
       for (const key in item) {
         // 如果值为对象
@@ -107,7 +107,7 @@ export const formatHumpLineTransfer = (data: any, type = 'hump'): Array<any> => 
   // 因为上面操作为了方便操作，会将对象转化为数组格式，操作完后，需要将原先是对象的重新转化为对象
   if (Object.prototype.toString.call(data) === '[object Object]') {
     let obj = null
-    newData.forEach((item) => (obj = item))
+    newData.forEach((item: any) => (obj = item))
     return obj
   } else {
     return newData
@@ -119,14 +119,14 @@ export const formatHumpLineTransfer = (data: any, type = 'hump'): Array<any> => 
  * @param {type}
  * @return {Array||Object}
  */
-export const timeChange = (data): Array<any> => {
+export const timeChange = (data: any[]): Array<any> => {
   // 判断传入的值是对象还是数组
   const newData =
     Object.prototype.toString.call(data) === '[object Object]'
       ? [JSON.parse(JSON.stringify(data))]
       : JSON.parse(JSON.stringify(data))
 
-  function toggleFn(list) {
+  function toggleFn(list: any[]) {
     list.forEach((item) => {
       for (const key in item) {
         // 如果 item[key] 为时间，则修改时间格式重新赋值
@@ -152,7 +152,7 @@ export const timeChange = (data): Array<any> => {
   // 因为上面操作为了方便操作，会将对象转化为数组格式，操作完后，需要将原先是对象的重新转化为对象
   if (Object.prototype.toString.call(data) === '[object Object]') {
     let obj = null
-    newData.forEach((item) => (obj = item))
+    newData.forEach((item: any) => (obj = item))
     return obj
   } else {
     return newData
@@ -162,10 +162,10 @@ export const timeChange = (data): Array<any> => {
 /**
  * 对象扁平化
  */
-export const flatten = (obj) => {
+export const flatten = (obj: any) => {
   let result = {}
 
-  let process = (key, value) => {
+  let process = (key: string, value: string | any[]) => {
     // 首先判断是基础数据类型还是引用数据类型
     if (Object(value) !== value) {
       // 基础数据类型
