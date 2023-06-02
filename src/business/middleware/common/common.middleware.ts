@@ -194,11 +194,11 @@ export const exportExcelMid = (
         }
         ctx.state.dicts = arr
       }
+      await next()
     } catch (error) {
       console.error('导出用户列表错误!', ctx.request['body'])
       return ctx.app.emit('error', exportUserListErr, ctx)
     }
-    await next()
   }
 }
 
@@ -245,8 +245,6 @@ export const commondUploadImgMid = async (ctx: Context, next: () => Promise<void
 export const commondDelImgMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const data = (ctx.request as any).body
-    console.log(249, data)
-
     data.forEach((item: string) => {
       removeSpecifyFile(item)
     })

@@ -504,6 +504,9 @@ const createHtmlAddEdit = (data: ColumnType[]) => {
         case 'fileUpload':
           break
         case 'editor':
+          addEdit += `<Form.Item label="${item.columnComment}"    name="${item.tsField}">
+            <TextEditor ref={editorRef} editorHtml={editorHtml} />
+          </Form.Item>\n        `
           break
 
         default:
@@ -853,6 +856,13 @@ import { IdictType } from '@/type/modules/system/sysDictData'
 ${data.columns.find((item) => item.dictType) ? "import DictTag from '@/components/DictTag'" : ''}
 ${data.tplCategory === 'tree' ? `import { generalTreeFn } from '@/utils/smallUtils'` : ''}
 ${data.columns.find((item) => item.htmlType === 'datetime') ? `import dayjs from 'dayjs'` : ``}
+${
+  data.columns.find((item) => item.htmlType === 'editor')
+    ? `import TextEditor from '@/components/TextEditor'
+import { IDomEditor } from '@wangeditor/editor'
+import { commonDelImgAPI } from '@/api/modules/common'`
+    : ``
+}
 
 const ${stringFirst(data.className)}: React.FC = () => {
   ${data.columns.find((item) => item.htmlType === 'textarea') ? 'const { TextArea } = Input' : ''}
@@ -893,6 +903,13 @@ const ${stringFirst(data.className)}: React.FC = () => {
   const [searchShow, setSearchShow] = useState(true)
   // 当前编辑的id
   const [currentId, setCurrentId] = useState<number>()
+  ${
+    data.columns.find((item) => item.htmlType === 'editor')
+      ? `// editor
+      const editorRef = useRef()
+      const [editorHtml, setEditorHtml] = useState<string>('')`
+      : ''
+  }
   ${
     data.tplCategory === 'tree'
       ? `  //  行展开
@@ -942,6 +959,40 @@ const ${stringFirst(data.className)}: React.FC = () => {
   }
 
   ${
+    data.columns.find((item) => item.htmlType === 'editor')
+      ? `  // 添加编辑 确认
+  const addEditFn = async () => {
+    const { editor, html, uploadedImg } = editorRef.current as unknown as {
+      editor: IDomEditor
+      html: string
+      uploadedImg: string[]
+    }
+    // 1 获取富文本保存的 图片
+    const saveImgs = editor.getElemsByType('image') as unknown as {
+      src: string
+    }[]
+    // 2 用保存全部图片的 uploadedImg 对比 saveImgs 得出需要删除的img 调用后端接口删除图片
+    const delImgs: string[] = []
+    uploadedImg.forEach((item) => {
+      if (
+        !saveImgs.find((value) => value.src.split('/')[value.src.split('/').length - 1] === item)
+      ) {
+        delImgs.push(item)
+      }
+    })
+    await commonDelImgAPI(delImgs)
+
+    // 3 将 html 存储到 form 表单
+    addEditForm.setFieldValue('${
+      data.columns.find((item) => item.htmlType === 'editor').tsField
+    }', html)
+
+    addEditForm.submit()
+  }`
+      : ``
+  }
+
+  ${
     data.tplCategory === 'tree'
       ? ``
       : `  // row-select
@@ -964,6 +1015,11 @@ const ${stringFirst(data.className)}: React.FC = () => {
   // 获取详情
   const handleEditForm = async (id: number) => {
     const { data } = await getDetailAPI(id)
+    ${
+      data.columns.find((item) => item.htmlType === 'editor')
+        ? `setEditorHtml(data.result.noticeContent as string)`
+        : ``
+    }
     addEditForm.setFieldsValue(data.result as unknown as I${data.businessName}Type)
     setCurrentId(id)
     setIsModalOpen(true)
@@ -1223,7 +1279,11 @@ const ${stringFirst(data.className)}: React.FC = () => {
         <Modal
           title={isAdd ? '添加${data.functionName}' : '编辑${data.functionName}'}
           open={isModalOpen}
-          onOk={() => addEditForm.submit()}
+          onOk={${
+            data.columns.find((item) => item.htmlType === 'editor')
+              ? `addEditFn`
+              : `() => addEditForm.submit()`
+          }}
           onCancel={() => {
             setIsModalOpen(false)
             addEditForm.resetFields()

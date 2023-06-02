@@ -4,7 +4,6 @@ import KoaBody from 'koa-body'
 import errHandlerFn from './errHandler'
 import path from 'path'
 import koaStatic from 'koa-static'
-import os from 'os'
 
 // 引入路由
 import router from '@/business/router'
