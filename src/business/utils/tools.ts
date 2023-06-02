@@ -502,6 +502,7 @@ const createHtmlAddEdit = (data: ColumnType[]) => {
         case 'imageUpload':
           break
         case 'fileUpload':
+          addEdit += `<FileUpload ref={fileRef} />\n        `
           break
         case 'editor':
           addEdit += `<Form.Item label="${item.columnComment}"    name="${item.tsField}">
@@ -808,7 +809,7 @@ export const putAPI = (data: I${data.businessName}Type) => {
   const ids = '`是否确认删除编号为"${ids}"的数据项？`'
   codes[
     data.tplCategory === 'tree' ? 'index-tree.tsx' : 'index.tsx'
-  ] = `import React, { useState, useEffect } from 'react'
+  ] = `import React, { useState, useEffect, useRef } from 'react'
 import {
   Button,
   Form,
@@ -904,6 +905,7 @@ const ${stringFirst(data.className)}: React.FC = () => {
   const [searchShow, setSearchShow] = useState(true)
   // 当前编辑的id
   const [currentId, setCurrentId] = useState<number>()
+  ${data.columns.find((item) => item.htmlType === 'fileUpload') ? `const fileRef = useRef()` : ``}
   ${
     data.columns.find((item) => item.htmlType === 'editor')
       ? `// editor
@@ -1037,6 +1039,15 @@ const ${stringFirst(data.className)}: React.FC = () => {
       } else {
         await putAPI({ ...values, ${mainIdKey}: currentId })
         message.success('修改成功')
+      }
+      ${
+        data.columns.find((item) => item.htmlType === 'fileUpload')
+          ? `      const { handleUploadOk } = fileRef.current as unknown as {
+        handleUploadOk: Function
+        handleUploadCancel: Function
+      }
+      handleUploadOk()`
+          : ``
       }
     } catch (error) {}
     addEditForm.resetFields()
@@ -1291,6 +1302,15 @@ const ${stringFirst(data.className)}: React.FC = () => {
           }}
           onCancel={() => {
             setIsModalOpen(false)
+            ${
+              data.columns.find((item) => item.htmlType === 'fileUpload')
+                ? `            const { handleUploadCancel } = fileRef.current as unknown as {
+              handleUploadOk: Function
+              handleUploadCancel: Function
+            }
+            handleUploadCancel()`
+                : ``
+            }
             addEditForm.resetFields()
           }}
         >
