@@ -37,7 +37,7 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
     const { userName } = ctx.state.user as userType
     const addContent = ctx.request['body'] as Ipost
     const addContent2 = { ...addContent, createBy: userName }
-    const newAddContent = formatHumpLineTransfer(addContent2, 'line')
+    const newAddContent = formatHumpLineTransfer(addContent2, 'line') as IpostSer
 
     await addSer<IpostSer>(SysPost, newAddContent)
     await next()
@@ -78,7 +78,7 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { userName } = ctx.state.user as userType
     const res = ctx.request['body'] as Ipost
-    const lineData = await formatHumpLineTransfer(res, 'line')
+    const lineData = formatHumpLineTransfer(res, 'line') as IpostSer
     const { post_id, ...data } = lineData
 
     await putSer<IpostSer>(SysPost, { post_id }, { ...data, update_by: userName })

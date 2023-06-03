@@ -164,7 +164,7 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { userName } = ctx.state.user as userType
     const res = ctx.request['body'] as menusType
-    const menu = formatHumpLineTransfer(res, 'line') as menusSqlType
+    const menu = formatHumpLineTransfer(res, 'line') as unknown as menusSqlType
     const { menu_id, ...data } = menu
     await putSer(SysMenu, { menu_id }, { ...data, update_by: userName })
 

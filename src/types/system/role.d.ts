@@ -41,6 +41,7 @@ export interface Irole {
 }
 
 export interface IroleSer {
+  role_id?: number
   role_name?: string
   role_key?: string
   del_flag?: string

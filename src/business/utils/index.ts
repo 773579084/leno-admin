@@ -45,14 +45,14 @@ export const removeFolder = (folderPath: string) => {
  * @param {type} 'hump' 为下划线转驼峰，'line' 为驼峰转下划线
  * @return {Array||Object}
  */
-export const formatHumpLineTransfer = (data: any, type = 'hump'): Array<any> => {
+export const formatHumpLineTransfer = (data, type = 'hump'): Array<any> => {
   // 判断传入的值是对象还是数组
   const newData =
     Object.prototype.toString.call(data) === '[object Object]'
       ? [JSON.parse(JSON.stringify(data))]
       : JSON.parse(JSON.stringify(data))
 
-  function toggleFn(list: any[]) {
+  function toggleFn(list) {
     list.forEach((item) => {
       for (const key in item) {
         // 如果值为对象
@@ -107,7 +107,7 @@ export const formatHumpLineTransfer = (data: any, type = 'hump'): Array<any> => 
   // 因为上面操作为了方便操作，会将对象转化为数组格式，操作完后，需要将原先是对象的重新转化为对象
   if (Object.prototype.toString.call(data) === '[object Object]') {
     let obj = null
-    newData.forEach((item: any) => (obj = item))
+    newData.forEach((item) => (obj = item))
     return obj
   } else {
     return newData

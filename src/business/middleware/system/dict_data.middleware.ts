@@ -38,7 +38,7 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
     const { userName } = ctx.state.user as userType
     const addContent = ctx.request['body'] as IdictData
     const addContent2 = { ...addContent, createBy: userName }
-    const newAddContent = formatHumpLineTransfer(addContent2, 'line')
+    const newAddContent = formatHumpLineTransfer(addContent2, 'line') as IdictDataSer
 
     await addSer<IdictDataSer>(SysDictData, newAddContent)
     await next()
@@ -94,7 +94,7 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { userName } = ctx.state.user as userType
     const res = ctx.request['body'] as IdictData
-    const lineData = await formatHumpLineTransfer(res, 'line')
+    const lineData = formatHumpLineTransfer(res, 'line') as IdictDataSer
     const { dict_code, ...data } = lineData
 
     await putSer<IdictDataSer>(SysDictData, { dict_code }, { ...data, update_by: userName })

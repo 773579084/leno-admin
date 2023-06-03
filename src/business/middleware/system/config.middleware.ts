@@ -42,7 +42,7 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
     const { userName } = ctx.state.user as userType
     const addContent = ctx.request['body'] as Iconfig
     const addContent2 = { ...addContent, createBy: userName }
-    const newAddContent = formatHumpLineTransfer(addContent2, 'line')
+    const newAddContent = formatHumpLineTransfer(addContent2, 'line') as IconfigSer
 
     await addSer<IconfigSer>(SysConfig, newAddContent)
     await next()
@@ -83,7 +83,7 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { userName } = ctx.state.user as userType
     const res = ctx.request['body'] as Iconfig
-    const lineData = await formatHumpLineTransfer(res, 'line')
+    const lineData = formatHumpLineTransfer(res, 'line') as IconfigSer
     const { config_id, ...data } = lineData
 
     await putSer<IconfigSer>(SysConfig, { config_id }, { ...data, update_by: userName })

@@ -50,7 +50,7 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
     const { userName } = ctx.state.user as userType
     const addContent = ctx.request['body'] as Irole
     const addContent2 = { ...addContent, createBy: userName }
-    const newAddContent = formatHumpLineTransfer(addContent2, 'line') as Irole
+    const newAddContent = formatHumpLineTransfer(addContent2, 'line') as IroleSer
 
     const res = await addSer<IroleSer>(SysRole, newAddContent)
 
@@ -112,7 +112,7 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { userName } = ctx.state.user as userType
     const res = ctx.request['body'] as Irole
-    const lineData = await formatHumpLineTransfer(res, 'line')
+    const lineData = formatHumpLineTransfer(res, 'line') as IroleSer
     const { role_id, ...data } = lineData
 
     await putSer<IroleSer>(SysRole, { role_id }, { ...data, update_by: userName })
@@ -145,7 +145,7 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
 export const putRoleStatusMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { userName } = ctx.state.user as userType
-    let { id, status } = ctx.request['body'] as { status: string; id: string }
+    let { id, status } = ctx.request['body'] as { status: string; id: number }
 
     await putSer<IroleSer>(SysRole, { role_id: id }, { status, update_by: userName })
 

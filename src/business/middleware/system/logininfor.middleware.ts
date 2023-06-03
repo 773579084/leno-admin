@@ -47,7 +47,7 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
     const { userName } = ctx.state.user as userType
     const addContent = ctx.request['body'] as Ilogininfor
     const addContent2 = { ...addContent, createBy: userName }
-    const newAddContent = formatHumpLineTransfer(addContent2, 'line')
+    const newAddContent = formatHumpLineTransfer(addContent2, 'line') as IlogininforSer
 
     await addSer<IlogininforSer>(SysLogininfor, newAddContent)
     await next()

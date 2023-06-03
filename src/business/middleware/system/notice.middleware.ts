@@ -35,7 +35,7 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
     const { userName } = ctx.state.user as userType
     const addContent = ctx.request['body'] as Inotice
     const addContent2 = { ...addContent, createBy: userName }
-    const newAddContent = formatHumpLineTransfer(addContent2, 'line')
+    const newAddContent = formatHumpLineTransfer(addContent2, 'line') as InoticeSer
 
     await addSer<InoticeSer>(SysNotice, newAddContent)
     await next()
@@ -76,7 +76,7 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { userName } = ctx.state.user as userType
     const res = ctx.request['body'] as Inotice
-    const lineData = await formatHumpLineTransfer(res, 'line')
+    const lineData = formatHumpLineTransfer(res, 'line') as InoticeSer
     const { notice_id, ...data } = lineData
 
     await putSer<InoticeSer>(SysNotice, { notice_id }, { ...data, update_by: userName })

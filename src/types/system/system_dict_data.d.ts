@@ -49,6 +49,7 @@ export interface IdictDataSer {
   status?: string
   createBy?: string
   updateBy?: string
+  update_by?: string
   remark?: string
   createdAt?: string
   updatedAt?: string

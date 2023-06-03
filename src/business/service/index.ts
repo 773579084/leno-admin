@@ -118,7 +118,7 @@ export const getDetailSer = async <T>(
  */
 export const putSer = async <T extends Object>(
   model: ModelStatic<any>,
-  where: { [id: string]: string | string[] },
+  where: { [id: string]: number | number[] | string | string[] },
   data: T
 ) => {
   await model.update(data, { where })

@@ -159,7 +159,7 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { userName } = ctx.state.user as userType
     const res = ctx.request['body'] as GenType
-    const newRes = formatHumpLineTransfer(res, 'line') as GenSerType
+    const newRes = formatHumpLineTransfer(res, 'line') as unknown as GenSerType
 
     const { table_id, columns, ...genDate } = newRes
 
@@ -198,7 +198,7 @@ export const codePreviewMid = async (ctx: Context, next: () => Promise<void>) =>
         ]
       }
     )
-    const newRows = formatHumpLineTransfer(res)
+    const newRows = formatHumpLineTransfer(res) as unknown as GenType
     const code = generateCode(newRows)
     ctx.state.formatData = code
 

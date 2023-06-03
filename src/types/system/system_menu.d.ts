@@ -1,6 +1,6 @@
 // 菜单sql类型
 export interface menusSqlType {
-  menu_id: string
+  menu_id: number
   menu_name: string
   parent_id: string
   order_num: string
