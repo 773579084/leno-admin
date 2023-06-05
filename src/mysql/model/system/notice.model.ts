@@ -30,8 +30,13 @@ const SysNotice = seq.define(
     },
     status: {
       type: DataTypes.STRING,
-      defaultValue: 0,
+      defaultValue: '0',
       comment: '公告状态（0正常 1关闭）'
+    },
+    imgs: {
+      type: DataTypes.STRING,
+      defaultValue: '',
+      comment: '图片存储地址'
     },
     create_by: {
       type: DataTypes.STRING,

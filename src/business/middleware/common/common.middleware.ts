@@ -3,7 +3,12 @@ import { dictMapListType, imgType } from '@/types'
 import errors from '@/app/err.type'
 import { getExcelAddress, parsingExcel } from '@/business/utils/excel'
 import { getDataTypeSer } from '@/business/service/system/dict_data.service'
-import { formatHumpLineTransfer, removeSpecifyFile, timeChange } from '@/business/utils'
+import {
+  accessSrcFn,
+  formatHumpLineTransfer,
+  removeSpecifyFile,
+  timeChange
+} from '@/business/utils'
 import path from 'path'
 const {
   importUserListErr,
@@ -18,7 +23,6 @@ import { userExcelHeader } from '@/business/public/excelMap'
 import bcrypt from 'bcryptjs'
 import XLSX from 'exceljs'
 import { ModelStatic, Op } from 'sequelize'
-import os from 'os'
 
 // 下划线转驼峰
 export const formatHandle = async (ctx: Context, next: () => Promise<void>) => {
@@ -236,11 +240,9 @@ export const commondUploadImgMid = async (ctx: Context, next: () => Promise<void
     const { avatar } = (ctx.request as any).files
     const { filepath } = avatar as imgType
     const basePath = path.basename(filepath) as string
-    const { APP_PORT } = process.env
-    const ip = os.networkInterfaces()['WLAN'][1].address
 
     ctx.state.formatData = {
-      imgUrl: `http://${ip}:${APP_PORT}/${basePath}`,
+      imgUrl: accessSrcFn([basePath])[0],
       imgName: basePath
     }
     await next()
@@ -264,20 +266,24 @@ export const commondDelImgMid = async (ctx: Context, next: () => Promise<void>) 
   }
 }
 
-// 公用文件上传 会给下一级图片名 sting[]
+// 公用文件图片上传
 export const commondUploadFilesMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { files } = (ctx.request as any).files
 
     if (Object.prototype.toString.call(files) === '[object Object]') {
+      // 单
       const { newFilename } = files
+
       ctx.state.formatData = [newFilename]
     } else {
+      // 多
       const fileNames = []
       files.forEach((file: any) => {
         const { newFilename } = file
         fileNames.push(newFilename)
       })
+
       ctx.state.formatData = fileNames
     }
 

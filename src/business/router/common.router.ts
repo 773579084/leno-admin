@@ -10,7 +10,7 @@ import {
 
 const router = new Router({ prefix: '/common' })
 
-// 公用上传图片接口
+// 公用单张图片上传接口（一般用于上传后及时回显所用）
 router.post(
   '/image',
   contrastFileSizeSchema(),

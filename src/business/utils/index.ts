@@ -2,6 +2,9 @@ import fs from 'fs'
 import path from 'path'
 import dayjs from 'dayjs'
 import { dictMapListType, dictMapType } from '@/types'
+import os from 'os'
+const { APP_PORT, APP_HTTP } = process.env
+const ip = os.networkInterfaces()['WLAN'][1].address
 
 /** 删除文件
  * @param {string} filename
@@ -207,4 +210,16 @@ export const dictMapFn = (dicts: dictMapListType): dictMapType => {
   }
 
   return maps
+}
+
+/**
+ * 文件名转访问路径
+ * @param filesName
+ */
+export const accessSrcFn = (filesName: string[]) => {
+  const srcs = []
+  filesName.forEach((fileName) => {
+    srcs.push(`${APP_HTTP}://${ip}:${APP_PORT}/${fileName}`)
+  })
+  return srcs
 }

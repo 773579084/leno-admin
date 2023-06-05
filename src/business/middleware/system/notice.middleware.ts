@@ -3,7 +3,7 @@ import { getListSer, addSer, putSer, getDetailSer, delSer } from '@/business/ser
 import { userType } from '@/types'
 import { InoticeQueryType, InoticeQuerySerType, Inotice, InoticeSer } from '@/types/system/notice'
 import errors from '@/app/err.type'
-import { formatHumpLineTransfer } from '@/business/utils'
+import { formatHumpLineTransfer, removeSpecifyFile } from '@/business/utils'
 import { excelJsExport } from '@/business/utils/excel'
 import { excelBaseStyle } from '@/business/public/excelMap'
 import SysNotice from '@/mysql/model/system/notice.model'
@@ -48,6 +48,12 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
 // 删除
 export const delMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
+    // 拿取图片信息，有则删除
+    const { imgs } = await getDetailSer<InoticeSer>(SysNotice, { notice_id: ctx.state.ids })
+    if (imgs) {
+      JSON.parse(imgs).forEach((item: string) => removeSpecifyFile(item))
+    }
+
     await delSer(SysNotice, { notice_id: ctx.state.ids })
   } catch (error) {
     console.error('删除失败', error)
