@@ -16,5 +16,6 @@ export const putJudg = Joi.object({
   configKey: Joi.string().required(),
   configValue: Joi.string().required(),
   configType: Joi.string(),
+  files: Joi.string().allow(''),
   remark: Joi.any()
 })

@@ -1019,10 +1019,10 @@ const ${stringFirst(data.className)}: React.FC = () => {
         setImgs(data.result.${data.columns.find((item) => item.htmlType === 'editor')} as string)`
         : ``
     }
-    addEditForm.setFieldsValue(data.result as unknown as I${data.businessName}Type)
     setCurrentId(id)
     setIsModalOpen(true)
     setIsAdd(false)
+    addEditForm.setFieldsValue(data.result as unknown as I${data.businessName}Type)
   }
 
   // 表单提交
@@ -1047,9 +1047,9 @@ const ${stringFirst(data.className)}: React.FC = () => {
           : ``
       }
     } catch (error) {}
+    setIsModalOpen(false)
     addEditForm.resetFields()
     getList()
-    setIsModalOpen(false)
   }
 
   // 分页
