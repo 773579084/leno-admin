@@ -22,7 +22,7 @@ router.post(
 // 公用删除图片
 router.post('/delImage', commondDelImgMid, IndexCon())
 
-// 公用文件上传
+// 公用文件图片上传
 router.post('/files', commondUploadFilesMid, IndexCon())
 
 module.exports = router

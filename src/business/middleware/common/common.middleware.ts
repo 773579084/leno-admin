@@ -271,7 +271,7 @@ export const commondUploadFilesMid = async (ctx: Context, next: () => Promise<vo
 
     if (Object.prototype.toString.call(files) === '[object Object]') {
       const { newFilename } = files
-      ctx.state.filesSrc = [newFilename]
+      ctx.state.formatData = [newFilename]
     } else {
       const fileNames = []
       files.forEach((file: any) => {

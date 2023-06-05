@@ -500,6 +500,7 @@ const createHtmlAddEdit = (data: ColumnType[]) => {
             </Form.Item>\n        `
           break
         case 'imageUpload':
+          addEdit += `<ImageUpload ref={fileRef} />\n        `
           break
         case 'fileUpload':
           addEdit += `<FileUpload ref={fileRef} />\n        `
