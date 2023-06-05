@@ -14,15 +14,19 @@ import {
 import errors from '@/app/err.type'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import { loginSchema, resetPwdSchema, changeUserInfoSchema } from '@/business/schema/user.schema'
 import { formatHumpLineTransfer, removeSpecifyFile } from '@/business/utils'
 import dayjs from 'dayjs'
+import { getUserRoleSer } from '../service/system/user.service'
+import { queryConditionsData } from '../service'
+import SysRole from '@/mysql/model/system/role.model'
+import { Op } from 'sequelize'
+import SysRoleMenu from '@/mysql/model/system/sys_role_menu.model'
+import SysMenu from '@/mysql/model/system/menu.model'
 const {
   userExisting,
   userLoginError,
   userDoesNotExist,
   userRegisterError,
-  FormatWrongErr,
   InvalidConnectionError,
   userStatusErr,
   sqlErr,
@@ -155,25 +159,83 @@ export const loginMid = async (ctx: Context, next: () => Promise<void>) => {
   await next()
 }
 
-// 获取用户
+//  获取用户
 export const getUserInfoMid = async (ctx: Context, next: () => Promise<void>) => {
   const { userId } = ctx.state.user as userType
+  console.log(161, userId)
 
   try {
     const { password, ...res } = await getAllUserInfoSer({ userId })
+    // 查询用户关联角色id
+    const roleIds = (await getUserRoleSer(userId)) as unknown as { role_id: number }[]
+    const ids = []
+    roleIds.forEach((item) => {
+      ids.push(item.role_id)
+    })
+
+    const roleMessage = await queryConditionsData(SysRole, {
+      role_id: {
+        [Op.in]: ids
+      }
+    })
+    res.roles = roleMessage
+
     const data = formatHumpLineTransfer(res)
 
     ctx.state.formatData = data
-    ctx.body = {
-      code: 200,
-      message: '用户获取个人信息成功！',
-      result: data
-    }
+    await next()
   } catch (error) {
     console.error('用户获取个人信息失败', error)
     return ctx.app.emit('error', getUserInfoErr, ctx)
   }
+}
 
+// 获取权限
+export const getPermRoleMid = async (ctx: Context, next: () => Promise<void>) => {
+  const userInfo = ctx.state.formatData as userType
+  const roles = []
+  const permissionsIds = []
+  const permissions = []
+  userInfo.roles.forEach((item) => {
+    if (item.roleKey === 'admin') {
+      permissions.push('*:*:*')
+    } else {
+      roles.push(item.roleKey)
+      permissionsIds.push(item.roleId)
+    }
+  })
+
+  // 查询角色关联的菜单ids
+  const menuRole = await queryConditionsData(
+    SysRoleMenu,
+    {
+      role_id: {
+        [Op.in]: permissionsIds
+      }
+    },
+    { attributes: ['menu_id'] }
+  )
+
+  const menuIds = menuRole.map((item) => item.menu_id)
+
+  // 查寻找角色相关的
+  const menus = await queryConditionsData(
+    SysMenu,
+    {
+      menu_id: {
+        [Op.in]: Array.from(new Set(menuIds))
+      }
+    },
+    { attributes: ['perms'] }
+  )
+  console.log(233, menus)
+  // permissions =
+
+  ctx.state.formatData = {
+    userInfo,
+    roles,
+    permissions
+  }
   await next()
 }
 

@@ -1,4 +1,5 @@
 import { deptType } from './system'
+import { IroleQueryType } from './system/role'
 
 export interface userType {
   userId?: number
@@ -23,6 +24,7 @@ export interface userType {
   createdAt?: string | null
   updatedAt?: string | null
   dept?: deptType
+  roles?: IroleQueryType[]
   postIds?: number[]
   roleIds?: number[]
 }

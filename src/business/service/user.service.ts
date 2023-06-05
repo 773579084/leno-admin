@@ -1,3 +1,4 @@
+import SysDept from '@/mysql/model/system/dept.model'
 import LenoUser from '@/mysql/model/user.model'
 import { userType } from '@/types'
 
@@ -43,7 +44,13 @@ export const getUserInfo = async ({ userId, userName, password }: userType) => {
 // 获取 详细信息
 export const getAllUserInfoSer = async ({ userId }) => {
   const res = (await LenoUser.findOne({
-    where: { user_id: userId }
+    where: { user_id: userId },
+    include: [
+      {
+        model: SysDept,
+        as: 'dept'
+      }
+    ]
   })) as any
   return res ? res.dataValues : null
 }

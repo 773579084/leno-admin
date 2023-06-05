@@ -201,5 +201,10 @@ export default {
     code: '500',
     message: '上传文件失败',
     result: ''
+  },
+  importErr: {
+    code: '500',
+    message: '导入失败',
+    result: ''
   }
 }

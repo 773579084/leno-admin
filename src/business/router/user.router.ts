@@ -10,7 +10,8 @@ import {
   updatePwdMid,
   updateUserInfoMid,
   uploadAvatarMid,
-  refreshTokenMid
+  refreshTokenMid,
+  getPermRoleMid
 } from '@/business/middleware/user.middleware'
 import IndexCon from '@/business/controller'
 import refreshAuth from '@/business/middleware/common/refresh'
@@ -38,8 +39,11 @@ router.post(
   IndexCon('注册成功！')
 )
 
+// 获取用户及权限角色信息
+router.get('/getInfo', getUserInfoMid, getPermRoleMid, IndexCon('获取用户个人信息成功！'))
+
 // 获取用户所有的个人信息
-router.get('/profile/userInfo', getUserInfoMid, IndexCon('用户获取个人信息成功！'))
+router.get('/profile', getUserInfoMid, IndexCon('获取用户个人信息成功！'))
 
 // 修改用户密码
 router.put('/profile/updatePwd', pwdSchema, updatePwdMid, IndexCon('密码修改成功！'))

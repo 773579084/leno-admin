@@ -94,7 +94,7 @@ export const addUserPostSer = async (list) => {
 }
 
 // 查询用户岗位关联表
-export const getUserPostSer = async (userId) => {
+export const getUserPostSer = async (userId: string) => {
   const res = await UserPost.findAll({
     raw: true,
     attributes: ['post_id'],
@@ -105,7 +105,7 @@ export const getUserPostSer = async (userId) => {
   return res || []
 }
 
-// 查询角色岗位关联表
+// / 查询用户关联角色
 export const getUserRoleSer = async (userId) => {
   const res = await SysUserRole.findAll({
     raw: true,

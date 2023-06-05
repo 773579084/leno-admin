@@ -38,6 +38,8 @@ import { excelJsExport } from '@/business/utils/excel'
 import { excelBaseStyle, userExcelHeader, userTemExcelHeader } from '@/business/public/excelMap'
 import SysDept from '@/mysql/model/system/dept.model'
 import { Op } from 'sequelize'
+import { IroleSer } from '@/types/system/role'
+import { IpostSer } from '@/types/system/post'
 const {
   checkUserIdErr,
   getDeptTreeErr,
@@ -48,7 +50,8 @@ const {
   putUserErr,
   exportUserListErr,
   delErr,
-  exportExcelErr
+  exportExcelErr,
+  importErr
 } = errors
 
 // 生成用户列表
@@ -255,25 +258,29 @@ export const userInfoMid = async (ctx: Context, next: () => Promise<void>) => {
   }
 
   try {
-    const res = (await getUserPostSer(userId)) as any
     const postIds = [],
       roleIds = []
+    // 岗位
+    const res = (await getUserPostSer(userId)) as unknown as { post_id: number }[]
     res.forEach((item) => postIds.push(item.post_id))
     finRes.postIds = postIds
-    const res2 = await getPostSer()
-    finRes.posts = res2 as any
-    const roleRes = (await getUserRoleSer(userId)) as any
-    roleRes.forEach((item) => roleIds.push(item.role_id))
+    const res2 = (await getPostSer()) as IpostSer[]
+    finRes.posts = res2
+    // 角色
+    const roleRes = (await getUserRoleSer(userId)) as unknown as { role_id: number }[]
+    roleRes.forEach((item) => {
+      roleIds.push(item.role_id)
+    })
     finRes.roleIds = roleIds as number[]
-    const roleRes2 = await getRoleSer()
-    finRes.roles = roleRes2 as any
+    const roleRes2 = (await getRoleSer()) as IroleSer[]
+
+    finRes.roles = roleRes2.filter((item) => item.role_key !== 'admin')
+    ctx.state.formatData = finRes
+    await next()
   } catch (error) {
     console.error('查询用户岗位与角色信息错误', error)
     return ctx.app.emit('error', sqlErr, ctx)
   }
-
-  ctx.state.formatData = finRes
-  await next()
 }
 
 // 修改用户
@@ -371,23 +378,28 @@ export const exportTemMid = async (ctx: Context, next: () => Promise<void>) => {
 
 // 导入 用户excel
 export const importExcelUserCon = async (ctx: Context, next: () => Promise<void>) => {
-  const excelData = ctx.state.excelData
-  // 将导入用户的部门名称替换成部门id
-  for (let i = 0; i < excelData.length; i++) {
-    for (let key in excelData[i]) {
-      if (key === 'dept.dept_name') {
-        const deptArr = (await SysDept.findAll({
-          raw: true,
-          attributes: ['dept_id'],
-          where: {
-            dept_name: excelData[i][key]
-          }
-        })) as unknown as { dept_id: number }[]
-        excelData[i]['dept_id'] = deptArr[0].dept_id
+  try {
+    const excelData = ctx.state.excelData
+    // 将导入用户的部门名称替换成部门id
+    for (let i = 0; i < excelData.length; i++) {
+      for (let key in excelData[i]) {
+        if (key === 'dept.dept_name') {
+          const deptArr = (await SysDept.findAll({
+            raw: true,
+            attributes: ['dept_id'],
+            where: {
+              dept_name: excelData[i][key]
+            }
+          })) as unknown as { dept_id: number }[]
+          excelData[i]['dept_id'] = deptArr[0].dept_id
+        }
       }
     }
-  }
 
-  ctx.state.excelData = excelData
-  await next()
+    ctx.state.excelData = excelData
+    await next()
+  } catch (error) {
+    console.error('导入失败', error)
+    return ctx.app.emit('error', importErr, ctx)
+  }
 }

@@ -136,3 +136,22 @@ export const exportExcelSer = async (model: ModelStatic<any>) => {
 
   return res.rows
 }
+
+/**
+ * 查询相关条件所有数据
+ * @param model
+ * @param where
+ */
+export const queryConditionsData = async (
+  model: ModelStatic<any>,
+  where: { [key: string]: any },
+  otherWhere?: Object
+) => {
+  const res = await model.findAll({
+    raw: true, // 设置为 true，即可返回源数据
+    ...otherWhere,
+    where
+  })
+
+  return res
+}

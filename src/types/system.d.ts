@@ -1,3 +1,5 @@
+import { IroleSer } from '@/types/system/role'
+import { IpostSer } from '@/types/system/post'
 // 部门类型
 export interface deptType {
   [x: string]: any
@@ -55,9 +57,9 @@ export interface IUserDetail {
   createdAt: string
   updatedAt: string
   postIds: number[]
-  posts: SysPost[]
+  posts: IpostSer[]
   roleIds: number[]
-  roles: SysRole[]
+  roles: IroleSer[]
   userId: number
   deptId?: number
   userName: string
