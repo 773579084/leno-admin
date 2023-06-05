@@ -223,3 +223,28 @@ export const accessSrcFn = (filesName: string[]) => {
   })
   return srcs
 }
+
+/**
+ * 下划线转首字母和下划线后首字母大写，并去掉下划线
+ * @param str
+ * @returns
+ */
+export const underlineToCamel = (str: string) => {
+  return str
+    .replace(/_(\w)/g, function (match, p1) {
+      return p1.toUpperCase()
+    })
+    .replace(/^\w/, function (match) {
+      return match.toUpperCase()
+    })
+}
+
+/**
+ * 下划线后首字母大写，并去掉下划线
+ *  @param str
+ */
+export const underline = (str: string) => {
+  return str.replace(/_(\w)/g, function (match, p1) {
+    return p1.toUpperCase()
+  })
+}

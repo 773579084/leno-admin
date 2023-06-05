@@ -5,24 +5,7 @@ import { ColumnType, GenType, sqlTableCoulmnsType } from '@/types/tools/gen'
 import { QueryTypes } from 'sequelize'
 import { addAllSer } from '../service'
 import { queryGenIdSer } from '../service/tool/gen.service'
-
-// 下划线转首字母和下划线后首字母大写，并去掉下划线
-function underlineToCamel(str: string) {
-  return str
-    .replace(/_(\w)/g, function (match, p1) {
-      return p1.toUpperCase()
-    })
-    .replace(/^\w/, function (match) {
-      return match.toUpperCase()
-    })
-}
-
-// 下划线后首字母大写，并去掉下划线
-function underline(str: string) {
-  return str.replace(/_(\w)/g, function (match, p1) {
-    return p1.toUpperCase()
-  })
-}
+import { underlineToCamel, underline } from './index'
 
 // sql字段类型与typescript字段类型对比
 const sqlTsContrast = {
@@ -223,12 +206,12 @@ const addEditSchema = (data: ColumnType[], isAdd: boolean) => {
   data.forEach((item) => {
     if (isAdd && item.isInsert === '0') {
       schema += `${item.tsField}: Joi.${item.tsType}()${
-        item.isRequired === '0' ? '.required(),' : ','
+        item.isRequired === '0' ? `.required(),` : `.allow(''),`
       }\n  `
     }
     if (!isAdd && item.isEdit === '0') {
       schema += `${item.tsField}: Joi.${item.tsField === 'remark' ? 'any' : item.tsType}()${
-        item.isRequired === '0' ? '.required(),' : ','
+        item.isRequired === '0' ? '.required(),' : `.allow(''),`
       }\n  `
     }
   })
@@ -507,7 +490,7 @@ const createHtmlAddEdit = (data: ColumnType[]) => {
           break
         case 'editor':
           addEdit += `<Form.Item label="${item.columnComment}"    name="${item.tsField}">
-            <TextEditor ref={editorRef} editorHtml={editorHtml} />
+            <TextEditor ref={editorRef} editorHtml={editorHtml}  imgs={imgs}/>
           </Form.Item>\n        `
           break
 
@@ -538,7 +521,7 @@ import seq from '@/mysql/db/seq.db'
 const ${data.className} = seq.define(
   '${data.tableName}',
   {
-    ${generateModel(data.columns)}
+    ${generateModel(data.columns)},
   },
   {
     tableName: '${data.tableName}', // 强制创建表名
@@ -672,6 +655,15 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
 // 删除
 export const delMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
+    ${
+      data.columns.find((item) => item.htmlType === 'editor')
+        ? `// 拿取图片信息，有则删除
+    const { imgs } = await getDetailSer<InoticeSer>(SysNotice, { notice_id: ctx.state.ids })
+    if (imgs) {
+      JSON.parse(imgs).forEach((item: string) => removeSpecifyFile(item))
+    }`
+        : ``
+    }
     await delSer(${data.className}, { ${data.columns[0].columnName}: ctx.state.ids })
   } catch (error) {
     console.error('删除失败', error)
@@ -911,7 +903,8 @@ const ${stringFirst(data.className)}: React.FC = () => {
     data.columns.find((item) => item.htmlType === 'editor')
       ? `// editor
       const editorRef = useRef()
-      const [editorHtml, setEditorHtml] = useState<string>('')`
+      const [editorHtml, setEditorHtml] = useState<string>('')
+      const [imgs, setImgs] = useState<string>('')`
       : ''
   }
   ${
@@ -1022,7 +1015,8 @@ const ${stringFirst(data.className)}: React.FC = () => {
     const { data } = await getDetailAPI(id)
     ${
       data.columns.find((item) => item.htmlType === 'editor')
-        ? `setEditorHtml(data.result.noticeContent as string)`
+        ? `setEditorHtml(data.result.noticeContent as string)
+        setImgs(data.result.${data.columns.find((item) => item.htmlType === 'editor')} as string)`
         : ``
     }
     addEditForm.setFieldsValue(data.result as unknown as I${data.businessName}Type)
@@ -1035,10 +1029,12 @@ const ${stringFirst(data.className)}: React.FC = () => {
   const handleFormFinish = async (values: I${data.businessName}Type) => {
     try {
       if (isAdd) {
-        await addAPI(values)
+        await addAPI({ ...values, ${data.columns.find((item) => item.htmlType === 'editor')}:imgs})
         message.success('新增成功')
       } else {
-        await putAPI({ ...values, ${mainIdKey}: currentId })
+        await putAPI({ ...values, ${data.columns.find(
+          (item) => item.htmlType === 'editor'
+        )}:imgs, ${mainIdKey}: currentId })
         message.success('修改成功')
       }
       ${
