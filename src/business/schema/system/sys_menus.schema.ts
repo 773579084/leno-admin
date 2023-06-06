@@ -2,7 +2,7 @@ import Joi from 'joi'
 import { remark, dictString, mustId, requireString } from '../config.schema'
 
 const addEdit = {
-  path: requireString,
+  path: Joi.string().max(500).allow(''),
   component: dictString,
   query: dictString,
   visible: requireString,

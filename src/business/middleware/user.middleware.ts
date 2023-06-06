@@ -199,37 +199,43 @@ export const getPermRoleMid = async (ctx: Context, next: () => Promise<void>) =>
   userInfo.roles.forEach((item) => {
     if (item.roleKey === 'admin') {
       permissions.push('*:*:*')
+      roles.push('admin')
     } else {
       roles.push(item.roleKey)
       permissionsIds.push(item.roleId)
     }
   })
 
-  // 查询角色关联的菜单ids
-  const menuRole = await queryConditionsData(
-    SysRoleMenu,
-    {
-      role_id: {
-        [Op.in]: permissionsIds
-      }
-    },
-    { attributes: ['menu_id'] }
-  )
+  // 返回权限 如果 permissions 有值，则表示为超级管理员，否则
+  if (permissions.length < 1) {
+    // 查询角色关联的菜单ids
+    const menuRole = (await queryConditionsData(
+      SysRoleMenu,
+      {
+        role_id: {
+          [Op.in]: permissionsIds
+        }
+      },
+      { attributes: ['menu_id'] }
+    )) as { menu_id: number }[]
 
-  const menuIds = menuRole.map((item) => item.menu_id)
+    const menuIds = menuRole.map((item) => item.menu_id)
 
-  // 查寻找角色相关的
-  const menus = await queryConditionsData(
-    SysMenu,
-    {
-      menu_id: {
-        [Op.in]: Array.from(new Set(menuIds))
-      }
-    },
-    { attributes: ['perms'] }
-  )
-  console.log(233, menus)
-  // permissions =
+    // 查寻找角色相关的
+    const menus = (await queryConditionsData(
+      SysMenu,
+      {
+        menu_id: {
+          [Op.in]: Array.from(new Set(menuIds))
+        }
+      },
+      { attributes: ['perms'] }
+    )) as { perms: string }[]
+
+    menus.forEach((menu) => {
+      if (menu.perms) permissions.push(menu.perms)
+    })
+  }
 
   ctx.state.formatData = {
     userInfo,

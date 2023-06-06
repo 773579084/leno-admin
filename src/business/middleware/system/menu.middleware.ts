@@ -40,6 +40,7 @@ export const getRouterMid = async (ctx: Context, next: () => Promise<void>) => {
           hidden: menu.visible === '0' ? false : true,
           children: [],
           query: menu.query,
+          perms: menu.perms,
           meta: {
             title: menu.menuName,
             link: menu.isFrame ? null : menu.path,
@@ -67,6 +68,7 @@ export const getRouterMid = async (ctx: Context, next: () => Promise<void>) => {
             element: menu.component,
             hidden: menu.visible === '0' ? false : true,
             children: [],
+            perms: menu.perms,
             meta: {
               title: menu.menuName,
               link: menu.isFrame ? null : menu.path,
