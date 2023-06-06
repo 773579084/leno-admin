@@ -7,8 +7,6 @@ export interface IroleQueryType {
   roleKey?: string
   roleSort?: number
   dataScope?: string
-  menuCheckStrictly?: string
-  deptCheckStrictly?: string
   status?: string
   delFlag?: string
   createBy?: string

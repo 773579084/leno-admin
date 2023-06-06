@@ -5,7 +5,6 @@ export const addJudg = Joi.object({
   roleName: Joi.string().required(),
   roleKey: Joi.string().required(),
   status: Joi.string().required(),
-  menuCheckStrictly: Joi.string(),
   roleSort: Joi.number().required(),
   menuIds: Joi.array(),
   remark: Joi.any()
@@ -18,7 +17,6 @@ export const putJudg = Joi.object({
   roleKey: Joi.string().required(),
   roleSort: Joi.number().required(),
   status: Joi.string().required(),
-  menuCheckStrictly: Joi.string(),
   menuIds: Joi.array(),
   remark: Joi.any()
 })
