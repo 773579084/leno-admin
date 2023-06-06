@@ -21,7 +21,7 @@ const router = new Router({ prefix: '/system' })
 // 查询routers菜单
 router.get('/menu/getRouters', conversionMid, getRouterMid, IndexCon())
 
-// 查询列表
+// 获取角色权限过滤后的菜单列表
 router.get('/menu/list', getMenusMid, formatHandle, IndexCon())
 
 // 新增

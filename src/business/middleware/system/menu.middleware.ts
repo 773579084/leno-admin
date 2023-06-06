@@ -1,11 +1,14 @@
 import { Context } from 'koa'
 import { getRoutersSer, getMenusSer } from '@/business/service/system/menu.service'
-import { addSer, delSer, getDetailSer, putSer } from '@/business/service'
+import { addSer, delSer, getDetailSer, putSer, queryConditionsData } from '@/business/service'
 import { formatHumpLineTransfer } from '@/business/utils'
 import { MenuParamsType, menusSqlType, menusType, RouteType, userType } from '@/types'
 import { addJudg, putJudg } from '@/business/schema/system/sys_menus.schema'
 import errors from '@/app/err.type'
 import SysMenu from '@/mysql/model/system/menu.model'
+import { getUserRoleSer } from '@/business/service/system/user.service'
+import SysRoleMenu from '@/mysql/model/system/sys_role_menu.model'
+import { Op } from 'sequelize'
 const { delErr, getRoutersErr, getListErr, uploadParamsErr, addErr, sqlErr } = errors
 
 // 获取菜单数据并进行数据转换
@@ -100,14 +103,37 @@ export const getRouterMid = async (ctx: Context, next: () => Promise<void>) => {
 export const getMenusMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const params = ctx.query as unknown as MenuParamsType
+    const whereObj = {}
+    const { status, menuName } = params
+    status && Object.assign(whereObj, { status })
+    menuName && Object.assign(whereObj, { menu_name: { [Op.like]: menuName + '%' } })
+
+    // 找出用户id 关联的 菜单信息
+    const { userId } = ctx.state.user as userType
+    if (userId !== 1) {
+      // 1 查找用户关联的角色id
+      const roleIds = (await getUserRoleSer(userId)) as unknown as { role_id: number }[]
+      const ids = roleIds.map((item) => item.role_id)
+
+      // 2 查找角色关联的菜单id
+      const menuRoles = await queryConditionsData(SysRoleMenu, {
+        role_id: {
+          [Op.in]: ids
+        }
+      })
+      const menuIds = menuRoles.map((item) => item.menu_id)
+      const filterMenuIds = Array.from(new Set(menuIds))
+      Object.assign(whereObj, { menu_id: { [Op.in]: filterMenuIds } })
+    }
+
     // 获取数据库菜单数据
-    const res = await getMenusSer(params)
+    const res = await getMenusSer(whereObj)
     ctx.state.formatData = res
+    await next()
   } catch (error) {
     console.error('菜单列表获取失败', error)
     return ctx.app.emit('error', getListErr, ctx)
   }
-  await next()
 }
 
 // 检查新增上传参数 judge 判断时新增或修改

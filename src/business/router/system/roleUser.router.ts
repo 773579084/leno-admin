@@ -18,7 +18,7 @@ router.get('/roleUser/list', getListMid, formatHandle, IndexCon())
 router.post('/roleUser', getAddMid, IndexCon())
 
 // 取消授权
-router.delete('/roleUser/:id', judgeIdSchema(), delMid, IndexCon())
+router.delete('/roleUser', delMid, IndexCon())
 
 // 选择用户列表
 router.get('/roleUser/unallocatedList', unallocatedListMid, formatHandle, IndexCon())

@@ -162,16 +162,12 @@ export const loginMid = async (ctx: Context, next: () => Promise<void>) => {
 //  获取用户
 export const getUserInfoMid = async (ctx: Context, next: () => Promise<void>) => {
   const { userId } = ctx.state.user as userType
-  console.log(161, userId)
 
   try {
     const { password, ...res } = await getAllUserInfoSer({ userId })
     // 查询用户关联角色id
     const roleIds = (await getUserRoleSer(userId)) as unknown as { role_id: number }[]
-    const ids = []
-    roleIds.forEach((item) => {
-      ids.push(item.role_id)
-    })
+    const ids = roleIds.map((item) => item.role_id)
 
     const roleMessage = await queryConditionsData(SysRole, {
       role_id: {
@@ -218,19 +214,14 @@ export const getPermRoleMid = async (ctx: Context, next: () => Promise<void>) =>
       },
       { attributes: ['menu_id'] }
     )) as { menu_id: number }[]
-
     const menuIds = menuRole.map((item) => item.menu_id)
 
-    // 查寻找角色相关的
-    const menus = (await queryConditionsData(
-      SysMenu,
-      {
-        menu_id: {
-          [Op.in]: Array.from(new Set(menuIds))
-        }
-      },
-      { attributes: ['perms'] }
-    )) as { perms: string }[]
+    // 查寻找角色相关的菜单
+    const menus = (await queryConditionsData(SysMenu, {
+      menu_id: {
+        [Op.in]: Array.from(new Set(menuIds))
+      }
+    })) as { perms: string }[]
 
     menus.forEach((menu) => {
       if (menu.perms) permissions.push(menu.perms)

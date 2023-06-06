@@ -66,4 +66,5 @@ export interface RouteType {
 export interface MenuParamsType {
   status?: string
   menuName?: menuName
+  [OpTypes.in]?: number[]
 }

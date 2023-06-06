@@ -67,13 +67,14 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
 // 取消授权
 export const delMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    await delSer(SysUserRole, { user_id: ctx.state.ids })
+    const data = ctx.request['body'] as { roleId: string; userId: string }
+
+    await delSer(SysUserRole, { user_id: data.userId.split(','), role_id: [data.roleId] })
+    await next()
   } catch (error) {
     console.error('删除失败', error)
     return ctx.app.emit('error', delErr, ctx)
   }
-
-  await next()
 }
 
 export const unallocatedListMid = async (ctx: Context, next: () => Promise<void>) => {
