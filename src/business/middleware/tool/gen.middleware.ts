@@ -1,5 +1,5 @@
 import { Context } from 'koa'
-import { getListSer, addSer, putSer, getDetailSer } from '@/business/service'
+import { getListSer, addSer, putSer, getDetailSer, addAllSer } from '@/business/service'
 import { userType, IdictType } from '@/types'
 import errors from '@/app/err.type'
 import { formatHumpLineTransfer, removeFolder } from '@/business/utils'
@@ -412,7 +412,8 @@ export const genCodeMid = async (ctx: Context, next: () => Promise<void>) => {
 
       // 判断是否选择了 上级菜单
       if (row.parentId) {
-        await addSer(SysMenu, {
+        // 写入菜单
+        const res = await addSer(SysMenu, {
           menu_type: 'C',
           icon: row.businessName,
           menu_name: row.functionName,
@@ -426,6 +427,31 @@ export const genCodeMid = async (ctx: Context, next: () => Promise<void>) => {
           status: '0',
           visible: '0'
         })
+        console.log(430, res)
+
+        // 写入按钮权限
+        const btnPerm = [
+          { name: '查询', perm: 'query' },
+          { name: '新增', perm: 'add' },
+          { name: '修改', perm: 'edit' },
+          { name: '删除', perm: 'remove' },
+          { name: '导出', perm: 'export' }
+        ]
+        const btnPermsList = []
+        btnPerm.forEach((item, index) => {
+          btnPermsList.push({
+            menu_type: 'F',
+            menu_name: item.name,
+            order_num: index + 1,
+            is_cache: 0,
+            is_frame: 1,
+            parent_id: res.menu_id,
+            perms: `${row.moduleName}:${row.businessName}:${item.perm}`,
+            status: '0',
+            visible: '0'
+          })
+        })
+        await addAllSer(SysMenu, btnPermsList)
       }
     })
 

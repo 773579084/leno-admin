@@ -847,6 +847,7 @@ ${
     : ''
 }
 import ColorBtn from '@/components/ColorBtn'
+import { hasPermi } from '@/utils/auth'
 import { IdictType } from '@/type/modules/system/sysDictData'
 ${data.columns.find((item) => item.dictType) ? "import DictTag from '@/components/DictTag'" : ''}
 ${data.tplCategory === 'tree' ? `import { generalTreeFn } from '@/utils/smallUtils'` : ''}
@@ -859,7 +860,7 @@ import { commonDelImgAPI } from '@/api/modules/common'`
     : ``
 }
 
-const ${stringFirst(data.className)}: React.FC = () => {
+const ${stringFirst(data.className)} = () => {
   ${data.columns.find((item) => item.htmlType === 'textarea') ? 'const { TextArea } = Input' : ''}
   const [queryForm] = Form.useForm()
   const [addEditForm] = Form.useForm()
@@ -1126,6 +1127,7 @@ const ${stringFirst(data.className)}: React.FC = () => {
       render: (_: any, record: I${data.businessName}Type) => (
         <div>
           <Button
+            hidden={hasPermi('${data.moduleName}:${data.businessName}:edit')}
             onClick={() => handleEditForm(record.${mainIdKey} as number)}
             size="small"
             icon={<EditOutlined />}
@@ -1134,6 +1136,7 @@ const ${stringFirst(data.className)}: React.FC = () => {
             修改
           </Button>
           <Button
+            hidden={hasPermi('${data.moduleName}:${data.businessName}:remove')}
             size="small"
             icon={<DeleteOutlined />}
             type="link"
@@ -1175,6 +1178,7 @@ const ${stringFirst(data.className)}: React.FC = () => {
             <Row gutter={8}>
               <Col>
                 <ColorBtn
+                  hidden={hasPermi('${data.moduleName}:${data.businessName}:add')}
                   icon={<PlusOutlined />}
                   onClick={() => {
                     setIsModalOpen(true)
@@ -1186,7 +1190,7 @@ const ${stringFirst(data.className)}: React.FC = () => {
               </Col>
               ${
                 data.tplCategory === 'tree'
-                  ? `              <Col>
+                  ? `<Col>
               <ColorBtn
                 color="info"
                 icon={<SwapOutlined rotate={90} />}
@@ -1195,8 +1199,9 @@ const ${stringFirst(data.className)}: React.FC = () => {
                 展开/折叠
               </ColorBtn>
             </Col>`
-                  : `              <Col>
+                  : `<Col>
                   <ColorBtn
+                    hidden={hasPermi('${data.moduleName}:${data.businessName}:edit')}
                     disabled={single}
                     color="success"
                     icon={<EditOutlined />}
@@ -1207,6 +1212,7 @@ const ${stringFirst(data.className)}: React.FC = () => {
                 </Col>
                 <Col>
                   <ColorBtn
+                    hidden={hasPermi('${data.moduleName}:${data.businessName}:remove')}
                     onClick={() => delFn(rowKeys)}
                     disabled={multiple}
                     color="danger"
@@ -1217,6 +1223,7 @@ const ${stringFirst(data.className)}: React.FC = () => {
                 </Col>
                 <Col>
                   <ColorBtn
+                    hidden={hasPermi('${data.moduleName}:${data.businessName}:export')}
                     color="warning"
                     icon={<VerticalAlignBottomOutlined />}
                     onClick={() => download('/${data.moduleName}/${data.businessName}/export', 'sys_dict_type')}
@@ -1247,9 +1254,7 @@ const ${stringFirst(data.className)}: React.FC = () => {
                     icon={<SyncOutlined />}
                     onClick={() => {
                       searchQueryFn()
-                      ${
-                        data.tplCategory === 'tree' ? `` : `                      setSelectKeys([])`
-                      }
+                      ${data.tplCategory === 'tree' ? `` : `setSelectKeys([])`}
                     }}
                   />
                 </Tooltip>

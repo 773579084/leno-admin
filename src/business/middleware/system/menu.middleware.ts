@@ -155,6 +155,7 @@ export const addMenuMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const list = ctx.request['body'] as menusType
     const menu = formatHumpLineTransfer(list, 'line')
+
     // 获取数据库菜单数据
     await addSer(SysMenu, menu)
   } catch (error) {
