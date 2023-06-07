@@ -427,7 +427,6 @@ export const genCodeMid = async (ctx: Context, next: () => Promise<void>) => {
           status: '0',
           visible: '0'
         })
-        console.log(430, res)
 
         // 写入按钮权限
         const btnPerm = [
