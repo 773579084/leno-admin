@@ -15,7 +15,7 @@ const auth = async (ctx: Context, next: () => Promise<void>) => {
     try {
       // user中包含了payload的信息(userId, userName)
       const user = jwt.verify(token, JWT_SECRET) as IuserTokenType
-      console.log(16, user, token, hash)
+      console.log(16, user)
 
       if (dayjs().isAfter(user.exp)) {
         console.error('token 过期')

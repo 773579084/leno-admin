@@ -248,3 +248,13 @@ export const underline = (str: string) => {
     return p1.toUpperCase()
   })
 }
+
+/**
+ * 生成随机的hash值
+ * @param hashLength 生成hash值的长度
+ */
+export const createHash = (hashLength = 30) => {
+  return Array.from(Array(Number(hashLength)), () =>
+    Math.floor(Math.random() * 36).toString(36)
+  ).join('')
+}

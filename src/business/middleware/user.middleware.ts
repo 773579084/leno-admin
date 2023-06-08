@@ -14,7 +14,7 @@ import {
 import errors from '@/app/err.type'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import { formatHumpLineTransfer, removeSpecifyFile } from '@/business/utils'
+import { createHash, formatHumpLineTransfer, removeSpecifyFile } from '@/business/utils'
 import dayjs from 'dayjs'
 import { getUserRoleSer } from '../service/system/user.service'
 import { queryConditionsData } from '../service'
@@ -22,6 +22,7 @@ import SysRole from '@/mysql/model/system/role.model'
 import { Op } from 'sequelize'
 import SysRoleMenu from '@/mysql/model/system/sys_role_menu.model'
 import SysMenu from '@/mysql/model/system/menu.model'
+import redis from '@/redis'
 const {
   userExisting,
   userLoginError,
@@ -103,60 +104,79 @@ export const loginValidatorMid = async (ctx: Context, next: () => Promise<void>)
       ctx.app.emit('error', InvalidConnectionError, ctx)
       return
     }
+    await next()
   } catch (error) {
     console.error(error)
     return ctx.app.emit('error', userLoginError, ctx)
   }
+}
 
-  await next()
+// 获取用户基本信息
+export const getUserBaseMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    const { userName } = ctx.request['body'] as userType
+    const { password, ...res } = await getUserInfo({ userName })
+    const data = formatHumpLineTransfer(res)
+
+    ctx.state.user = data
+    await next()
+  } catch (error) {
+    console.error('获取用户基本信息失败', error)
+    return ctx.app.emit('error', userLoginError, ctx)
+  }
 }
 
 // 注册
 export const registerMid = async (ctx: Context, next: () => Promise<void>) => {
   // 1、获取数据
   const { userName, password } = ctx.request['body'] as userType
+  try {
+    // 2、操作数据库
+    const res = await createdUser(userName as string, password as string)
 
-  // 2、操作数据库
-  const res = await createdUser(userName as string, password as string)
+    ctx.state.formatData = {
+      userId: res.user_id,
+      userName: res.user_name
+    }
 
-  ctx.state.formatData = {
-    userId: res.user_id,
-    userName: res.user_name
+    await next()
+  } catch (error) {
+    console.error('用户注册失败', error)
+    return ctx.app.emit('error', getUserInfoErr, ctx)
   }
-
-  await next()
 }
 
 // 登录
 export const loginMid = async (ctx: Context, next: () => Promise<void>) => {
-  const { userName } = ctx.request['body'] as userType
+  const userInfo = ctx.state.formatData as userType
 
-  // 1、获取用户信息（token 中包含 userId，userName） expiresIn : token有效时间
+  // 获取用户信息（token 中包含 userId，userName） expiresIn : token有效时间
   try {
-    const { password, ...res } = await getUserInfo({ userName })
-    const data = formatHumpLineTransfer(res)
+    // 1 生成随机的hash sessionId
+    const hash = createHash()
+    // 2 获取用户的登录日志信息
+
+    // 3 将登录基本信息存储到 redis的login_token，并且设置过期时间
+    redis.sadd('login_tokens', hash)
+    redis.set(hash, JSON.stringify(userInfo))
+    console.log(159, hash)
 
     ctx.state.formatData = {
       token: jwt.sign(
         {
-          ...data,
-          exp: dayjs().add(10, 'd').valueOf()
+          userId: userInfo.userId,
+          userName: userInfo.userName,
+          session: hash,
+          exp: dayjs().add(100, 'y').valueOf()
         },
         process.env.JWT_SECRET
-      ),
-      refreshToken: jwt.sign(
-        {
-          ...data,
-          exp: dayjs().add(30, 'd').valueOf()
-        },
-        process.env.JWT_REFRESH_SECRET
       )
     }
+    await next()
   } catch (error) {
     console.error('用户登录失败', error)
+    return ctx.app.emit('error', getUserInfoErr, ctx)
   }
-
-  await next()
 }
 
 //  获取用户

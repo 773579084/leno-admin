@@ -11,7 +11,8 @@ import {
   updateUserInfoMid,
   uploadAvatarMid,
   refreshTokenMid,
-  getPermRoleMid
+  getPermRoleMid,
+  getUserBaseMid
 } from '@/business/middleware/user.middleware'
 import IndexCon from '@/business/controller'
 import refreshAuth from '@/business/middleware/common/refresh'
@@ -25,6 +26,9 @@ router.post(
   userSchema,
   isUserStatusMid,
   loginValidatorMid,
+  getUserBaseMid,
+  getUserInfoMid,
+  getPermRoleMid,
   loginMid,
   IndexCon('用户登录成功！')
 )

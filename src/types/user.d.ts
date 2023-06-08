@@ -25,6 +25,7 @@ export interface userType {
   updatedAt?: string | null
   dept?: deptType
   roles?: IroleQueryType[]
+  permissions?: string[]
   postIds?: number[]
   roleIds?: number[]
 }
