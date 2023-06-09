@@ -25,9 +25,14 @@ export interface userType {
   updatedAt?: string | null
   dept?: deptType
   roles?: IroleQueryType[]
-  permissions?: string[]
   postIds?: number[]
   roleIds?: number[]
+}
+
+export interface IuserInfoType {
+  userInfo: userType
+  permissions: string[]
+  roles: string[]
 }
 
 export interface userListType {

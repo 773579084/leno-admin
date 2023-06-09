@@ -1,6 +1,6 @@
 import { Context } from 'koa'
 import path from 'path'
-import { userType, pwdType, imgType } from '@/types'
+import { userType, pwdType, imgType, IuserInfoType } from '@/types'
 import {
   createdUser,
   deletFrontAvatarSer,
@@ -22,7 +22,10 @@ import SysRole from '@/mysql/model/system/role.model'
 import { Op } from 'sequelize'
 import SysRoleMenu from '@/mysql/model/system/sys_role_menu.model'
 import SysMenu from '@/mysql/model/system/menu.model'
-import redis from '@/redis'
+import { addSession } from '../utils/auth'
+import SysUserPost from '@/mysql/model/system/sys_user_post.model'
+import SysPost from '@/mysql/model/system/post.model'
+
 const {
   userExisting,
   userLoginError,
@@ -148,30 +151,28 @@ export const registerMid = async (ctx: Context, next: () => Promise<void>) => {
 
 // 登录
 export const loginMid = async (ctx: Context, next: () => Promise<void>) => {
-  const userInfo = ctx.state.formatData as userType
+  const data = ctx.state.formatData as IuserInfoType
 
   // 获取用户信息（token 中包含 userId，userName） expiresIn : token有效时间
   try {
     // 1 生成随机的hash sessionId
     const hash = createHash()
-    // 2 获取用户的登录日志信息
 
-    // 3 将登录基本信息存储到 redis的login_token，并且设置过期时间
-    redis.sadd('login_tokens', hash)
-    redis.set(hash, JSON.stringify(userInfo))
-    console.log(159, hash)
-
+    // 2 生成token
     ctx.state.formatData = {
       token: jwt.sign(
         {
-          userId: userInfo.userId,
-          userName: userInfo.userName,
+          userId: data.userInfo.userId,
+          userName: data.userInfo.userName,
           session: hash,
           exp: dayjs().add(100, 'y').valueOf()
         },
         process.env.JWT_SECRET
       )
     }
+    // 3 将登录基本信息存储到 redis的login_token，并且设置过期时间
+    addSession(hash, data)
+
     await next()
   } catch (error) {
     console.error('用户登录失败', error)
@@ -179,7 +180,7 @@ export const loginMid = async (ctx: Context, next: () => Promise<void>) => {
   }
 }
 
-//  获取用户
+// 获取用户基本信息
 export const getUserInfoMid = async (ctx: Context, next: () => Promise<void>) => {
   const { userId } = ctx.state.user as userType
 
@@ -195,10 +196,46 @@ export const getUserInfoMid = async (ctx: Context, next: () => Promise<void>) =>
       }
     })
     res.roles = roleMessage
-
     const data = formatHumpLineTransfer(res)
-
     ctx.state.formatData = data
+    await next()
+  } catch (error) {
+    console.error('用户获取个人信息失败', error)
+    return ctx.app.emit('error', getUserInfoErr, ctx)
+  }
+}
+
+// 获取个人信息的其他信息
+export const getProfile = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    const data = ctx.state.formatData as userType
+    const postGroup = []
+    const roleGroup = []
+    data.roles.forEach((item) => {
+      roleGroup.push(item.roleName)
+    })
+
+    // 用户关联岗位查询
+    const postMessage = await queryConditionsData(SysUserPost, {
+      user_id: data.userId
+    })
+
+    const postIds = postMessage.map((item) => item.post_id)
+
+    const postData = await queryConditionsData(SysPost, {
+      post_id: {
+        [Op.in]: postIds
+      }
+    })
+    postData.forEach((item) => {
+      postGroup.push(item.post_name)
+    })
+
+    ctx.state.formatData = {
+      ...data,
+      postGroup: postGroup.join(','),
+      roleGroup: roleGroup.join(',')
+    }
     await next()
   } catch (error) {
     console.error('用户获取个人信息失败', error)

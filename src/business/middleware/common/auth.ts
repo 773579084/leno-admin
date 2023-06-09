@@ -3,7 +3,6 @@ import jwt from 'jsonwebtoken'
 import errors from '@/app/err.type'
 import dayjs from 'dayjs'
 import { IuserTokenType } from '@/types/auth'
-import { hash } from 'bcryptjs'
 const { invalidToken } = errors
 const { JWT_SECRET } = process.env
 

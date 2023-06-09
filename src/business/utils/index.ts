@@ -4,7 +4,6 @@ import dayjs from 'dayjs'
 import { dictMapListType, dictMapType } from '@/types'
 import os from 'os'
 const { APP_PORT, APP_HTTP } = process.env
-const ip = os.networkInterfaces()['WLAN'][1].address
 
 /** 删除文件
  * @param {string} filename
@@ -218,6 +217,7 @@ export const dictMapFn = (dicts: dictMapListType): dictMapType => {
  */
 export const accessSrcFn = (filesName: string[]) => {
   const srcs = []
+  const ip = os.networkInterfaces()['WLAN'][1].address
   filesName.forEach((fileName) => {
     srcs.push(`${APP_HTTP}://${ip}:${APP_PORT}/${fileName}`)
   })
