@@ -45,11 +45,6 @@ export default {
     message: '无效的token',
     result: ''
   },
-  invalidRefreshToken: {
-    code: '401',
-    message: '无效的RefreshToken',
-    result: ''
-  },
   FormatWrongErr: {
     code: '400',
     message: '格式错误',

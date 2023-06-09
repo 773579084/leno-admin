@@ -16,7 +16,6 @@ import {
   getProfile
 } from '@/business/middleware/user.middleware'
 import IndexCon from '@/business/controller'
-import refreshAuth from '@/business/middleware/common/refresh'
 import { userSchema, pwdSchema, userInfoSchema } from '@/business/schema/user.schema'
 import { contrastFileSizeSchema, judImgFormatSchema } from '@/business/schema'
 
@@ -64,8 +63,5 @@ router.post(
   uploadAvatarMid,
   IndexCon('用户上传头像成功！')
 )
-
-// refresh token
-router.get('/refresh', refreshAuth, refreshTokenMid, IndexCon('token状态刷新成功！'))
 
 module.exports = router

@@ -33,3 +33,21 @@ export const getAllUserInfo = async () => {
   console.log(31, res)
   return res
 }
+
+/**
+ * 查询 sessionId 过期了没
+ * @param key
+ * @returns
+ */
+export const judgeKeyOverdue = async (key: string) => {
+  return await redis.exists(key)
+}
+
+/**
+ * 查询 sessionId 过期了没
+ * @param key
+ * @returns
+ */
+export const removeKey = async (key: string) => {
+  await redis.srem('login_tokens', key)
+}
