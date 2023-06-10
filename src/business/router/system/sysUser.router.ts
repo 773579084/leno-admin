@@ -27,24 +27,26 @@ import { exportUserListSer } from '@/business/service/system/user.service'
 import LenoUser from '@/mysql/model/user.model'
 import { judgeIdSchema, addEditSchema } from '@/business/schema'
 import { addUserJudg, putUserJudg } from '@/business/schema/system/sys_user.schema'
+import { hasPermi } from '@/business/middleware/common/auth'
 
 const router = new Router({ prefix: '/system' })
 // #region 用户管理
 // 查询列表用户
-router.get('/user/list', getUserListMid, formatHandle, IndexCon())
+router.get('/user/list', hasPermi('system:user:query'), getUserListMid, formatHandle, IndexCon())
 
 // 删除用户
-router.delete(`/user/:id`, judgeIdSchema(), delMid, IndexCon())
+router.delete(`/user/:id`, hasPermi('system:user:remove'), judgeIdSchema(), delMid, IndexCon())
 
 // 查询部门下拉树结构
-router.get('/dept/treeselect', deptTreeMid, formatHandle, IndexCon())
+router.get('/dept/treeselect', hasPermi('system:user:query'), deptTreeMid, formatHandle, IndexCon())
 
 // 获取用户的角色与岗位关联信息
-router.get('/user', getPostRoleMid, formatHandle, IndexCon())
+router.get('/user', getPostRoleMid, hasPermi('system:user:query'), formatHandle, IndexCon())
 
 // 新增用户
 router.post(
   '/user',
+  hasPermi('system:user:add'),
   addEditSchema(addUserJudg),
   verifyUserMid,
   crptyPasswordMid,
@@ -53,21 +55,28 @@ router.post(
 )
 
 // 修改用户密码
-router.put('/user/updatePwd', updatePwdMid, IndexCon())
+router.put('/user/updatePwd', hasPermi('system:user:resetPwd'), updatePwdMid, IndexCon())
 
 // 获取用户个人详细数据
-router.get(`/userInfo/:id`, userInfoMid, formatHandle, IndexCon())
+router.get(`/userInfo/:id`, hasPermi('system:user:query'), userInfoMid, formatHandle, IndexCon())
 
 // 修改用户
-router.put('/user', addEditSchema(putUserJudg), putUserMid, IndexCon())
+router.put(
+  '/user',
+  hasPermi('system:user:edit'),
+  addEditSchema(putUserJudg),
+  putUserMid,
+  IndexCon()
+)
 
 // 修改用户状态
-router.put('/user/profile', putUserStatusMid, IndexCon())
+router.put('/user/profile', hasPermi('system:user:edit'), putUserStatusMid, IndexCon())
 // #endregion
 
 // 导出用户列表
 router.post(
   '/user/export',
+  hasPermi('system:user:export'),
   exportExcelMid(exportUserListSer, LenoUser, {
     status: 'sys_normal_disable',
     sex: 'sys_user_sex'
@@ -79,6 +88,7 @@ router.post(
 // 导入用户列表
 router.post(
   '/user/importExcel',
+  hasPermi('system:user:import'),
   importExcelDictMapMid({ status: 'sys_normal_disable', sex: 'sys_user_sex' }),
   importExcelsMid({ password: true }),
   importExcelUserCon,
@@ -95,6 +105,6 @@ router.post(
 )
 
 // 导出用户excel模板
-router.post('/user/importTemplate', exportTemMid, IndexCon())
+router.post('/user/importTemplate', hasPermi('system:user:export'), exportTemMid, IndexCon())
 
 module.exports = router

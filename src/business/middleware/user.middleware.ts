@@ -22,7 +22,7 @@ import SysRole from '@/mysql/model/system/role.model'
 import { Op } from 'sequelize'
 import SysRoleMenu from '@/mysql/model/system/sys_role_menu.model'
 import SysMenu from '@/mysql/model/system/menu.model'
-import { addSession } from '../utils/auth'
+import { addSession, removeKey, removeListKey } from '../utils/auth'
 import SysUserPost from '@/mysql/model/system/sys_user_post.model'
 import SysPost from '@/mysql/model/system/post.model'
 
@@ -370,19 +370,10 @@ export const uploadAvatarMid = async (ctx: Context, next: () => Promise<void>) =
 }
 
 // 重新返回新的 token 和 refreshToken
-export const refreshTokenMid = async (ctx: Context, next: () => Promise<void>) => {
-  const res = ctx.state.user
-  const data = formatHumpLineTransfer(res)
+export const userLogoutMid = async (ctx: Context, next: () => Promise<void>) => {
+  const { session } = ctx.state.user
 
-  ctx.state.formatData = {
-    token: jwt.sign(
-      {
-        ...data,
-        exp: dayjs().add(10, 'd').valueOf()
-      },
-      process.env.JWT_SECRET
-    )
-  }
-
+  removeListKey(session)
+  removeKey(session)
   await next()
 }

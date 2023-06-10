@@ -7,7 +7,7 @@ import koaStatic from 'koa-static'
 
 // 引入路由
 import router from '@/business/router'
-import auth from '@/business/middleware/common/auth'
+import { auth } from '@/business/middleware/common/auth'
 // 初始化 Koa 应用实例
 const app: Koa<DefaultState, DefaultContext> = new Koa()
 import '@/mysql/db'

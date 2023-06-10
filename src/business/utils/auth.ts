@@ -7,7 +7,7 @@ import redis from '@/redis'
  * @param data userInfo
  * @param time 过期时间设置(min)
  */
-export const addSession = async (key: string, data: IuserInfoType, time = 10) => {
+export const addSession = async (key: string, data: IuserInfoType, time = 60) => {
   await redis.sadd('login_tokens', key)
   await redis.set(key, JSON.stringify(data))
 
@@ -20,7 +20,7 @@ export const addSession = async (key: string, data: IuserInfoType, time = 10) =>
  * @param key
  * @param time 过期时间设置(min)
  */
-export const resetTime = (key: string, time = 10) => {
+export const resetTime = (key: string, time = 60) => {
   redis.expire(key, time * 60)
 }
 
@@ -44,10 +44,28 @@ export const judgeKeyOverdue = async (key: string) => {
 }
 
 /**
- * 查询 sessionId 过期了没
+ * 删除集合内的 sessionId
+ * @param key
+ * @returns
+ */
+export const removeListKey = async (key: string) => {
+  await redis.srem('login_tokens', key)
+}
+
+/**
+ * 删除 redis 的key
  * @param key
  * @returns
  */
 export const removeKey = async (key: string) => {
-  await redis.srem('login_tokens', key)
+  await redis.del(key)
+}
+
+/**
+ * 查询 用户的详细信息
+ * @param key
+ * @returns
+ */
+export const queryKeyValue = async (key: string) => {
+  return JSON.parse(await redis.get(key))
 }

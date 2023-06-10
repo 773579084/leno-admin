@@ -201,5 +201,10 @@ export default {
     code: '500',
     message: '导入失败',
     result: ''
+  },
+  accessAuthErr: {
+    code: '403',
+    message: '无访问权限',
+    result: ''
   }
 }

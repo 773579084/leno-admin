@@ -12,20 +12,35 @@ import { judgeIdSchema } from '@/business/schema'
 import { exportExcelMid } from '@/business/middleware/common/common.middleware'
 import SysOperLog from '@/mysql/model/system/operlog.model'
 import { exportExcelSer } from '@/business/service'
+import { hasPermi } from '@/business/middleware/common/auth'
 
 const router = new Router({ prefix: '/system' })
 // 查询列表
-router.get('/operlog/list', getListMid, formatHandle, IndexCon())
+router.get('/operlog/list', hasPermi('monitor:operlog:query'), getListMid, formatHandle, IndexCon())
 
 // 删除
-router.delete('/operlog/:id', judgeIdSchema(), delMid, IndexCon())
+router.delete(
+  '/operlog/:id',
+  hasPermi('monitor:operlog:remove'),
+  judgeIdSchema(),
+  delMid,
+  IndexCon()
+)
 
 // 获取详细数据
-router.get('/operlog/detail/:id', judgeIdSchema(), getDetailMid, formatHandle, IndexCon())
+router.get(
+  '/operlog/detail/:id',
+  hasPermi('monitor:operlog:query'),
+  judgeIdSchema(),
+  getDetailMid,
+  formatHandle,
+  IndexCon()
+)
 
 // 导出列表(excel)
 router.post(
   '/operlog/export',
+  hasPermi('monitor:operlog:export'),
   exportExcelMid(exportExcelSer, SysOperLog, {
     business_type: 'sys_oper_type',
     status: 'sys_common_status'

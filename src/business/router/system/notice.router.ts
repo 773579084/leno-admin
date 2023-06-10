@@ -15,32 +15,29 @@ import { exportExcelMid } from '@/business/middleware/common/common.middleware'
 import SysNotice from '@/mysql/model/system/notice.model'
 import { exportExcelSer } from '@/business/service'
 import { addJudg, putJudg } from '@/business/schema/system/notice.schema'
+import { hasPermi } from '@/business/middleware/common/auth'
 
 const router = new Router({ prefix: '/system' })
 // 查询列表
-router.get('/notice/list', getListMid, formatHandle, IndexCon())
+router.get('/notice/list', hasPermi('system:notice:query	'), getListMid, formatHandle, IndexCon())
 
 // 新增
-router.post('/notice', addEditSchema(addJudg), getAddMid, IndexCon())
+router.post('/notice', hasPermi('system:notice:add'), addEditSchema(addJudg), getAddMid, IndexCon())
 
 // 删除
-router.delete('/notice/:id', judgeIdSchema(), delMid, IndexCon())
+router.delete('/notice/:id', hasPermi('system:notice:remove'), judgeIdSchema(), delMid, IndexCon())
 
 // 获取详细数据
-router.get('/notice/detail/:id', judgeIdSchema(), getDetailMid, formatHandle, IndexCon())
-
-// 修改
-router.put('/notice', addEditSchema(putJudg), putMid, IndexCon())
-
-// 导出列表(excel)
-router.post(
-  '/notice/export',
-  exportExcelMid(exportExcelSer, SysNotice, {
-    notice_type: 'sys_notice_type',
-    status: 'sys_notice_status'
-  }),
-  exportMid,
+router.get(
+  '/notice/detail/:id',
+  hasPermi('system:notice:query'),
+  judgeIdSchema(),
+  getDetailMid,
+  formatHandle,
   IndexCon()
 )
+
+// 修改
+router.put('/notice', hasPermi('system:notice:edit'), addEditSchema(putJudg), putMid, IndexCon())
 
 module.exports = router

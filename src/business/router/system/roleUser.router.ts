@@ -9,18 +9,25 @@ import {
   unallocatedListMid
 } from '@/business/middleware/system/roleUser.middleware'
 import { judgeIdSchema } from '@/business/schema'
+import { hasPermi } from '@/business/middleware/common/auth'
 
 const router = new Router({ prefix: '/system' })
 // 查询列表
-router.get('/roleUser/list', getListMid, formatHandle, IndexCon())
+router.get('/roleUser/list', hasPermi('system:roleUser:list'), getListMid, formatHandle, IndexCon())
 
 // 新增 用户与角色关系
-router.post('/roleUser', getAddMid, IndexCon())
+router.post('/roleUser', hasPermi('system:roleUser:list'), getAddMid, IndexCon())
 
 // 取消授权
-router.delete('/roleUser', delMid, IndexCon())
+router.delete('/roleUser', hasPermi('system:roleUser:list'), delMid, IndexCon())
 
 // 选择用户列表
-router.get('/roleUser/unallocatedList', unallocatedListMid, formatHandle, IndexCon())
+router.get(
+  '/roleUser/unallocatedList',
+  hasPermi('system:roleUser:list'),
+  unallocatedListMid,
+  formatHandle,
+  IndexCon()
+)
 
 module.exports = router

@@ -15,26 +15,35 @@ import { exportExcelMid } from '@/business/middleware/common/common.middleware'
 import SysConfig from '@/mysql/model/system/config.model'
 import { exportExcelSer } from '@/business/service'
 import { addJudg, putJudg } from '@/business/schema/system/config.schema'
+import { hasPermi } from '@/business/middleware/common/auth'
 
 const router = new Router({ prefix: '/system' })
 // 查询列表
-router.get('/config/list', getListMid, formatHandle, IndexCon())
+router.get('/config/list', hasPermi('system:config:query'), getListMid, formatHandle, IndexCon())
 
 // 新增
-router.post('/config', addEditSchema(addJudg), getAddMid, IndexCon())
+router.post('/config', hasPermi('system:config:add'), addEditSchema(addJudg), getAddMid, IndexCon())
 
 // 删除
-router.delete('/config/:id', judgeIdSchema(), delMid, IndexCon())
+router.delete('/config/:id', hasPermi('system:config:remove'), judgeIdSchema(), delMid, IndexCon())
 
 // 获取详细数据
-router.get('/config/detail/:id', judgeIdSchema(), getDetailMid, formatHandle, IndexCon())
+router.get(
+  '/config/detail/:id',
+  hasPermi('system:config:query'),
+  judgeIdSchema(),
+  getDetailMid,
+  formatHandle,
+  IndexCon()
+)
 
 // 修改
-router.put('/config', addEditSchema(putJudg), putMid, IndexCon())
+router.put('/config', hasPermi('system:config:edit'), addEditSchema(putJudg), putMid, IndexCon())
 
 // 导出列表(excel)
 router.post(
   '/config/export',
+  hasPermi('system:config:export'),
   exportExcelMid(exportExcelSer, SysConfig, { config_type: 'sys_normal_disable' }),
   exportMid,
   IndexCon()
