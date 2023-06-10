@@ -19,7 +19,7 @@ import {
 import IndexCon from '@/business/controller'
 import { userSchema, pwdSchema, userInfoSchema } from '@/business/schema/user.schema'
 import { contrastFileSizeSchema, judImgFormatSchema } from '@/business/schema'
-import { hasPermi } from '../middleware/common/auth'
+import { hasPermi } from '@/business/middleware/common/auth'
 
 const router = new Router({ prefix: '/user' })
 // 登录

@@ -554,30 +554,37 @@ ${
     import { exportExcelSer } from '@/business/service'`
 }
 import { addJudg, putJudg } from '@/business/schema/${data.moduleName}/${data.businessName}.schema'
+import { hasPermi } from '@/business/middleware/common/auth'
 
 const router = new Router({ prefix: '/${data.moduleName}' })
 // 查询列表
-router.get('/${data.businessName}/list', getListMid, formatHandle, IndexCon())
+router.get('/${data.businessName}/list', hasPermi('${data.moduleName}:${
+    data.businessName
+  }:query'), getListMid, formatHandle, IndexCon())
 
 // 新增
 router.post(
   '/${data.businessName}',
+  hasPermi('${data.moduleName}:${data.businessName}:add'),
   addEditSchema(addJudg),
   getAddMid,
   IndexCon()
 )
 
 // 删除
-router.delete('/${data.businessName}/:id', judgeIdSchema(), delMid, IndexCon())
+router.delete('/${data.businessName}/:id', hasPermi('${data.moduleName}:${
+    data.businessName
+  }:remove'), judgeIdSchema(), delMid, IndexCon())
 
 // 获取详细数据
-router.get('/${
+router.get('/${data.businessName}/detail/:id', hasPermi('${data.moduleName}:${
     data.businessName
-  }/detail/:id', judgeIdSchema(), getDetailMid, formatHandle, IndexCon())
+  }:query'), judgeIdSchema(), getDetailMid, formatHandle, IndexCon())
 
 // 修改
 router.put(
   '/${data.businessName}',
+  hasPermi('${data.moduleName}:${data.businessName}:edit'),
   addEditSchema(putJudg),
   putMid,
   IndexCon()
@@ -589,6 +596,7 @@ ${
     : `// 导出列表(excel)
     router.post(
       '/${data.businessName}/export',
+      hasPermi('${data.moduleName}:${data.businessName}:export'),
       exportExcelMid(exportExcelSer, ${data.className}, ${excelDictConversion(data.columns)}),
       exportMid,
       IndexCon()

@@ -47,7 +47,7 @@ router.delete(`/gen/del/:id`, hasPermi('tool:gen:remove'), judgeIdSchema(), delM
 router.post('/gen/importTable/:tables', hasPermi('tool:gen:import'), getAddMid, IndexCon())
 
 // 修改
-router.put('/gen', hasPermi('tool:gen:edit'), addEditSchema(putJudg), putMid, IndexCon())
+router.put('/gen', hasPermi('tool:genEdit:list'), addEditSchema(putJudg), putMid, IndexCon())
 
 // 代码预览
 router.get(
