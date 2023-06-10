@@ -22,7 +22,7 @@ import SysRole from '@/mysql/model/system/role.model'
 import { Op } from 'sequelize'
 import SysRoleMenu from '@/mysql/model/system/sys_role_menu.model'
 import SysMenu from '@/mysql/model/system/menu.model'
-import { addSession, removeKey, removeListKey } from '../utils/auth'
+import { addSession, queryKeyValue, removeKey, removeListKey } from '../utils/auth'
 import SysUserPost from '@/mysql/model/system/sys_user_post.model'
 import SysPost from '@/mysql/model/system/post.model'
 
@@ -208,16 +208,16 @@ export const getUserInfoMid = async (ctx: Context, next: () => Promise<void>) =>
 // 获取个人信息的其他信息
 export const getProfile = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    const data = ctx.state.formatData as userType
+    const { userInfo } = ctx.state.formatData as IuserInfoType
     const postGroup = []
     const roleGroup = []
-    data.roles.forEach((item) => {
+    userInfo.roles.forEach((item) => {
       roleGroup.push(item.roleName)
     })
 
     // 用户关联岗位查询
     const postMessage = await queryConditionsData(SysUserPost, {
-      user_id: data.userId
+      user_id: userInfo.userId
     })
 
     const postIds = postMessage.map((item) => item.post_id)
@@ -232,7 +232,7 @@ export const getProfile = async (ctx: Context, next: () => Promise<void>) => {
     })
 
     ctx.state.formatData = {
-      ...data,
+      ...userInfo,
       postGroup: postGroup.join(','),
       roleGroup: roleGroup.join(',')
     }
@@ -367,6 +367,19 @@ export const uploadAvatarMid = async (ctx: Context, next: () => Promise<void>) =
     console.error('用户头像上传失败')
     return ctx.app.emit('error', updateAvatarErr, ctx)
   }
+}
+
+// 初始化查询个人信息（权限、角色）
+export const queryUserInfoMid = async (ctx: Context, next: () => Promise<void>) => {
+  const { session } = ctx.state.user
+  const userData = await queryKeyValue(session)
+
+  ctx.state.formatData = {
+    userInfo: userData.userInfo,
+    roles: userData.roles,
+    permissions: userData.permissions
+  }
+  await next()
 }
 
 // 重新返回新的 token 和 refreshToken

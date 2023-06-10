@@ -33,6 +33,7 @@ export interface IuserInfoType {
   userInfo: userType
   permissions: string[]
   roles: string[]
+  loginMes: Object
 }
 
 export interface userListType {

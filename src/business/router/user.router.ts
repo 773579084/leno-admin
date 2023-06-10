@@ -13,7 +13,8 @@ import {
   getPermRoleMid,
   getUserBaseMid,
   getProfile,
-  userLogoutMid
+  userLogoutMid,
+  queryUserInfoMid
 } from '@/business/middleware/user.middleware'
 import IndexCon from '@/business/controller'
 import { userSchema, pwdSchema, userInfoSchema } from '@/business/schema/user.schema'
@@ -48,13 +49,13 @@ router.post(
 router.delete('/logout', userLogoutMid, IndexCon('退出账号成功！'))
 
 // 获取用户及权限角色信息
-router.get('/getInfo', getUserInfoMid, getPermRoleMid, IndexCon('获取用户个人信息成功！'))
+router.get('/getInfo', queryUserInfoMid, IndexCon('获取用户个人信息成功！'))
 
 // 获取用户所有的个人信息
 router.get(
   '/profile',
   hasPermi('profile:list'),
-  getUserInfoMid,
+  queryUserInfoMid,
   getProfile,
   IndexCon('获取用户个人信息成功！')
 )

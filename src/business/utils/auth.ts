@@ -29,7 +29,7 @@ export const resetTime = (key: string, time = 60) => {
  * @returns string[]
  */
 export const getAllUserInfo = async () => {
-  const res = await redis.smembers('login_tokens')
+  const res = (await redis.smembers('login_tokens')) as string[]
   console.log(31, res)
   return res
 }
@@ -67,5 +67,5 @@ export const removeKey = async (key: string) => {
  * @returns
  */
 export const queryKeyValue = async (key: string) => {
-  return JSON.parse(await redis.get(key))
+  return JSON.parse(await redis.get(key)) as IuserInfoType
 }

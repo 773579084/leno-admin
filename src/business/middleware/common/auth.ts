@@ -41,13 +41,9 @@ export const auth = async (ctx: Context, next: () => Promise<void>) => {
 export const hasPermi = (permi: string) => {
   return async (ctx: Context, next: () => Promise<void>) => {
     const { session } = ctx.state.user
-    console.log(38, session)
-    const { permissions } = (await queryKeyValue(session)) as IuserInfoType
-    console.log(45, permissions)
+    const { permissions } = await queryKeyValue(session)
 
     if (permissions[0] !== '*:*:*') {
-      console.log(49, permissions.includes(permi))
-
       if (!permissions.includes(permi)) {
         console.error('无访问权限')
         return ctx.app.emit('error', accessAuthErr, ctx)
