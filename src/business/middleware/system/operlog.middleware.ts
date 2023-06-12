@@ -30,7 +30,8 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
     const res = await getListSer<IoperlogQuerySerType>(SysOperLog, newParams)
 
     ctx.state.formatData = res
-    await next()
+    console.error('查询列表失败')
+    return ctx.app.emit('error', getListErr, ctx)
   } catch (error) {
     console.error('查询列表失败', error)
     return ctx.app.emit('error', getListErr, ctx)

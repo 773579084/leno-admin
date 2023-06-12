@@ -4,7 +4,6 @@ import { userType } from '@/types'
 import {
   IlogininforQueryType,
   IlogininforQuerySerType,
-  Ilogininfor,
   IlogininforSer
 } from '@/types/system/logininfor'
 import errors from '@/app/err.type'
@@ -38,22 +37,6 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
   } catch (error) {
     console.error('查询列表失败', error)
     return ctx.app.emit('error', getListErr, ctx)
-  }
-}
-
-// 新增
-export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
-  try {
-    const { userName } = ctx.state.user as userType
-    const addContent = ctx.request['body'] as Ilogininfor
-    const addContent2 = { ...addContent, createBy: userName }
-    const newAddContent = formatHumpLineTransfer(addContent2, 'line') as IlogininforSer
-
-    await addSer<IlogininforSer>(SysLogininfor, newAddContent)
-    await next()
-  } catch (error) {
-    console.error('新增失败', error)
-    return ctx.app.emit('error', uploadParamsErr, ctx)
   }
 }
 

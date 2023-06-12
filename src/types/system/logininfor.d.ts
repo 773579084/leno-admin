@@ -25,8 +25,6 @@ export interface IlogininforQuerySerType {
   login_time?: { [OpTypes.between]: string }
 }
 
-export interface Ilogininfor {}
-
 export interface IlogininforSer {
   info_id?: number
   user_name?: string
@@ -37,4 +35,17 @@ export interface IlogininforSer {
   status?: string
   msg?: string
   login_time?: string
+}
+
+// 登录日志其他数据
+export interface IloginLogSer {
+  message: string
+}
+
+// 请求用户设备信息
+export interface ImachineType {
+  ip: string
+  address: string
+  browser: string
+  os: string
 }

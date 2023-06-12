@@ -25,6 +25,7 @@ import SysMenu from '@/mysql/model/system/menu.model'
 import { addSession, queryKeyValue, removeKey, removeListKey } from '../utils/auth'
 import SysUserPost from '@/mysql/model/system/sys_user_post.model'
 import SysPost from '@/mysql/model/system/post.model'
+import { queryUserMachine } from '../utils/log'
 
 const {
   userExisting,
@@ -170,10 +171,14 @@ export const loginMid = async (ctx: Context, next: () => Promise<void>) => {
         process.env.JWT_SECRET
       )
     }
+    // 2-2 获取请求用户的设备信息
+    const machine = await queryUserMachine(ctx)
+
     // 3 将登录基本信息存储到 redis的login_token，并且设置过期时间
-    addSession(hash, data)
+    addSession(hash, { ...machine, ...data })
 
     await next()
+    console.log(181)
   } catch (error) {
     console.error('用户登录失败', error)
     return ctx.app.emit('error', getUserInfoErr, ctx)

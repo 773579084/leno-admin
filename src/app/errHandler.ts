@@ -1,6 +1,8 @@
 import { Context } from 'koa'
 
 export default function errHandlerFn(err: any, ctx: Context) {
+  console.log(4, err, ctx)
+
   let status = 500
   switch (err.code) {
     case '400':
