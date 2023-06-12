@@ -37,11 +37,6 @@ export interface IlogininforSer {
   login_time?: string
 }
 
-// 登录日志其他数据
-export interface IloginLogSer {
-  message: string
-}
-
 // 请求用户设备信息
 export interface ImachineType {
   ip: string

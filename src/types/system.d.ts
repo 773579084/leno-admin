@@ -1,20 +1,19 @@
 import { IroleSer } from '@/types/system/role'
 import { IpostSer } from '@/types/system/post'
-// 部门类型
-export interface deptType {
-  [x: string]: any
-  dept_id: number
-  parent_id: number
+
+export interface IdeptType {
+  deptId: number
+  parentId: number
   ancestors: string
-  dept_name: string
-  order_num: number
+  deptName: string
+  orderNum: number
   leader: string
   phone: string
   email: string
   status: string
-  del_flag: string
-  create_by: string
-  update_by: string
+  delFlag: string
+  createBy: string
+  updateBy: string
   createdAt: string
   updatedAt: string
 }

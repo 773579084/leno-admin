@@ -26,9 +26,9 @@ import { ModelStatic, Op } from 'sequelize'
 
 // 下划线转驼峰
 export const formatHandle = async (ctx: Context, next: () => Promise<void>) => {
-  const res = await formatHumpLineTransfer(ctx.state.formatData)
+  const res = formatHumpLineTransfer(ctx.state.formatData)
   // 转换时间格式
-  ctx.state.formatData = await timeChange(res)
+  ctx.state.formatData = timeChange(res)
   await next()
 }
 

@@ -44,7 +44,7 @@ export const removeFolder = (folderPath: string) => {
 
 /** 返回数据下划线转化为驼峰命名
  * @param {data} 'obj或ary'
- * @param {type} 'hump' 为下划线转驼峰，'line' 为驼峰转下划线
+ * @param {type} 默认hump 'hump' 下划线转驼峰，'line' 驼峰转下划线
  * @return {Array||Object}
  */
 export const formatHumpLineTransfer = (data, type = 'hump'): Array<any> => {

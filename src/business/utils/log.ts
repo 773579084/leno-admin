@@ -1,9 +1,12 @@
 import { Context } from 'koa'
 import axios from 'axios'
 import { ImachineType } from '@/types/system/logininfor'
-import { userType } from '@/types/user'
 import { addSer } from '../service'
 import SysLogininfor from '@/mysql/model/system/logininfor.model'
+import { querySqlMes } from './redis'
+import { queryKeyValue } from './auth'
+import { IuserTokenType } from '@/types/auth'
+import { GenType } from '@/types/tools/gen'
 
 /**
  * 写入日志
@@ -14,9 +17,9 @@ import SysLogininfor from '@/mysql/model/system/logininfor.model'
 export const writeLog = async (
   type: string,
   ctx: Context,
-  data?: { code: string; message: string }
+  data?: { code: string | number; message: string }
 ) => {
-  const user = ctx.state.user as userType
+  const user = ctx.state.user as IuserTokenType
 
   // 写入登录日志
   if (ctx.request.url.split('/').includes('login')) {
@@ -35,8 +38,63 @@ export const writeLog = async (
   }
 
   // 写入操作日志
-  if (!ctx.request.url.indexOf('login')) {
-    console.log(39, ctx.request.url.indexOf('login'))
+  if (!ctx.request.url.split('/').includes('login') && ctx.request.method !== 'GET') {
+    console.log(39, ctx, user)
+    // 1 查询日志所属的 系统模块 操作类型
+    const sqls = await querySqlMes()
+
+    // 2 查询 用户信息 拿去请求用户 设备信息
+    const userMes = await queryKeyValue(user.session)
+
+    const operLog = {
+      title: '',
+      business_type: '',
+      method: '',
+      request_method: ctx.request.method,
+      operator_type: '',
+      oper_name: userMes.userInfo.userName,
+      dept_name: userMes.userInfo.dept.deptName,
+      oper_url: filterCtxUrl(ctx.request.url, ctx.request.method),
+      oper_ip: userMes.ip,
+      oper_location: userMes.address,
+      oper_param: JSON.stringify(ctx.request['body']),
+      json_result: JSON.stringify(data),
+      status: type,
+      error_msg: type === '1' ? data : '',
+      oper_time: new Date()
+    }
+    console.log(65, operLog)
+  }
+}
+
+/**
+ * 获取路径
+ * @param url
+ * @param method 请求方法
+ */
+export const filterCtxUrl = (url: string, method: string) => {
+  if (method === 'DELETE') {
+    const urlList = url.split('/')
+    urlList.splice(url.split('/').length - 1, 1)
+    console.log(75, urlList.join('/'))
+    return urlList.join('/')
+  }
+  return url
+}
+
+/**
+ *
+ * @param sqls
+ * @param ctx
+ * @returns {title:string,business_type:string}
+ */
+export const filterModule = (
+  sqls: GenType[],
+  ctx: Context
+): { title: string; business_type: string } => {
+  return {
+    title: '',
+    business_type: ''
   }
 }
 
@@ -74,7 +132,7 @@ export const queryIpAdress = async (ip: string) => {
     if (data.status === 'success') {
       address = `${data.regionName} ${data.city}`
     } else {
-      address = data.message
+      address = '内网IP'
     }
     return address
   } catch (error) {

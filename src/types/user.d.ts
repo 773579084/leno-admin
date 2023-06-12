@@ -1,4 +1,4 @@
-import { deptType } from './system'
+import { IdeptType } from './system'
 import { IroleQueryType } from './system/role'
 
 export interface userType {
@@ -23,13 +23,17 @@ export interface userType {
   exp?: string
   createdAt?: string | null
   updatedAt?: string | null
-  dept?: deptType
+  dept?: IdeptType
   roles?: IroleQueryType[]
   postIds?: number[]
   roleIds?: number[]
 }
 
 export interface IuserInfoType {
+  ip: string
+  address: string
+  browser: string
+  os: string
   userInfo: userType
   permissions: string[]
   roles: string[]

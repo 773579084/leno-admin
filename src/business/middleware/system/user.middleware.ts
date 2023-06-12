@@ -16,21 +16,8 @@ import {
   exportUserListSer,
   delUserSer
 } from '@/business/service/system/user.service'
-import {
-  userListType,
-  deptType,
-  userType,
-  IUserDetail,
-  userQueryType,
-  userQuerySerType
-} from '@/types'
-import {
-  IdJudge,
-  IdsJudge,
-  addUserJudg,
-  checkPwdJudg,
-  putUserJudg
-} from '@/business/schema/system/sys_user.schema'
+import { userListType, userType, IUserDetail, userQueryType, userQuerySerType } from '@/types'
+import { IdJudge, checkPwdJudg } from '@/business/schema/system/sys_user.schema'
 import { updatePassword, getAllUserInfoSer } from '@/business/service/user.service'
 import errors from '@/app/err.type'
 import { formatHumpLineTransfer, timeChange } from '@/business/utils'
@@ -40,6 +27,7 @@ import SysDept from '@/mysql/model/system/dept.model'
 import { Op } from 'sequelize'
 import { IroleSer } from '@/types/system/role'
 import { IpostSer } from '@/types/system/post'
+import { IdeptSer } from '@/types/system/dept'
 const {
   checkUserIdErr,
   getDeptTreeErr,
@@ -106,7 +94,7 @@ export const exportUserListMid = async (ctx: Context, next: () => Promise<void>)
 // 查询部门下拉树结构
 export const deptTreeMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    const res = (await getdeptTreeSer()) as unknown as deptType[]
+    const res = (await getdeptTreeSer()) as unknown as IdeptSer[]
 
     // 将部门进行树状结构数据
     const deptTree = []
