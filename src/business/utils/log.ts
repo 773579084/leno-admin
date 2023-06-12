@@ -11,24 +11,32 @@ import SysLogininfor from '@/mysql/model/system/logininfor.model'
  * @param ctx koa请求信息
  * @param data 其他信息
  */
-export const writeLog = async (type: string, ctx: Context, data?: any) => {
+export const writeLog = async (
+  type: string,
+  ctx: Context,
+  data?: { code: string; message: string }
+) => {
   const user = ctx.state.user as userType
-  if (ctx.request.url.indexOf('login') !== -1) {
+
+  // 写入登录日志
+  if (ctx.request.url.split('/').includes('login')) {
     const machine = await queryUserMachine(ctx)
-    // 写入登录日志
     const loginLog = {
-      user_name: user.userName,
+      user_name: type === '0' ? user.userName : ctx.request['body'].userName,
       ipaddr: machine.ip,
       login_location: machine.address,
       browser: machine.browser,
       os: machine.os,
       status: type,
-      msg: type === '0' ? '登录成功' : '',
+      msg: type === '0' ? '登录成功' : data.message,
       login_time: new Date()
     }
-    console.log(27, loginLog)
     await addSer(SysLogininfor, loginLog)
-  } else {
+  }
+
+  // 写入操作日志
+  if (!ctx.request.url.indexOf('login')) {
+    console.log(39, ctx.request.url.indexOf('login'))
   }
 }
 

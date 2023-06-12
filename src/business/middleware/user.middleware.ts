@@ -176,9 +176,7 @@ export const loginMid = async (ctx: Context, next: () => Promise<void>) => {
 
     // 3 将登录基本信息存储到 redis的login_token，并且设置过期时间
     addSession(hash, { ...machine, ...data })
-
     await next()
-    console.log(181)
   } catch (error) {
     console.error('用户登录失败', error)
     return ctx.app.emit('error', getUserInfoErr, ctx)
