@@ -7,6 +7,7 @@ import { querySqlMes } from './redis'
 import { queryKeyValue } from './auth'
 import { IuserTokenType } from '@/types/auth'
 import { GenType } from '@/types/tools/gen'
+import SysOperLog from '@/mysql/model/system/operlog.model'
 
 /**
  * 写入日志
@@ -39,16 +40,15 @@ export const writeLog = async (
 
   // 写入操作日志
   if (!ctx.request.url.split('/').includes('login') && ctx.request.method !== 'GET') {
-    console.log(39, ctx, user)
     // 1 查询日志所属的 系统模块 操作类型
     const sqls = await querySqlMes()
-
+    const { title, business_type } = filterModule(sqls, ctx)
     // 2 查询 用户信息 拿去请求用户 设备信息
     const userMes = await queryKeyValue(user.session)
 
     const operLog = {
-      title: '',
-      business_type: '',
+      title,
+      business_type,
       method: '',
       request_method: ctx.request.method,
       operator_type: '',
@@ -60,10 +60,11 @@ export const writeLog = async (
       oper_param: JSON.stringify(ctx.request['body']),
       json_result: JSON.stringify(data),
       status: type,
-      error_msg: type === '1' ? data : '',
+      error_msg: type === '1' ? data.message : '',
       oper_time: new Date()
     }
-    console.log(65, operLog)
+
+    await addSer(SysOperLog, operLog)
   }
 }
 
@@ -76,14 +77,14 @@ export const filterCtxUrl = (url: string, method: string) => {
   if (method === 'DELETE') {
     const urlList = url.split('/')
     urlList.splice(url.split('/').length - 1, 1)
-    console.log(75, urlList.join('/'))
+
     return urlList.join('/')
   }
   return url
 }
 
 /**
- *
+ * 获取请求的系统模块及操作类型
  * @param sqls
  * @param ctx
  * @returns {title:string,business_type:string}
@@ -92,9 +93,34 @@ export const filterModule = (
   sqls: GenType[],
   ctx: Context
 ): { title: string; business_type: string } => {
+  const urlList = ctx.request.url.split('/')
+  let title = '',
+    business_type = ''
+  for (let i = 0; i < sqls.length - 1; i++) {
+    if (urlList.includes(sqls[i].businessName)) {
+      title = sqls[i].functionName
+      break
+    }
+  }
+
+  switch (ctx.request.method) {
+    case 'POST':
+      business_type = '1'
+      break
+    case 'PUT':
+      business_type = '2'
+      break
+    case 'DELETE':
+      business_type = '3'
+      break
+
+    default:
+      break
+  }
+
   return {
-    title: '',
-    business_type: ''
+    title,
+    business_type
   }
 }
 

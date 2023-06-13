@@ -300,7 +300,6 @@ export const putUserMid = async (ctx: Context, next: () => Promise<void>) => {
       })
       await addUserPostSer(createPost)
     }
-
     await next()
   } catch (error) {
     console.error('修改用户失败', error)
