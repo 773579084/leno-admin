@@ -13,7 +13,7 @@ export interface menuQueryType {
 /**
  * 存储所有菜单的信息（供全局调用）
  */
-export const saveMenyMes = async () => {
+export const saveMenuMes = async () => {
   const { rows } = await getListSer<menuQueryType>(SysMenu, {
     pageNum: 1,
     pageSize: 1000,

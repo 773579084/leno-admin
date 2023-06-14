@@ -110,6 +110,26 @@ export const filterModule = (
   //
   const specialEvents = [
     {
+      type: 'authorization',
+      value: '4'
+    },
+    {
+      type: 'export',
+      value: '5'
+    },
+    {
+      type: 'import',
+      value: '6'
+    },
+    {
+      type: 'logout',
+      value: '7'
+    },
+    {
+      type: 'generatedCode',
+      value: '8'
+    },
+    {
       type: 'clean',
       value: '9'
     }

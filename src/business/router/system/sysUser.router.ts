@@ -87,7 +87,7 @@ router.post(
 
 // 导入用户列表
 router.post(
-  '/user/importExcel',
+  '/user/import',
   hasPermi('system:user:import'),
   importExcelDictMapMid({ status: 'sys_normal_disable', sex: 'sys_user_sex' }),
   importExcelsMid({ password: true }),
@@ -105,6 +105,6 @@ router.post(
 )
 
 // 导出用户excel模板
-router.post('/user/importTemplate', hasPermi('system:user:export'), exportTemMid, IndexCon())
+router.post('/user/export/template', hasPermi('system:user:export'), exportTemMid, IndexCon())
 
 module.exports = router

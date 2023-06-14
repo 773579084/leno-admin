@@ -32,7 +32,7 @@ router.get(
 )
 
 // 导入表
-router.post('/gen/importTable/:tables', hasPermi('tool:gen:import'), importTableMid, IndexCon())
+router.post('/gen/import/:tables', hasPermi('tool:gen:import'), importTableMid, IndexCon())
 
 // 查询列表
 router.get('/gen/list', hasPermi('tool:gen:query'), getListMid, formatHandle, IndexCon())
@@ -44,7 +44,7 @@ router.get('/gen/sql/list', hasPermi('tool:gen:query'), getListSqlMid, formatHan
 router.delete(`/gen/del/:id`, hasPermi('tool:gen:remove'), judgeIdSchema(), delMid, IndexCon())
 
 // 导入生成表模板
-router.post('/gen/importTable/:tables', hasPermi('tool:gen:import'), getAddMid, IndexCon())
+router.post('/gen/import/:tables', hasPermi('tool:gen:import'), getAddMid, IndexCon())
 
 // 修改
 router.put('/gen', hasPermi('tool:genEdit:list'), addEditSchema(putJudg), putMid, IndexCon())
@@ -60,7 +60,7 @@ router.get(
 
 // 生成代码（压缩包）
 router.post(
-  '/gen/batchGenCode/:ids',
+  '/gen/batchGenCode/generatedCode/:ids',
   hasPermi('tool:gen:code'),
   judgeIdSchema(),
   batchGenCodeMid,
@@ -68,6 +68,12 @@ router.post(
 )
 
 // 生成代码（写到指定文件夹）
-router.post('/gen/genCode/:ids', hasPermi('tool:gen:code'), judgeIdSchema(), genCodeMid, IndexCon())
+router.post(
+  '/gen/genCode/generatedCode/:ids',
+  hasPermi('tool:gen:code'),
+  judgeIdSchema(),
+  genCodeMid,
+  IndexCon()
+)
 
 module.exports = router
