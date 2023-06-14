@@ -131,7 +131,7 @@ export const filterModule = (
  */
 export const queryUserMachine = async (ctx: Context): Promise<ImachineType> => {
   // 用户 ip 及 地址
-  const ip = ctx.request.header.origin.split('//')[1].split(':')[0]
+  const ip = ctx.request.header.origin?.split('//')[1].split(':')[0]
   const address = await queryIpAdress(ip)
   // 浏览器
   const browser = ctx.userAgent._agent.browser + ' ' + ctx.userAgent._agent.version.split('.')[0]

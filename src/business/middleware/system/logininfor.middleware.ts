@@ -1,18 +1,16 @@
 import { Context } from 'koa'
-import { getListSer, addSer, putSer, getDetailSer, delSer } from '@/business/service'
-import { userType } from '@/types'
+import { getListSer, getDetailSer, delSer } from '@/business/service'
 import {
   IlogininforQueryType,
   IlogininforQuerySerType,
   IlogininforSer
 } from '@/types/system/logininfor'
 import errors from '@/app/err.type'
-import { formatHumpLineTransfer } from '@/business/utils'
 import { excelJsExport } from '@/business/utils/excel'
 import { excelBaseStyle } from '@/business/public/excelMap'
 import SysLogininfor from '@/mysql/model/system/logininfor.model'
 import { Op } from 'sequelize'
-const { uploadParamsErr, getListErr, sqlErr, delErr, exportExcelErr } = errors
+const { getListErr, sqlErr, delErr, exportExcelErr } = errors
 
 // 获取列表
 export const getListMid = async (ctx: Context, next: () => Promise<void>) => {

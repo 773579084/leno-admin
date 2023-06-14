@@ -29,36 +29,34 @@ export const resetTime = (key: string, time = 60) => {
  * @returns string[]
  */
 export const getAllUserInfo = async () => {
-  const res = (await redis.smembers('login_tokens')) as string[]
-  console.log(31, res)
-  return res
+  return (await redis.smembers('login_tokens')) as string[]
 }
 
 /**
  * 查询 sessionId 过期了没
  * @param key
- * @returns
+ * @returns 1未过期 0过期
  */
 export const judgeKeyOverdue = async (key: string) => {
   return await redis.exists(key)
 }
 
 /**
- * 删除集合内的 sessionId
- * @param key
+ * 批量删除集合内的 sessionId
+ * @param keys: string[]
  * @returns
  */
-export const removeListKey = async (key: string) => {
-  await redis.srem('login_tokens', key)
+export const removeListKey = async (keys: string[]) => {
+  await redis.srem('login_tokens', keys)
 }
 
 /**
- * 删除 redis 的key
- * @param key
+ * 批量删除 redis 的key
+ * @param keys string[]
  * @returns
  */
-export const removeKey = async (key: string) => {
-  await redis.del(key)
+export const removeKey = async (keys: string[]) => {
+  await redis.del(...keys)
 }
 
 /**
@@ -68,4 +66,14 @@ export const removeKey = async (key: string) => {
  */
 export const queryKeyValue = async (key: string) => {
   return JSON.parse(await redis.get(key)) as IuserInfoType
+}
+
+/**
+ * 批量查询 用户的详细信息
+ * @param keys string[]
+ * @returns string[]
+ */
+export const queryAllKeyValue = async (keys: string[]) => {
+  const res = await redis.mget(keys)
+  return res.map((item) => JSON.parse(item)) as IuserInfoType[]
 }

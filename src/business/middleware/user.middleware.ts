@@ -176,7 +176,7 @@ export const loginMid = async (ctx: Context, next: () => Promise<void>) => {
     const machine = await queryUserMachine(ctx)
 
     // 3 将登录基本信息存储到 redis的login_token，并且设置过期时间
-    addSession(hash, { ...machine, ...data })
+    addSession(hash, { ...machine, loginTime: new Date(), ...data })
     await next()
 
     // 存储所有表信息（供全局调用）
@@ -393,7 +393,7 @@ export const queryUserInfoMid = async (ctx: Context, next: () => Promise<void>) 
 export const userLogoutMid = async (ctx: Context, next: () => Promise<void>) => {
   const { session } = ctx.state.user
 
-  removeListKey(session)
-  removeKey(session)
+  removeListKey([session])
+  removeKey([session])
   await next()
 }

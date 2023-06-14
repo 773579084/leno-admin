@@ -19,7 +19,7 @@ export const auth = async (ctx: Context, next: () => Promise<void>) => {
     // 查询 sessionId 过期了没
     if (!(await judgeKeyOverdue(user.session))) {
       // 删除 login_tokens 集合中的过期key
-      removeListKey(user.session)
+      removeListKey([user.session])
       console.error('token 过期')
       return ctx.app.emit('error', invalidToken, ctx)
     } else {

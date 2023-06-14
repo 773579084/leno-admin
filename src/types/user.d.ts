@@ -34,6 +34,7 @@ export interface IuserInfoType {
   address: string
   browser: string
   os: string
+  loginTime: string
   userInfo: userType
   permissions: string[]
   roles: string[]
