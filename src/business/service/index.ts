@@ -81,7 +81,7 @@ export const addAllSer = async <T extends Optional<any, string>[]>(
 export const delSer = async (
   model: ModelStatic<any>,
   where: {
-    [id: string]: string[] | number[]
+    [id: string]: any
   }
 ) => {
   await model.destroy({ where })

@@ -26,7 +26,7 @@ import { addSession, queryKeyValue, removeKey, removeListKey } from '../utils/au
 import SysUserPost from '@/mysql/model/system/sys_user_post.model'
 import SysPost from '@/mysql/model/system/post.model'
 import { queryUserMachine } from '../utils/log'
-import { saveSqlMes } from '../utils/redis'
+import { saveMenyMes } from '../utils/redis'
 
 const {
   userExisting,
@@ -180,7 +180,7 @@ export const loginMid = async (ctx: Context, next: () => Promise<void>) => {
     await next()
 
     // 存储所有表信息（供全局调用）
-    saveSqlMes()
+    saveMenyMes()
   } catch (error) {
     console.error('用户登录失败', error)
     return ctx.app.emit('error', getUserInfoErr, ctx)

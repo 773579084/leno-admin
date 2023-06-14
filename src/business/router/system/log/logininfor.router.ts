@@ -6,7 +6,8 @@ import {
   getListMid,
   getDetailMid,
   delMid,
-  exportMid
+  exportMid,
+  cleanMid
 } from '@/business/middleware/system/logininfor.middleware'
 import { judgeIdSchema } from '@/business/schema'
 import { exportExcelMid } from '@/business/middleware/common/common.middleware'
@@ -23,6 +24,9 @@ router.get(
   formatHandle,
   IndexCon()
 )
+
+// 清空
+router.delete('/logininfor/clean', hasPermi('monitor:logininfor:remove'), cleanMid, IndexCon())
 
 // 删除
 router.delete(

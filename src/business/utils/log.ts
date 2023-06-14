@@ -3,11 +3,11 @@ import axios from 'axios'
 import { ImachineType } from '@/types/system/logininfor'
 import { addSer } from '../service'
 import SysLogininfor from '@/mysql/model/system/logininfor.model'
-import { querySqlMes } from './redis'
+import { queryMenuMes } from './redis'
 import { queryKeyValue } from './auth'
 import { IuserTokenType } from '@/types/auth'
-import { GenType } from '@/types/tools/gen'
 import SysOperLog from '@/mysql/model/system/operlog.model'
+import { menusType } from '@/types/system/system_menu'
 
 /**
  * 写入日志
@@ -41,8 +41,8 @@ export const writeLog = async (
   // 写入操作日志
   if (!ctx.request.url.split('/').includes('login') && ctx.request.method !== 'GET') {
     // 1 查询日志所属的 系统模块 操作类型
-    const sqls = await querySqlMes()
-    const { title, business_type } = filterModule(sqls, ctx)
+    const menus = await queryMenuMes()
+    const { title, business_type } = filterModule(menus, ctx)
     // 2 查询 用户信息 拿去请求用户 设备信息
     const userMes = await queryKeyValue(user.session)
 
@@ -85,23 +85,47 @@ export const filterCtxUrl = (url: string, method: string) => {
 
 /**
  * 获取请求的系统模块及操作类型
- * @param sqls
+ * @param menus
  * @param ctx
  * @returns {title:string,business_type:string}
  */
 export const filterModule = (
-  sqls: GenType[],
+  menus: menusType[],
   ctx: Context
 ): { title: string; business_type: string } => {
   const urlList = ctx.request.url.split('/')
   let title = '',
     business_type = ''
-  for (let i = 0; i < sqls.length - 1; i++) {
-    if (urlList.includes(sqls[i].businessName)) {
-      title = sqls[i].functionName
+  for (let i = 0; i < menus.length; i++) {
+    let path = menus[i].path
+    if (menus[i].path.indexOf('/:') !== -1) {
+      path = menus[i].path.split('/:')[0]
+    }
+    if (urlList.includes(path)) {
+      title = menus[i].menuName
       break
     }
   }
+
+  //
+  const specialEvents = [
+    {
+      type: 'clean',
+      value: '9'
+    }
+  ]
+
+  console.log(113, urlList)
+  for (let i = 0; i < specialEvents.length; i++) {
+    console.log(121, specialEvents[i])
+    if (urlList.includes(specialEvents[i].type)) {
+      return {
+        title,
+        business_type: specialEvents[i].value
+      }
+    }
+  }
+  console.log(127)
 
   switch (ctx.request.method) {
     case 'POST':

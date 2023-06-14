@@ -3,7 +3,6 @@ import jwt from 'jsonwebtoken'
 import errors from '@/app/err.type'
 import { IuserTokenType } from '@/types/auth'
 import { judgeKeyOverdue, queryKeyValue, removeListKey, resetTime } from '@/business/utils/auth'
-import { IuserInfoType } from '@/types/user'
 const { invalidToken, accessAuthErr } = errors
 const { JWT_SECRET } = process.env
 

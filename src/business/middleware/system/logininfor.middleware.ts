@@ -50,6 +50,18 @@ export const delMid = async (ctx: Context, next: () => Promise<void>) => {
   await next()
 }
 
+// 清空
+export const cleanMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    await delSer(SysLogininfor, { info_id: { [Op.ne]: null } })
+  } catch (error) {
+    console.error('删除失败', error)
+    return ctx.app.emit('error', delErr, ctx)
+  }
+
+  await next()
+}
+
 // 获取详细数据
 export const getDetailMid = async (ctx: Context, next: () => Promise<void>) => {
   try {

@@ -21,17 +21,11 @@ import { hasPermi } from '@/business/middleware/common/auth'
 
 const router = new Router({ prefix: '/system' })
 // 查询列表
-router.get(
-  '/dict/data/list',
-  hasPermi('system:dictData:list'),
-  getListMid,
-  formatHandle,
-  IndexCon()
-)
+router.get('/dictData/list', hasPermi('system:dictData:list'), getListMid, formatHandle, IndexCon())
 
 // 新增
 router.post(
-  '/dict/data',
+  '/dictData',
   hasPermi('system:dictData:list'),
   addEditSchema(addJudg),
   verifyMid(['dict_value', 'dict_type'], SysDictData),
@@ -41,7 +35,7 @@ router.post(
 
 // 删除
 router.delete(
-  `/dict/data/:id`,
+  `/dictData/:id`,
   hasPermi('system:dictData:list'),
   judgeIdSchema(),
   delMid,
@@ -50,7 +44,7 @@ router.delete(
 
 // 获取详细数据
 router.get(
-  `/dict/data/:id`,
+  `/dictData/:id`,
   hasPermi('system:dictData:list'),
   judgeIdSchema(),
   getDetailMid,
@@ -60,7 +54,7 @@ router.get(
 
 // 根据字典类型查询字典数据信息
 router.get(
-  `/dict/data/type/:dictType`,
+  `/dictData/type/:dictType`,
   hasPermi('system:dictData:list'),
   getDataTypeMid,
   formatHandle,
@@ -69,7 +63,7 @@ router.get(
 
 // 修改
 router.put(
-  '/dict/data',
+  '/dictData',
   hasPermi('system:dictData:list'),
   addEditSchema(putJudg),
   verifyMid(['dict_value', 'dict_type'], SysDictData, 'dict_code'),
@@ -79,7 +73,7 @@ router.put(
 
 // 导出列表(excel)
 router.post(
-  '/dict/data/export',
+  '/dictData/export',
   hasPermi('system:dictData:list'),
   exportExcelMid(exportExcelSer, SysDictData, { status: 'sys_normal_disable' }),
   exportMid,

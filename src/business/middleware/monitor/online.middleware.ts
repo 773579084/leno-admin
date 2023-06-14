@@ -82,7 +82,6 @@ export const delMid = async (ctx: Context, next: () => Promise<void>) => {
     const list = ctx.request.path.split('/')
     const ids = list[list.length - 1]
     const tokens = ids.split(',')
-    console.log(82, tokens)
     removeKey(tokens)
     removeListKey(tokens)
   } catch (error) {

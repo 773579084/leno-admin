@@ -6,7 +6,8 @@ import {
   getListMid,
   getDetailMid,
   delMid,
-  exportMid
+  exportMid,
+  cleanMid
 } from '@/business/middleware/system/operlog.middleware'
 import { judgeIdSchema } from '@/business/schema'
 import { exportExcelMid } from '@/business/middleware/common/common.middleware'
@@ -17,6 +18,9 @@ import { hasPermi } from '@/business/middleware/common/auth'
 const router = new Router({ prefix: '/system' })
 // 查询列表
 router.get('/operlog/list', hasPermi('monitor:operlog:query'), getListMid, formatHandle, IndexCon())
+
+// 清空
+router.delete('/operlog/clean', hasPermi('monitor:operlog:remove'), cleanMid, IndexCon())
 
 // 删除
 router.delete(

@@ -53,6 +53,18 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
   }
 }
 
+// 清空
+export const cleanMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    await delSer(SysOperLog, { oper_id: { [Op.ne]: null } })
+  } catch (error) {
+    console.error('删除失败', error)
+    return ctx.app.emit('error', delErr, ctx)
+  }
+
+  await next()
+}
+
 // 删除
 export const delMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
