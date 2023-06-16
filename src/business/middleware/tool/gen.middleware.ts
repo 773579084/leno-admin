@@ -20,12 +20,14 @@ import ToolGenColumn from '@/mysql/model/tool/gen_column.model'
 import fs from 'fs'
 import archiver from 'archiver'
 import SysMenu from '@/mysql/model/system/menu.model'
-import { saveMenuMes } from '@/business/utils/redis'
+import { recordNum, saveMenuMes } from '@/business/utils/redis'
+import { redisType } from '@/config/redis.config'
 
 // 查询数据库所有的表 -》 并将表数据转换为代码生成表的数据
 export const findAllSqlMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const existNames = await redis.smembers('tool_sql_names')
+    recordNum(redisType.smembers)
     // const existNames = []
     // 1、获取数据库里面所有的sql名字
     const tables = await sequelize.getQueryInterface().showAllTables()
@@ -38,6 +40,7 @@ export const findAllSqlMid = async (ctx: Context, next: () => Promise<void>) => 
         // 1-1-1、将新增tables表名存储到redis做缓存
         newAddRedisNames.push(name)
         redis.sadd('tool_sql_names', name)
+        recordNum(redisType.sadd)
       } else {
       }
     })

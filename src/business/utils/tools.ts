@@ -924,8 +924,10 @@ const ${stringFirst(data.className)} = () => {
   }
   ${getDictsState(data.columns)}
   useEffect(() => {
-    const getDictsFn = async () => {
-    ${getDicts(data.columns)}}
+    try {
+      const getDictsFn = async () => {
+        ${getDicts(data.columns)}}
+    } catch (error) {}
     getDictsFn()
   }, [])
 
@@ -935,17 +937,20 @@ const ${stringFirst(data.className)} = () => {
 
   // 查询列表
   const getList = async () => {
-    const { data } = await getListAPI(queryParams)
-    ${
-      data.tplCategory === 'tree'
-        ? `const treeData = generalTreeFn(data.result.rows, '${underline(
-            data.treeParentCode
-          )}', '${underline(data.treeCode)}') as any
-    setDataList(treeData)`
-        : 'setDataList({ ...data.result })'
-    }
-    message.success('查询成功')
-    setLoading(false)
+    try {
+      const { data } = await getListAPI(queryParams)
+      ${
+        data.tplCategory === 'tree'
+          ? `const treeData = generalTreeFn(data.result.rows, '${underline(
+              data.treeParentCode
+            )}', '${underline(data.treeCode)}') as any
+      setDataList(treeData)`
+          : 'setDataList({ ...data.result })'
+      }
+      
+      message.success('查询成功')
+      setLoading(false)
+    } catch (error) {}
   }
 
   // 搜索
@@ -1021,17 +1026,19 @@ const ${stringFirst(data.className)} = () => {
 
   // 获取详情
   const handleEditForm = async (id: number) => {
-    const { data } = await getDetailAPI(id)
-    ${
-      data.columns.find((item) => item.htmlType === 'editor')
-        ? `setEditorHtml(data.result.noticeContent as string)
-        setImgs(data.result.${data.columns.find((item) => item.htmlType === 'editor')} as string)`
-        : ``
-    }
-    setCurrentId(id)
-    setIsModalOpen(true)
-    setIsAdd(false)
-    addEditForm.setFieldsValue(data.result as unknown as I${data.businessName}Type)
+    try {
+      const { data } = await getDetailAPI(id)
+      ${
+        data.columns.find((item) => item.htmlType === 'editor')
+          ? `setEditorHtml(data.result.noticeContent as string)
+          setImgs(data.result.${data.columns.find((item) => item.htmlType === 'editor')} as string)`
+          : ``
+      }
+      setCurrentId(id)
+      setIsModalOpen(true)
+      setIsAdd(false)
+      addEditForm.setFieldsValue(data.result as unknown as I${data.businessName}Type)
+    } catch (error) {}
   }
 
   // 表单提交
