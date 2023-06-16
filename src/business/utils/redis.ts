@@ -50,3 +50,21 @@ export const getRecordNum = async (types: string[]) => {
   recordNum(redisType.mget)
   return await redis.mget(types)
 }
+
+/**
+ * 查询所有 key
+ * @return
+ */
+export const querySetKeys = async () => {
+  const allKeys = await redis.keys('*')
+  recordNum(redisType.keys)
+  const list = []
+  allKeys.forEach(async (key) => {
+    const type = await redis.type(key)
+    recordNum(redisType.type)
+    if (type === 'set') {
+      list.push(key)
+    }
+  })
+  return list
+}

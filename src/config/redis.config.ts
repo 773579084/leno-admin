@@ -9,5 +9,13 @@ export const redisType = {
   get: 'get',
   mget: 'mget',
   info: 'info',
+  keys: 'keys',
+  type: 'type',
   exists: 'exists'
+}
+
+// redis 集合类型 key 含义
+export const redisListType = {
+  tool_sql_names: 'sql表',
+  login_tokens: '用户信息'
 }
