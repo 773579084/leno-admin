@@ -135,9 +135,7 @@ export const filterModule = (
     }
   ]
 
-  console.log(113, urlList)
   for (let i = 0; i < specialEvents.length; i++) {
-    console.log(121, specialEvents[i])
     if (urlList.includes(specialEvents[i].type)) {
       return {
         title,
@@ -145,7 +143,6 @@ export const filterModule = (
       }
     }
   }
-  console.log(127)
 
   switch (ctx.request.method) {
     case 'POST':
