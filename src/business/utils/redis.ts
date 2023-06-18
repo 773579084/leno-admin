@@ -59,12 +59,44 @@ export const querySetKeys = async () => {
   const allKeys = await redis.keys('*')
   recordNum(redisType.keys)
   const list = []
-  allKeys.forEach(async (key) => {
-    const type = await redis.type(key)
+  for (let i = 0; i < allKeys.length; i++) {
+    const type = await redis.type(allKeys[i])
     recordNum(redisType.type)
     if (type === 'set') {
-      list.push(key)
+      list.push(allKeys[i])
     }
-  })
+  }
+
   return list
+}
+
+/**
+ * 获取 集合 的 所有的值
+ * @param key string
+ * @returns string[]
+ */
+export const getSetsValue = async (key: string) => {
+  recordNum(redisType.smembers)
+  return (await redis.smembers(key)) as string[]
+}
+
+/**
+ * 批量删除集合内的值
+ * @param setName: string
+ * @param keys: string[]
+ * @returns
+ */
+export const removeSetKeys = async (setName: string, keys: string[]) => {
+  await redis.srem(setName, keys)
+  recordNum(redisType.srem)
+}
+
+/**
+ * 删除集合
+ * @param setName: string
+ * @param keys string
+ */
+export const removeSet = async (setName: string, keys: string[]) => {
+  await redis.srem(setName, keys)
+  recordNum(redisType.srem)
 }

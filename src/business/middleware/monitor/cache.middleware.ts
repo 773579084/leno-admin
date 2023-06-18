@@ -1,11 +1,19 @@
 import { Context } from 'koa'
 // import { IserverType } from '@/types/monitor/cache'
 import errors from '@/app/err.type'
-const { getListErr } = errors
+const { getListErr, delErr } = errors
 import redis from '@/redis'
 import { parse } from 'redis-info'
-import { recordNum, getRecordNum, querySetKeys } from '@/business/utils/redis'
-import { redisType } from '@/config/redis.config'
+import {
+  recordNum,
+  getRecordNum,
+  querySetKeys,
+  getSetsValue,
+  removeSetKeys,
+  removeSet
+} from '@/business/utils/redis'
+import { redisListType, redisType } from '@/config/redis.config'
+import { queryKeyValue, removeKey } from '@/business/utils/auth'
 
 // 查询 缓存监控信息
 export const getCacheMid = async (ctx: Context, next: () => Promise<void>) => {
@@ -57,9 +65,13 @@ export const getCacheMid = async (ctx: Context, next: () => Promise<void>) => {
 export const getCacheListMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const setKeys = await querySetKeys()
-    console.log(60, setKeys)
-
-    ctx.state.formatData = {}
+    const newKeys = setKeys.map((key) => {
+      return {
+        cacheName: key,
+        remark: redisListType[key]
+      }
+    })
+    ctx.state.formatData = newKeys
     await next()
   } catch (error) {
     console.error('缓存列表', error)
@@ -70,7 +82,9 @@ export const getCacheListMid = async (ctx: Context, next: () => Promise<void>) =
 // 查询 缓存键名
 export const getCacheKeysMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    ctx.state.formatData = {}
+    const key = ctx.request.url.split('/')[ctx.request.url.split('/').length - 1]
+    const keyList = await getSetsValue(key)
+    ctx.state.formatData = keyList
     await next()
   } catch (error) {
     console.error('缓存列表', error)
@@ -81,10 +95,69 @@ export const getCacheKeysMid = async (ctx: Context, next: () => Promise<void>) =
 // 查询 缓存内容
 export const getCacheContentMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    ctx.state.formatData = {}
+    const key = ctx.request.url.split('/')[ctx.request.url.split('/').length - 1]
+    const keyList = key.split(':')
+    let res = await queryKeyValue(keyList[1])
+    let newCacheValue = res as any
+
+    if (res !== null && typeof res === 'object') {
+      newCacheValue = JSON.stringify(res)
+    }
+
+    ctx.state.formatData = {
+      cacheName: keyList[0],
+      cacheKey: keyList[1],
+      cacheValue: newCacheValue ? newCacheValue : ''
+    }
     await next()
   } catch (error) {
-    console.error('缓存列表', error)
+    console.error('缓存列表失败', error)
     return ctx.app.emit('error', getListErr, ctx)
+  }
+}
+
+// 删除缓存
+export const clearCacheKeyMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    const key = ctx.request.url.split('/')[ctx.request.url.split('/').length - 1]
+    if (key.indexOf(':') !== -1) {
+      const newKey = key.split(':')
+      // 删除集合内的值
+      await removeSetKeys(newKey[0], [newKey[1]])
+      // 如果集合外有存值，则将集合外的值也删除掉
+      if (await queryKeyValue(newKey[1])) {
+        await removeKey([newKey[1]])
+      }
+    } else {
+      // 首先获取集合内的值
+      const setKeys = await getSetsValue(key)
+      // 删除由集合内值绑定集合外的所有值
+      await removeKey(setKeys)
+      // 删除该集合
+      await removeSet(key, setKeys)
+    }
+    await next()
+  } catch (error) {
+    console.error('删除缓存失败', error)
+    return ctx.app.emit('error', delErr, ctx)
+  }
+}
+
+// 删除全部缓存
+export const clearCacheAllMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    // 查询全部的缓存列表
+    const sets = await querySetKeys()
+    for (let i = 0; i < sets.length; i++) {
+      // 获取结合内所有的值
+      const setKeys = await getSetsValue(sets[i])
+      // 删除由集合内值绑定集合外的所有值
+      await removeKey(setKeys)
+      // 删除集合内所有的值
+      await removeSet(sets[i], setKeys)
+    }
+  } catch (error) {
+    console.error('删除缓存失败', error)
+    return ctx.app.emit('error', delErr, ctx)
   }
 }
