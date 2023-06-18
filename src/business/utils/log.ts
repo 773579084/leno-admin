@@ -42,19 +42,19 @@ export const writeLog = async (
   if (!ctx.request.url.split('/').includes('login') && ctx.request.method !== 'GET') {
     // 1 查询日志所属的 系统模块 操作类型
     const menus = await queryMenuMes()
-    const { title, business_type } = filterModule(menus, ctx)
+    const { business_type } = filterModule(menus, ctx)
     // 2 查询 用户信息 拿去请求用户 设备信息
     const userMes = await queryKeyValue(user.session)
 
     const operLog = {
-      title,
+      title: filterCtxUrl(ctx.request.url, ctx.request.method),
       business_type,
       method: '',
       request_method: ctx.request.method,
       operator_type: '',
       oper_name: userMes.userInfo.userName,
       dept_name: userMes.userInfo.dept.deptName,
-      oper_url: filterCtxUrl(ctx.request.url, ctx.request.method),
+      oper_url: ctx.request.url,
       oper_ip: userMes.ip,
       oper_location: userMes.address,
       oper_param: JSON.stringify(ctx.request['body']),
