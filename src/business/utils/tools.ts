@@ -1045,18 +1045,18 @@ const ${stringFirst(data.className)} = () => {
   const handleFormFinish = async (values: I${data.businessName}Type) => {
     try {
       if (isAdd) {
-        await addAPI({ ...values, ${
+        await addAPI({ ...values ${
           data.columns.find((item) => item.htmlType === 'editor')
-            ? `${data.columns.find((item) => item.htmlType === 'editor').columnName}:imgs`
+            ? `,${data.columns.find((item) => item.htmlType === 'editor').columnName}:imgs`
             : ''
         }})
         message.success('新增成功')
       } else {
         await putAPI({ ...values, ${
           data.columns.find((item) => item.htmlType === 'editor')
-            ? `${data.columns.find((item) => item.htmlType === 'editor').columnName}:imgs`
+            ? `${data.columns.find((item) => item.htmlType === 'editor').columnName}:imgs,`
             : ''
-        }}), ${mainIdKey}: currentId })
+        } ${mainIdKey}: currentId })
         message.success('修改成功')
       }
       ${
