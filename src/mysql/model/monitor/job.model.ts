@@ -10,7 +10,7 @@ const MonitorJob = seq.define(
       defaultValue: 1,
       comment: '是否并发执行（0允许 1禁止）'
     },
-    create_at: {
+    created_at: {
       type: DataTypes.DATE,
       defaultValue: null,
       comment: '创建时间'
@@ -63,7 +63,7 @@ const MonitorJob = seq.define(
       defaultValue: 0,
       comment: '状态（0正常 1暂停）'
     },
-    update_at: {
+    updated_at: {
       type: DataTypes.DATE,
       defaultValue: null,
       comment: '更新时间'

@@ -1314,7 +1314,7 @@ const ${stringFirst(data.className)} = () => {
 
         </div>
 
-        {/* 添加 编辑 用户 */}
+        {/* 添加 编辑 */}
         <Modal
           title={isAdd ? '添加${data.functionName}' : '编辑${data.functionName}'}
           open={isModalOpen}

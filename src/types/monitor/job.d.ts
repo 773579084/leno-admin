@@ -3,7 +3,7 @@ export interface IjobQueryType {
   pageNum: number
   pageSize: number
   concurrent?: string
-  createAt?: string
+  createdAt?: string
   createBy?: string
   cronExpression?: string
   invokeTarget?: string
@@ -13,8 +13,9 @@ export interface IjobQueryType {
   misfirePolicy?: string
   remark?: string
   status?: string
-  updateAt?: string
+  updatedAt?: string
   updateBy?: string
+  nextValidTime?: string
 }
 
 export interface IjobQuerySerType {

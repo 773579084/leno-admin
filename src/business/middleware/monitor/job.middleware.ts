@@ -61,7 +61,7 @@ export const delMid = async (ctx: Context, next: () => Promise<void>) => {
 // 获取详细数据
 export const getDetailMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    const res = await getDetailSer<IjobSer>(MonitorJob, { concurrent: ctx.state.ids })
+    const res = await getDetailSer<IjobSer>(MonitorJob, { job_id: ctx.state.ids })
 
     ctx.state.formatData = res
   } catch (error) {
