@@ -521,7 +521,7 @@ import seq from '@/mysql/db/seq.db'
 const ${data.className} = seq.define(
   '${data.tableName}',
   {
-    ${generateModel(data.columns)},
+    ${generateModel(data.columns)}
   },
   {
     tableName: '${data.tableName}', // 强制创建表名
@@ -1047,14 +1047,14 @@ const ${stringFirst(data.className)} = () => {
       if (isAdd) {
         await addAPI({ ...values, ${
           data.columns.find((item) => item.htmlType === 'editor')
-            ? `${data.columns.find((item) => item.htmlType === 'editor')}:imgs`
+            ? `${data.columns.find((item) => item.htmlType === 'editor').columnName}:imgs`
             : ''
         }})
         message.success('新增成功')
       } else {
         await putAPI({ ...values, ${
           data.columns.find((item) => item.htmlType === 'editor')
-            ? `${data.columns.find((item) => item.htmlType === 'editor')}:imgs`
+            ? `${data.columns.find((item) => item.htmlType === 'editor').columnName}:imgs`
             : ''
         }}), ${mainIdKey}: currentId })
         message.success('修改成功')
