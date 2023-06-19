@@ -2,12 +2,7 @@ import Router from 'koa-router'
 // 格式转换
 import { formatHandle } from '@/business/middleware/common/common.middleware'
 import IndexCon from '@/business/controller'
-import {
-  getListMid,
-  getDetailMid,
-  delMid,
-  exportMid
-} from '@/business/middleware/monitor/jobLog.middleware'
+import { getListMid, delMid, exportMid } from '@/business/middleware/monitor/jobLog.middleware'
 import { judgeIdSchema } from '@/business/schema'
 import { exportExcelMid } from '@/business/middleware/common/common.middleware'
 import MonitorJobLog from '@/mysql/model/monitor/jobLog.model'
@@ -20,16 +15,6 @@ router.get('/jobLog/list', hasPermi('monitor:jobLog:query'), getListMid, formatH
 
 // 删除
 router.delete('/jobLog/:id', hasPermi('monitor:jobLog:remove'), judgeIdSchema(), delMid, IndexCon())
-
-// 获取详细数据
-router.get(
-  '/jobLog/detail/:id',
-  hasPermi('monitor:jobLog:query'),
-  judgeIdSchema(),
-  getDetailMid,
-  formatHandle,
-  IndexCon()
-)
 
 // 导出列表(excel)
 router.post(

@@ -19,6 +19,12 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
     params.jobGroup ? (newParams.job_group = { [Op.eq]: params.jobGroup }) : null
     params.jobName ? (newParams.job_name = { [Op.like]: params.jobName + '%' }) : null
     params.status ? (newParams.status = { [Op.eq]: params.status }) : null
+    if (params.createdAt) params.createdAt = JSON.parse(params.createdAt as unknown as string)
+    params.createdAt
+      ? (newParams.created_at = {
+          [Op.between]: [params.createdAt.beginTime, params.createdAt.endTime]
+        })
+      : null
 
     const res = await getListSer<IjobLogQuerySerType>(MonitorJobLog, newParams)
 
@@ -58,20 +64,6 @@ export const delMid = async (ctx: Context, next: () => Promise<void>) => {
   await next()
 }
 
-// 获取详细数据
-export const getDetailMid = async (ctx: Context, next: () => Promise<void>) => {
-  try {
-    const res = await getDetailSer<IjobLogSer>(MonitorJobLog, { create_at: ctx.state.ids })
-
-    ctx.state.formatData = res
-  } catch (error) {
-    console.error('详细数据查询错误', error)
-    return ctx.app.emit('error', sqlErr, ctx)
-  }
-
-  await next()
-}
-
 // 导出
 export const exportMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
@@ -86,7 +78,8 @@ export const exportMid = async (ctx: Context, next: () => Promise<void>) => {
         { title: '任务组名', dataIndex: 'job_group' },
         { title: '日志信息', dataIndex: 'job_message' },
         { title: '任务名称', dataIndex: 'job_name' },
-        { title: '执行状态（0正常 1失败）', dataIndex: 'status' }
+        { title: '执行状态（0正常 1失败）', dataIndex: 'status' },
+        { title: '执行时间', dataIndex: 'created+at' }
       ],
       tableData: list
     })

@@ -17,7 +17,10 @@ export interface IoperlogQueryType {
   jsonResult?: string
   status?: string
   errorMsg?: string
-  operTime?: string
+  operTime?: {
+    beginTime: string
+    endTime: string
+  }
 }
 
 export interface IoperlogQuerySerType {

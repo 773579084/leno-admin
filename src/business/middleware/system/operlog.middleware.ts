@@ -25,7 +25,13 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
     params.businessType ? (newParams.business_type = { [Op.eq]: params.businessType }) : null
     params.operName ? (newParams.oper_name = { [Op.eq]: params.operName }) : null
     params.status ? (newParams.status = { [Op.eq]: params.status }) : null
-    params.operTime ? (newParams.oper_time = { [Op.eq]: params.operTime }) : null
+
+    if (params.operTime) params.operTime = JSON.parse(params.operTime as unknown as string)
+    params.operTime
+      ? (newParams.oper_time = {
+          [Op.between]: [params.operTime.beginTime, params.operTime.endTime]
+        })
+      : null
 
     const res = await getListSer<IoperlogQuerySerType>(SysOperLog, newParams)
 

@@ -313,13 +313,13 @@ const createSearch = (data: ColumnType[]) => {
   let searchStr = ''
   data.forEach((item) => {
     if (item.htmlType === 'datetime') {
-      searchStr += `let { createdAt, ...form } = queryForm.getFieldsValue()
-      if (createdAt) {
+      searchStr += `let { ${item.tsField}, ...form } = queryForm.getFieldsValue()
+      if (${item.tsField}) {
         form = {
           ...form,
           ${item.tsField}:{
-            beginTime: dayjs(createdAt[0]).format('YYYY-MM-DD HH:mm:ss'),
-            endTime: dayjs(createdAt[1]).format('YYYY-MM-DD HH:mm:ss'),
+            beginTime: dayjs(${item.tsField}[0]).format('YYYY-MM-DD HH:mm:ss'),
+            endTime: dayjs(${item.tsField}[1]).format('YYYY-MM-DD HH:mm:ss'),
           }
         }
       }`

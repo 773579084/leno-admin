@@ -5,10 +5,15 @@ import seq from '@/mysql/db/seq.db'
 const MonitorJobLog = seq.define(
   'monitor_job_log',
   {
-    create_at: {
+    created_at: {
       type: DataTypes.DATE,
       defaultValue: null,
       comment: '创建时间'
+    },
+    updated_at: {
+      type: DataTypes.DATE,
+      defaultValue: null,
+      comment: '修改时间'
     },
     exception_info: {
       type: DataTypes.TEXT,

@@ -2,7 +2,10 @@
 export interface IjobLogQueryType {
   pageNum: number
   pageSize: number
-  createAt?: string
+  createdAt?: {
+    beginTime: string
+    endTime: string
+  }
   exceptionInfo?: string
   invokeTarget?: string
   jobGroup?: string
@@ -18,12 +21,13 @@ export interface IjobLogQuerySerType {
   job_group?: { [OpTypes.eq]: string }
   job_name?: { [OpTypes.like]: string }
   status?: { [OpTypes.eq]: string }
+  created_at?: { [OpTypes.between]: string }
 }
 
 export interface IjobLog {}
 
 export interface IjobLogSer {
-  create_at?: string
+  created_at?: string
   exception_info?: string
   invoke_target?: string
   job_group?: string
