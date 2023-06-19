@@ -672,7 +672,9 @@ export const delMid = async (ctx: Context, next: () => Promise<void>) => {
     }`
         : ``
     }
-    await delSer(${data.className}, { ${data.columns[0].columnName}: ctx.state.ids })
+    await delSer(${data.className}, { ${
+    data.columns.find((item) => item.isPk === '0').columnName
+  }: ctx.state.ids })
   } catch (error) {
     console.error('删除失败', error)
     return ctx.app.emit('error', delErr, ctx)
@@ -685,8 +687,8 @@ export const delMid = async (ctx: Context, next: () => Promise<void>) => {
 export const getDetailMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const res = await getDetailSer<I${data.businessName}Ser>(${data.className}, { ${
-    data.columns[0].columnName
-  }: ctx.state.ids })
+    data.columns.find((item) => item.isPk === '0').columnName
+  }: ctx.state.ids }: ctx.state.ids })
 
     ctx.state.formatData = res
   } catch (error) {
@@ -703,11 +705,13 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
     const { userName } = ctx.state.user as userType
     const res = ctx.request['body'] as I${data.businessName}
     const lineData =  formatHumpLineTransfer(res, 'line') as I${data.businessName}Ser
-    const { ${data.columns[0].columnName}, ...data } = lineData
+    const { ${
+      data.columns.find((item) => item.isPk === '0').columnName
+    }: ctx.state.ids }, ...data } = lineData
 
     await putSer<I${data.businessName}Ser>(${data.className}, { ${
-    data.columns[0].columnName
-  } }, { ...data, update_by: userName })
+    data.columns.find((item) => item.isPk === '0').columnName
+  }: ctx.state.ids }}, { ...data, update_by: userName })
 
     await next()
   } catch (error) {

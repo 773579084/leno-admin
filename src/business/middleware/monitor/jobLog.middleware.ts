@@ -55,7 +55,7 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
 // 删除
 export const delMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    await delSer(MonitorJobLog, { create_at: ctx.state.ids })
+    await delSer(MonitorJobLog, { job_log_id: ctx.state.ids })
   } catch (error) {
     console.error('删除失败', error)
     return ctx.app.emit('error', delErr, ctx)
