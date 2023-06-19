@@ -927,8 +927,8 @@ const ${stringFirst(data.className)} = () => {
     try {
       const getDictsFn = async () => {
         ${getDicts(data.columns)}}
+      getDictsFn()
     } catch (error) {}
-    getDictsFn()
   }, [])
 
   useEffect(() => {
@@ -1045,12 +1045,18 @@ const ${stringFirst(data.className)} = () => {
   const handleFormFinish = async (values: I${data.businessName}Type) => {
     try {
       if (isAdd) {
-        await addAPI({ ...values, ${data.columns.find((item) => item.htmlType === 'editor')}:imgs})
+        await addAPI({ ...values, ${
+          data.columns.find((item) => item.htmlType === 'editor')
+            ? `${data.columns.find((item) => item.htmlType === 'editor')}:imgs`
+            : ''
+        }})
         message.success('新增成功')
       } else {
-        await putAPI({ ...values, ${data.columns.find(
-          (item) => item.htmlType === 'editor'
-        )}:imgs, ${mainIdKey}: currentId })
+        await putAPI({ ...values, ${
+          data.columns.find((item) => item.htmlType === 'editor')
+            ? `${data.columns.find((item) => item.htmlType === 'editor')}:imgs`
+            : ''
+        }}), ${mainIdKey}: currentId })
         message.success('修改成功')
       }
       ${
