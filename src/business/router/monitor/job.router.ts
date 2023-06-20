@@ -8,7 +8,8 @@ import {
   getDetailMid,
   putMid,
   delMid,
-  exportMid
+  exportMid,
+  putRoleStatusMid
 } from '@/business/middleware/monitor/job.middleware'
 import { addEditSchema, judgeIdSchema } from '@/business/schema'
 import { exportExcelMid } from '@/business/middleware/common/common.middleware'
@@ -36,6 +37,9 @@ router.get(
   formatHandle,
   IndexCon()
 )
+
+// 修改状态
+router.put('/job/status', hasPermi('monitor:job:edit'), putRoleStatusMid, IndexCon())
 
 // 修改
 router.put('/job', hasPermi('monitor:job:edit'), addEditSchema(putJudg), putMid, IndexCon())

@@ -49,7 +49,7 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
 // 删除
 export const delMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    await delSer(MonitorJob, { concurrent: ctx.state.ids })
+    await delSer(MonitorJob, { job_id: ctx.state.ids })
   } catch (error) {
     console.error('删除失败', error)
     return ctx.app.emit('error', delErr, ctx)
@@ -78,13 +78,28 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
     const { userName } = ctx.state.user as userType
     const res = ctx.request['body'] as Ijob
     const lineData = formatHumpLineTransfer(res, 'line') as IjobSer
-    const { concurrent, ...data } = lineData
+    const { job_id, ...data } = lineData
 
-    await putSer<IjobSer>(MonitorJob, { concurrent }, { ...data, update_by: userName })
+    await putSer<IjobSer>(MonitorJob, { job_id }, { ...data, update_by: userName })
 
     await next()
   } catch (error) {
     console.error('修改失败', error)
+    return ctx.app.emit('error', uploadParamsErr, ctx)
+  }
+}
+
+// 修改用户状态
+export const putRoleStatusMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    const { userName } = ctx.state.user as userType
+    let { jobId, status } = ctx.request['body'] as { status: string; jobId: number }
+
+    await putSer<IjobSer>(MonitorJob, { job_id: jobId }, { status, update_by: userName })
+
+    await next()
+  } catch (error) {
+    console.error('修改角色状态失败', error)
     return ctx.app.emit('error', uploadParamsErr, ctx)
   }
 }
