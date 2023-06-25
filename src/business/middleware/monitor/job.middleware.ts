@@ -8,6 +8,7 @@ import { excelJsExport } from '@/business/utils/excel'
 import { excelBaseStyle } from '@/business/public/excelMap'
 import MonitorJob from '@/mysql/model/monitor/job.model'
 import { Op } from 'sequelize'
+import { addEditJob, cancelJob, runOneJob, scheduleAll } from '@/business/utils/job'
 const { uploadParamsErr, getListErr, sqlErr, delErr, exportExcelErr } = errors
 
 // 获取列表
@@ -38,7 +39,23 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
     const addContent2 = { ...addContent, createBy: userName }
     const newAddContent = formatHumpLineTransfer(addContent2, 'line') as IjobSer
 
-    await addSer<IjobSer>(MonitorJob, newAddContent)
+    const { job_id } = await addSer<IjobSer>(MonitorJob, newAddContent)
+
+    if (addContent.status === '0') {
+      switch (addContent.misfirePolicy) {
+        case '1':
+          // 新增定时任务 立即执行
+          addEditJob(`${job_id}`, addContent.cronExpression, 'addEditFn')
+          break
+        case '2':
+          // 仅执行一次
+          runOneJob(`${job_id}`, 'runOneFn')
+          break
+        default:
+          break
+      }
+    }
+
     await next()
   } catch (error) {
     console.error('新增失败', error)
@@ -49,7 +66,13 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
 // 删除
 export const delMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    await delSer(MonitorJob, { job_id: ctx.state.ids })
+    const ids = ctx.state.ids as string[]
+    await delSer(MonitorJob, { job_id: ids })
+
+    // 取消 定时任务
+    ids.forEach((id) => {
+      cancelJob(id)
+    })
   } catch (error) {
     console.error('删除失败', error)
     return ctx.app.emit('error', delErr, ctx)
@@ -96,6 +119,17 @@ export const putRoleStatusMid = async (ctx: Context, next: () => Promise<void>) 
     let { jobId, status } = ctx.request['body'] as { status: string; jobId: number }
 
     await putSer<IjobSer>(MonitorJob, { job_id: jobId }, { status, update_by: userName })
+
+    const res = await getDetailSer<IjobSer>(MonitorJob, { job_id: jobId })
+    console.log(124, res)
+
+    if (res.status === '0') {
+      // 新建定时任务
+      addEditJob(`${res.job_id}`, res.cron_expression, res.invoke_target)
+    } else {
+      // 删除定时任务
+      cancelJob(`${res.job_id}`)
+    }
 
     await next()
   } catch (error) {

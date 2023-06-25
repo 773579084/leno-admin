@@ -38,7 +38,7 @@ router.get(
   IndexCon()
 )
 
-// 修改状态
+// 修改状态(是否启动定时任务)
 router.put('/job/status', hasPermi('monitor:job:edit'), putRoleStatusMid, IndexCon())
 
 // 修改
