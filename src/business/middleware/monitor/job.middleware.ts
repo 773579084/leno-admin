@@ -45,11 +45,11 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
       switch (addContent.misfirePolicy) {
         case '1':
           // 新增定时任务 立即执行
-          addEditJob(`${job_id}`, addContent.cronExpression, 'addEditFn')
+          addEditJob(`${job_id}`, addContent.cronExpression, addContent.invokeTarget)
           break
         case '2':
           // 仅执行一次
-          runOneJob(`${job_id}`, 'runOneFn')
+          runOneJob(addContent.invokeTarget)
           break
         default:
           break
@@ -105,6 +105,21 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
 
     await putSer<IjobSer>(MonitorJob, { job_id }, { ...data, update_by: userName })
 
+    if (res.status === '0') {
+      switch (res.misfirePolicy) {
+        case '1':
+          // 新增定时任务 立即执行
+          addEditJob(`${job_id}`, res.cronExpression, 'addEditFn')
+          break
+        case '2':
+          // 仅执行一次
+          runOneJob('runOneFn')
+          break
+        default:
+          break
+      }
+    }
+
     await next()
   } catch (error) {
     console.error('修改失败', error)
@@ -121,7 +136,6 @@ export const putRoleStatusMid = async (ctx: Context, next: () => Promise<void>) 
     await putSer<IjobSer>(MonitorJob, { job_id: jobId }, { status, update_by: userName })
 
     const res = await getDetailSer<IjobSer>(MonitorJob, { job_id: jobId })
-    console.log(124, res)
 
     if (res.status === '0') {
       // 新建定时任务
@@ -136,6 +150,13 @@ export const putRoleStatusMid = async (ctx: Context, next: () => Promise<void>) 
     console.error('修改角色状态失败', error)
     return ctx.app.emit('error', uploadParamsErr, ctx)
   }
+}
+
+// 立即执行一次
+export const jobRunOneMid = async (ctx: Context, next: () => Promise<void>) => {
+  let { jobId } = ctx.request['body'] as { jobId: number }
+  const res = await getDetailSer<IjobSer>(MonitorJob, { job_id: jobId })
+  runOneJob(res.invoke_target)
 }
 
 // 导出

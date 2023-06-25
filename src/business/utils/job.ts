@@ -30,10 +30,9 @@ export const cancelJob = (id: string) => {
 
 /**
  * 立即执行一次
- * @param id
  * @param funStr
  */
-export const runOneJob = (id: string, funStr: string) => {
+export const runOneJob = (funStr: string) => {
   // 因为程序执行会存在异步时间差，所以我们需要将时间往后延迟数百毫秒，以保证当前时间在定时任务创建之后执行
   const time = Date.now() + 200
   schedule.scheduleJob(time, target[funStr])
