@@ -46,7 +46,7 @@ router.put('/job/status', hasPermi('monitor:job:edit'), putRoleStatusMid, IndexC
 router.put('/job', hasPermi('monitor:job:edit'), addEditSchema(putJudg), putMid, IndexCon())
 
 // 立即执行一次
-router.put('/job/run', hasPermi('monitor:job:edit'), jobRunOneMid, IndexCon())
+router.put('/job/run', hasPermi('monitor:job:edit'), jobRunOneMid, IndexCon('执行成功！'))
 
 // 导出列表(excel)
 router.post(

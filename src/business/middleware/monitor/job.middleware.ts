@@ -9,6 +9,7 @@ import { excelBaseStyle } from '@/business/public/excelMap'
 import MonitorJob from '@/mysql/model/monitor/job.model'
 import { Op } from 'sequelize'
 import { addEditJob, cancelJob, runOneJob, scheduleAll } from '@/business/utils/job'
+import { cronRunTime } from '@/business/utils/cronRunTime'
 const { uploadParamsErr, getListErr, sqlErr, delErr, exportExcelErr } = errors
 
 // 获取列表
@@ -86,7 +87,9 @@ export const getDetailMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const res = await getDetailSer<IjobSer>(MonitorJob, { job_id: ctx.state.ids })
 
-    ctx.state.formatData = res
+    const nextValidTime = cronRunTime(res.cron_expression, 1)
+
+    ctx.state.formatData = { ...res, nextValidTime: nextValidTime[0] }
   } catch (error) {
     console.error('详细数据查询错误', error)
     return ctx.app.emit('error', sqlErr, ctx)
@@ -109,11 +112,16 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
       switch (res.misfirePolicy) {
         case '1':
           // 新增定时任务 立即执行
-          addEditJob(`${job_id}`, res.cronExpression, 'addEditFn')
+          addEditJob(`${job_id}`, res.cronExpression, res.invokeTarget)
           break
         case '2':
+          cancelJob(`${job_id}`)
           // 仅执行一次
-          runOneJob('runOneFn')
+          runOneJob(res.invokeTarget)
+          break
+        case '3':
+          // 放弃执行
+          cancelJob(`${job_id}`)
           break
         default:
           break
@@ -138,6 +146,19 @@ export const putRoleStatusMid = async (ctx: Context, next: () => Promise<void>) 
     const res = await getDetailSer<IjobSer>(MonitorJob, { job_id: jobId })
 
     if (res.status === '0') {
+      switch (res.misfire_policy) {
+        case '1':
+          // 新增定时任务 立即执行
+          addEditJob(`${jobId}`, res.cron_expression, res.invoke_target)
+          break
+        case '2':
+          // 仅执行一次
+          runOneJob(res.invoke_target)
+          break
+
+        default:
+          break
+      }
       // 新建定时任务
       addEditJob(`${res.job_id}`, res.cron_expression, res.invoke_target)
     } else {
@@ -154,9 +175,16 @@ export const putRoleStatusMid = async (ctx: Context, next: () => Promise<void>) 
 
 // 立即执行一次
 export const jobRunOneMid = async (ctx: Context, next: () => Promise<void>) => {
-  let { jobId } = ctx.request['body'] as { jobId: number }
-  const res = await getDetailSer<IjobSer>(MonitorJob, { job_id: jobId })
-  runOneJob(res.invoke_target)
+  try {
+    let { jobId } = ctx.request['body'] as { jobId: number }
+    const res = await getDetailSer<IjobSer>(MonitorJob, { job_id: jobId })
+    runOneJob(res.invoke_target)
+
+    await next()
+  } catch (error) {
+    console.error('立即执行一次失败', error)
+    return ctx.app.emit('error', uploadParamsErr, ctx)
+  }
 }
 
 // 导出
