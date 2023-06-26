@@ -42,6 +42,19 @@ export const removeFolder = (folderPath: string) => {
   fs.rmdirSync(folderPath)
 }
 
+/**
+ * 删除文件夹 里面的所有文件
+ * @param folderPath
+ */
+export const delFiles = (folderPath: string) => {
+  const files = fs.readdirSync(folderPath)
+
+  for (let item of files) {
+    // 为文件就用删除文件方式删除
+    fs.unlinkSync(`${folderPath}\\${item}`)
+  }
+}
+
 /** 返回数据下划线转化为驼峰命名
  * @param {data} 'obj或ary'
  * @param {type} 默认hump 'hump' 下划线转驼峰，'line' 驼峰转下划线

@@ -84,6 +84,7 @@ export const writeLog = async (
     )
 
     // 写入到文件中 （按每天日期写入）
+    // if (type === '1')
     writeFileLog(type, ctx, data)
   } catch (error) {
     console.error('写入日志失败', error)
