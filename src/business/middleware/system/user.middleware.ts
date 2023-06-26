@@ -307,6 +307,7 @@ export const putUserMid = async (ctx: Context, next: () => Promise<void>) => {
   }
 }
 
+// 修改用户状态
 export const putUserStatusMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { userName } = ctx.state.user as userType

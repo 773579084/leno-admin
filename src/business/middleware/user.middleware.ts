@@ -27,6 +27,8 @@ import SysUserPost from '@/mysql/model/system/sys_user_post.model'
 import SysPost from '@/mysql/model/system/post.model'
 import { queryUserMachine } from '../utils/log'
 import { saveMenuMes } from '../utils/redis'
+import os from 'os'
+const { APP_PORT, APP_HTTP } = process.env
 
 const {
   userExisting,
@@ -381,8 +383,13 @@ export const queryUserInfoMid = async (ctx: Context, next: () => Promise<void>) 
   const { session } = ctx.state.user
   const userData = await queryKeyValue(session)
 
+  const ip = os.networkInterfaces()['WLAN'][1].address
+
   ctx.state.formatData = {
-    userInfo: userData.userInfo,
+    userInfo: {
+      ...userData.userInfo,
+      avatar: `${APP_HTTP}://${ip}:${APP_PORT}/${userData.userInfo.avatar}`
+    },
     roles: userData.roles,
     permissions: userData.permissions
   }

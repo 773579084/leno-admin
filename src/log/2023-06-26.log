@@ -20,3 +20,8 @@
 [2023-06-26 11:37:58] [success] [/tool/gen/db/list?pageNum=1&pageSize=10] 操作成功！
 [2023-06-26 11:37:59] [success] [/system/dictData/type/sys_common_status] 操作成功！
 [2023-06-26 11:37:59] [success] [/system/logininfor/list?pageNum=1&pageSize=10] 操作成功！
+[2023-06-26 13:36:43] [error] [/system/dictData/type/sys_oper_type] 无效的token
+[2023-06-26 13:36:43] [error] [/system/operlog/list?pageNum=1&pageSize=10] 无效的token
+[2023-06-26 13:46:05] [error] [/http://192.168.60.61:3010/07c0439905ba24cc2ed1ed301.jpeg] jwt must be provided
+[2023-06-26 13:46:06] [error] [/http://192.168.60.61:3010/07c0439905ba24cc2ed1ed301.jpeg] jwt must be provided
+[2023-06-26 13:46:32] [error] [/favicon.ico] jwt must be provided
