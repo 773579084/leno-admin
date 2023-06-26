@@ -1,3 +1,5 @@
+import { IjobSer } from '@/types/monitor/job'
+import { Context } from 'koa'
 import schedule from 'node-schedule'
 import target from './invokeTarget'
 
@@ -10,7 +12,6 @@ const parsingFunStr = (str: string): { fun: string; par: string[] } => {
   if (/\(|\)/.test(str)) {
     const regex = /\((.*?)\)/
     const match = str.match(regex)
-    console.log(14, match)
     return {
       fun: str.split('(')[0],
       par: match[1].split(',')
@@ -25,15 +26,16 @@ const parsingFunStr = (str: string): { fun: string; par: string[] } => {
 
 /**
  * 新增/修改 定时任务
- * @param id
- * @param cron
- * @param funStr
+ * @param ctx
+ * @param job
  * @returns
  */
-export const addEditJob = (id: string, cron: string, funStr: string) => {
-  const { fun, par } = parsingFunStr(funStr)
-  schedule.scheduleJob(id, cron, () => {
-    target[fun](...par)
+export const addEditJob = (ctx: Context, job: IjobSer) => {
+  const { fun, par } = parsingFunStr(job.invoke_target)
+  console.log(35, job)
+
+  schedule.scheduleJob(String(job.job_id), job.cron_expression, () => {
+    target[fun](ctx, job, ...par)
   })
 }
 
@@ -54,13 +56,14 @@ export const cancelJob = (id: string) => {
 
 /**
  * 立即执行一次
- * @param funStr
+ * @param ctx
+ * @param job
  */
-export const runOneJob = (funStr: string) => {
+export const runOneJob = (ctx: Context, job: IjobSer) => {
   // 因为程序执行会存在异步时间差，所以我们需要将时间往后延迟数百毫秒，以保证当前时间在定时任务创建之后执行
-  const { fun, par } = parsingFunStr(funStr)
+  const { fun, par } = parsingFunStr(job.invoke_target)
   const time = Date.now() + 200
   schedule.scheduleJob(time, () => {
-    target[fun](...par)
+    target[fun](ctx, job, ...par)
   })
 }

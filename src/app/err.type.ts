@@ -168,5 +168,9 @@ export default {
   accessAuthErr: {
     code: '403',
     message: '无访问权限'
+  },
+  logErr: {
+    code: '500',
+    message: '日志写入失败'
   }
 }

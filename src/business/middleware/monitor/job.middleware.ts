@@ -40,17 +40,17 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
     const addContent2 = { ...addContent, createBy: userName }
     const newAddContent = formatHumpLineTransfer(addContent2, 'line') as IjobSer
 
-    const { job_id } = await addSer<IjobSer>(MonitorJob, newAddContent)
+    const res = await addSer<IjobSer>(MonitorJob, newAddContent)
 
     if (addContent.status === '0') {
       switch (addContent.misfirePolicy) {
         case '1':
           // 新增定时任务 立即执行
-          addEditJob(`${job_id}`, addContent.cronExpression, addContent.invokeTarget)
+          addEditJob(ctx, res)
           break
         case '2':
           // 仅执行一次
-          runOneJob(addContent.invokeTarget)
+          runOneJob(ctx, res)
           break
         default:
           break
@@ -112,12 +112,12 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
       switch (res.misfirePolicy) {
         case '1':
           // 新增定时任务 立即执行
-          addEditJob(`${job_id}`, res.cronExpression, res.invokeTarget)
+          addEditJob(ctx, lineData)
           break
         case '2':
           cancelJob(`${job_id}`)
           // 仅执行一次
-          runOneJob(res.invokeTarget)
+          runOneJob(ctx, lineData)
           break
         case '3':
           // 放弃执行
@@ -149,18 +149,16 @@ export const putRoleStatusMid = async (ctx: Context, next: () => Promise<void>) 
       switch (res.misfire_policy) {
         case '1':
           // 新增定时任务 立即执行
-          addEditJob(`${jobId}`, res.cron_expression, res.invoke_target)
+          addEditJob(ctx, res)
           break
         case '2':
           // 仅执行一次
-          runOneJob(res.invoke_target)
+          runOneJob(ctx, res)
           break
 
         default:
           break
       }
-      // 新建定时任务
-      addEditJob(`${res.job_id}`, res.cron_expression, res.invoke_target)
     } else {
       // 删除定时任务
       cancelJob(`${res.job_id}`)
@@ -178,7 +176,7 @@ export const jobRunOneMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     let { jobId } = ctx.request['body'] as { jobId: number }
     const res = await getDetailSer<IjobSer>(MonitorJob, { job_id: jobId })
-    runOneJob(res.invoke_target)
+    runOneJob(ctx, res)
 
     await next()
   } catch (error) {

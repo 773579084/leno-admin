@@ -121,7 +121,9 @@ export const putSer = async <T extends Object>(
   where: { [id: string]: number | number[] | string | string[] },
   data: T
 ) => {
-  await model.update(data, { where })
+  const res = await model.update(data, { where })
+
+  return res
 }
 
 /**
