@@ -1,6 +1,5 @@
 import { Context } from 'koa'
 import { addAllSer, delSer, getListSer } from '@/business/service'
-import { IaddUserRoleType } from '@/types/system/roleUser'
 import errors from '@/app/err.type'
 
 import SysUserRole from '@/mysql/model/system/sys_user_role.model'
@@ -47,7 +46,6 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
         role_id: id
       }
     })
-    console.log(51, addRoleUser)
 
     await addAllSer(SysUserRole, addRoleUser)
     await next()

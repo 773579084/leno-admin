@@ -6,8 +6,6 @@ import Router from 'koa-router'
 import { formatHandle } from '@/business/middleware/common/common.middleware'
 import IndexCon from '@/business/controller'
 import {
-  getRouterMid,
-  conversionMid,
   getMenusMid,
   addMenuMid,
   delMenuMid,
@@ -19,14 +17,6 @@ import { addJudg, putJudg } from '../../schema/system/sys_menus.schema'
 import { hasPermi } from '@/business/middleware/common/auth'
 
 const router = new Router({ prefix: '/system' })
-// 查询routers菜单
-router.get(
-  '/menu/getRouters',
-  hasPermi('system:menu:query'),
-  conversionMid,
-  getRouterMid,
-  IndexCon()
-)
 
 // 获取角色权限过滤后的菜单列表
 router.get('/menu/list', hasPermi('system:menu:query'), getMenusMid, formatHandle, IndexCon())

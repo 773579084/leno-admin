@@ -61,3 +61,15 @@
 [2023-06-26 14:07:10] [error] [/system/roleUser/list?pageNum=1&pageSize=10] 获取列表失败
 [2023-06-26 14:07:10] [error] [/system/roleUser/list?pageNum=1&pageSize=10] 获取列表失败
 [2023-06-26 14:07:10] [error] [/system/roleUser/list?pageNum=1&pageSize=10] 获取列表失败
+[2023-06-26 16:11:52] [error] [/user/login] 密码错误
+[2023-06-26 16:11:56] [error] [/system/menu/getRouters] 无访问权限
+[2023-06-26 16:11:57] [error] [/null] jwt must be provided
+[2023-06-26 16:17:28] [error] [/null] jwt must be provided
+[2023-06-26 16:17:28] [error] [/system/menu/getRouters] 无访问权限
+[2023-06-26 16:19:49] [error] [/null] jwt must be provided
+[2023-06-26 16:19:53] [error] [/system/dept/treeselect] 无访问权限
+[2023-06-26 16:19:53] [error] [/system/user/list?pageNum=1&pageSize=10] 无访问权限
+[2023-06-26 16:20:24] [error] [/system/menu/list] 无访问权限
+[2023-06-26 16:20:33] [error] [/null] jwt must be provided
+[2023-06-26 16:21:36] [error] [/system/dept/treeselect] 无访问权限
+[2023-06-26 16:21:36] [error] [/system/user/list?pageNum=1&pageSize=10] 无访问权限

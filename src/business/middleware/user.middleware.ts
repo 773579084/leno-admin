@@ -388,7 +388,9 @@ export const queryUserInfoMid = async (ctx: Context, next: () => Promise<void>) 
   ctx.state.formatData = {
     userInfo: {
       ...userData.userInfo,
-      avatar: `${APP_HTTP}://${ip}:${APP_PORT}/${userData.userInfo.avatar}`
+      avatar: userData.userInfo.avatar
+        ? `${APP_HTTP}://${ip}:${APP_PORT}/${userData.userInfo.avatar}`
+        : ''
     },
     roles: userData.roles,
     permissions: userData.permissions
