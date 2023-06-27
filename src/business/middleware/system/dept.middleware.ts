@@ -6,6 +6,8 @@ import errors from '@/app/err.type'
 import { formatHumpLineTransfer } from '@/business/utils'
 import SysDept from '@/mysql/model/system/dept.model'
 import { Op } from 'sequelize'
+import LenoUser from '@/mysql/model/user.model'
+import { bindCheck } from '@/business/utils/bind'
 const { uploadParamsErr, getListErr, sqlErr, delErr } = errors
 
 // 获取列表
@@ -47,13 +49,19 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
 // 删除
 export const delMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    await putSer(SysDept, { dept_id: ctx.state.ids }, { del_flag: '2' })
+    if ((await bindCheck(LenoUser, { dept_id: ctx.state.ids })).length > 0) {
+      ctx.body = {
+        code: 500,
+        message: '部门存在用户,不允许删除'
+      }
+    } else {
+      await putSer(SysDept, { dept_id: ctx.state.ids }, { del_flag: '2' })
+      await next()
+    }
   } catch (error) {
     console.error('删除失败', error)
     return ctx.app.emit('error', delErr, ctx)
   }
-
-  await next()
 }
 
 // 获取详细数据

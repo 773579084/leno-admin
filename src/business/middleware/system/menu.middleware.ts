@@ -9,6 +9,7 @@ import SysMenu from '@/mysql/model/system/menu.model'
 import { getUserRoleSer } from '@/business/service/system/user.service'
 import SysRoleMenu from '@/mysql/model/system/sys_role_menu.model'
 import { Op } from 'sequelize'
+import { bindCheck } from '@/business/utils/bind'
 const { delErr, getRoutersErr, getListErr, uploadParamsErr, addErr, sqlErr } = errors
 
 // 获取菜单数据并进行数据转换
@@ -168,12 +169,26 @@ export const addMenuMid = async (ctx: Context, next: () => Promise<void>) => {
 // 删除
 export const delMenuMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    await delSer(SysMenu, { menu_id: ctx.state.ids })
+    const ids = ctx.state.ids as string[]
+
+    if ((await bindCheck(SysMenu, { parent_id: ids })).length > 0) {
+      ctx.body = {
+        code: 500,
+        message: '存在子菜单,不允许删除'
+      }
+    } else if ((await bindCheck(SysRoleMenu, { menu_id: ids })).length > 0) {
+      ctx.body = {
+        code: 500,
+        message: `菜单已分配,不允许删除`
+      }
+    } else {
+      await delSer(SysMenu, { menu_id: ids })
+      await next()
+    }
   } catch (error) {
-    console.error('删除用户失败', error)
+    console.error('删除菜单失败', error)
     return ctx.app.emit('error', delErr, ctx)
   }
-  await next()
 }
 
 // 获取详情

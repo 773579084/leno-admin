@@ -8,6 +8,8 @@ import { excelJsExport } from '@/business/utils/excel'
 import { excelBaseStyle } from '@/business/public/excelMap'
 import SysPost from '@/mysql/model/system/post.model'
 import { Op } from 'sequelize'
+import { bindCheck } from '@/business/utils/bind'
+import SysUserPost from '@/mysql/model/system/sys_user_post.model'
 const { uploadParamsErr, getListErr, sqlErr, delErr, exportExcelErr } = errors
 
 // 获取列表
@@ -50,13 +52,19 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
 // 删除
 export const delMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    await putSer(SysPost, { post_id: ctx.state.ids }, { del_flag: '2' })
+    if ((await bindCheck(SysUserPost, { post_id: ctx.state.ids })).length > 0) {
+      ctx.body = {
+        code: 500,
+        message: '岗位已被分配,不允许删除'
+      }
+    } else {
+      await putSer(SysPost, { post_id: ctx.state.ids }, { del_flag: '2' })
+      await next()
+    }
   } catch (error) {
     console.error('删除失败', error)
     return ctx.app.emit('error', delErr, ctx)
   }
-
-  await next()
 }
 
 // 获取详细数据

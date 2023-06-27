@@ -28,6 +28,9 @@ import { Op } from 'sequelize'
 import { IroleSer } from '@/types/system/role'
 import { IpostSer } from '@/types/system/post'
 import { IdeptSer } from '@/types/system/dept'
+import { delSer } from '@/business/service'
+import SysUserRole from '@/mysql/model/system/sys_user_role.model'
+import SysUserPost from '@/mysql/model/system/sys_user_post.model'
 const {
   checkUserIdErr,
   getDeptTreeErr,
@@ -194,6 +197,9 @@ export const getAddUserMid = async (ctx: Context, next: () => Promise<void>) => 
 // 删除
 export const delMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
+    // 删除用户时，将用户关联的角色和部门关系删除
+    await delSer(SysUserRole, { user_id: ctx.state.ids })
+    await delSer(SysUserPost, { user_id: ctx.state.ids })
     await delUserSer(ctx.state.ids)
   } catch (error) {
     console.error('删除用户失败', error)

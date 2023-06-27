@@ -1,5 +1,13 @@
 import { Context } from 'koa'
-import { getListSer, addSer, putSer, getDetailSer, delSer, addAllSer } from '@/business/service'
+import {
+  getListSer,
+  addSer,
+  putSer,
+  getDetailSer,
+  delSer,
+  addAllSer,
+  queryConditionsData
+} from '@/business/service'
 import { userType } from '@/types'
 import {
   IroleQueryType,
@@ -16,6 +24,8 @@ import SysRole from '@/mysql/model/system/role.model'
 import { Op } from 'sequelize'
 import SysRoleMenu from '@/mysql/model/system/sys_role_menu.model'
 import { getRoleMenuIdSer } from '@/business/service/system/role.service'
+import { bindCheck } from '@/business/utils/bind'
+import SysUserRole from '@/mysql/model/system/sys_user_role.model'
 const { uploadParamsErr, getListErr, sqlErr, delErr, exportExcelErr } = errors
 
 // 获取列表
@@ -73,18 +83,35 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
 // 删除
 export const delMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
+    const ids = ctx.state.ids as string[]
     const { userName } = ctx.state.user as userType
-    await putSer<IroleSer>(
-      SysRole,
-      { role_id: ctx.state.ids },
-      { del_flag: '1', update_by: userName }
-    )
+
+    const res = await bindCheck(SysUserRole, { role_id: ids })
+
+    if (res.length > 0) {
+      const relaIds = res.map((item: { user_id: number; role_id: number }) => {
+        if (ids.includes(String(item.role_id))) {
+          return item.role_id
+        }
+      })
+      const roles = await queryConditionsData(SysRole, { role_id: relaIds })
+      let roleMessage = ''
+
+      roles.forEach((role) => {
+        roleMessage += `${role.role_name},`
+      })
+      ctx.body = {
+        code: 500,
+        message: `${roleMessage}已分配,不能删除`
+      }
+    } else {
+      await putSer<IroleSer>(SysRole, { role_id: ids }, { del_flag: '1', update_by: userName })
+      await next()
+    }
   } catch (error) {
     console.error('删除角色失败', error)
     return ctx.app.emit('error', delErr, ctx)
   }
-
-  await next()
 }
 
 // 获取详细数据
