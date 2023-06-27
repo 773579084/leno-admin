@@ -53,7 +53,6 @@ export const writeLog = async (
       const { business_type } = filterModule(menus, ctx)
       // 2 查询 用户信息 拿去请求用户 设备信息
       const userMes = await queryKeyValue(user.session)
-      console.log(31, userMes)
 
       const operLog = {
         title: filterCtxUrl(ctx.request.url, ctx.request.method),
@@ -88,7 +87,12 @@ export const writeLog = async (
     if (type === '1') writeFileLog(type, ctx, data)
   } catch (error) {
     console.error('写入日志失败', error)
-    // return ctx.app.emit('error', logErr, ctx)
+    console.log(
+      '\x1b[31m%s\x1b[0m',
+      `[${dayjs().format('YYYY-MM-DD HH:mm:ss')}] [${type === '0' ? 'success' : 'error'}] [${
+        ctx.request.url
+      }] 写入日志失败`
+    )
   }
 }
 

@@ -64,7 +64,8 @@ export const getCacheMid = async (ctx: Context, next: () => Promise<void>) => {
 // 查询 缓存列表
 export const getCacheListMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    const setKeys = await querySetKeys()
+    const setKeys = (await querySetKeys()).filter((item) => item !== 'tool_sql_names')
+
     const newKeys = setKeys.map((key) => {
       return {
         cacheName: key,

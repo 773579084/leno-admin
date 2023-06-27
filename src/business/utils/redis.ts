@@ -52,7 +52,7 @@ export const getRecordNum = async (types: string[]) => {
 }
 
 /**
- * 查询所有 key
+ * 查询所有 集合 key
  * @return
  */
 export const querySetKeys = async () => {
