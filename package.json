@@ -34,6 +34,7 @@
     "node-schedule": "^2.1.1",
     "redis-info": "^3.1.0",
     "sequelize": "^6.25.0",
+    "svg-captcha": "^1.4.0",
     "tsc-alias": "^1.8.2",
     "tsconfig-paths": "^4.1.2"
   },

@@ -1,6 +1,6 @@
 import { Context } from 'koa'
 import path from 'path'
-import { userType, pwdType, imgType, IuserInfoType } from '@/types'
+import { userType, pwdType, imgType, IuserInfoType, ILoginType } from '@/types'
 import {
   createdUser,
   deletFrontAvatarSer,
@@ -25,10 +25,11 @@ import SysMenu from '@/mysql/model/system/menu.model'
 import { addSession, queryKeyValue, removeKey, removeListKey } from '../utils/auth'
 import SysUserPost from '@/mysql/model/system/sys_user_post.model'
 import SysPost from '@/mysql/model/system/post.model'
-import { queryUserMachine } from '../utils/log'
-import { saveMenuMes } from '../utils/redis'
+import { queryUserMachine, writeLog } from '../utils/log'
+import { saveKey, saveMenuMes } from '../utils/redis'
 import os from 'os'
 const { APP_PORT, APP_HTTP } = process.env
+import svgCode from '../utils/svgCode'
 
 const {
   userExisting,
@@ -41,7 +42,8 @@ const {
   getUserInfoErr,
   enteredPasswordsDiffer,
   reviseErr,
-  updateAvatarErr
+  updateAvatarErr,
+  uploadParamsErr
 } = errors
 
 // 判断用户是否停用
@@ -59,6 +61,35 @@ export const isUserStatusMid = async (ctx: Context, next: () => Promise<void>) =
     return ctx.app.emit('error', sqlErr, ctx)
   }
   await next()
+}
+
+// 判断 验证码
+export const iscaptchaImageMid = async (ctx: Context, next: () => Promise<void>) => {
+  const { uuid, code } = ctx.request['body'] as ILoginType
+  console.log(uuid)
+
+  try {
+    const value = (await queryKeyValue(uuid)) as unknown as string
+
+    if (value) {
+      if (String(value) === code) {
+        await next()
+      } else {
+        ctx.body = {
+          code: 400,
+          message: '输入的验证码错误'
+        }
+      }
+    } else {
+      ctx.body = {
+        code: 400,
+        message: '验证码已过期'
+      }
+    }
+  } catch (error) {
+    console.error('验证码验证错误', ctx.request['body'])
+    return ctx.app.emit('error', uploadParamsErr, ctx)
+  }
 }
 
 // 判断用户名是否重复
@@ -398,11 +429,24 @@ export const queryUserInfoMid = async (ctx: Context, next: () => Promise<void>) 
   await next()
 }
 
-// 重新返回新的 token 和 refreshToken
+// 退出账号
 export const userLogoutMid = async (ctx: Context, next: () => Promise<void>) => {
   const { session } = ctx.state.user
 
   removeListKey([session])
   removeKey([session])
+
+  await next()
+}
+
+// 生成svg 验证图
+export const captchaImageMid = async (ctx: Context, next: () => Promise<void>) => {
+  const { data, text } = svgCode()
+  const uuid = createHash()
+
+  // 存储验证uuid与text答案
+  await saveKey(uuid, text, 2)
+
+  ctx.state.formatData = { img: data, uuid }
   await next()
 }

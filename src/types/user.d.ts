@@ -56,3 +56,11 @@ export interface imgType {
   mimetype?: string
   size?: number
 }
+
+export interface ILoginType {
+  userName: string
+  password: string
+  password2: string
+  code: string
+  uuid: string
+}

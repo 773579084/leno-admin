@@ -14,6 +14,7 @@ import { IjobSer } from '@/types/monitor/job'
 import MonitorJobLog from '@/mysql/model/monitor/jobLog.model'
 import errors from '@/app/err.type'
 const { logErr } = errors
+import { logWhites } from '@/config'
 
 /**
  * 写入 日志
@@ -45,9 +46,10 @@ export const writeLog = async (
 
       await addSer(SysLogininfor, loginLog)
     }
+    console.log()
 
     // 写入操作日志
-    if (!ctx.request.url.split('/').includes('login') && ctx.request.method !== 'GET') {
+    if (!logWhites.includes(ctx.request.url) && ctx.request.method !== 'GET') {
       // 1 查询日志所属的 系统模块 操作类型
       const menus = await queryMenuMes()
       const { business_type } = filterModule(menus, ctx)

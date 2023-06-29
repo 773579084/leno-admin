@@ -5,8 +5,8 @@ import { redisType } from '@/config/redis.config'
 
 /**
  * 存储用户 session & userinfo
- * @param key sessionId
- * @param data userInfo
+ * @param key
+ * @param data
  * @param time 过期时间设置(min)
  */
 export const addSession = async (key: string, data: IuserInfoType, time = 60) => {

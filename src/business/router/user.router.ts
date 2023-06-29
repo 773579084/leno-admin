@@ -14,7 +14,9 @@ import {
   getUserBaseMid,
   getProfile,
   userLogoutMid,
-  queryUserInfoMid
+  queryUserInfoMid,
+  captchaImageMid,
+  iscaptchaImageMid
 } from '@/business/middleware/user.middleware'
 import IndexCon from '@/business/controller'
 import { userSchema, pwdSchema, userInfoSchema } from '@/business/schema/user.schema'
@@ -27,6 +29,7 @@ const router = new Router({ prefix: '/user' })
 router.post(
   '/login',
   userSchema,
+  iscaptchaImageMid,
   isUserStatusMid,
   loginValidatorMid,
   getUserBaseMid,
@@ -40,13 +43,17 @@ router.post(
 router.post(
   '/register',
   userSchema,
+  iscaptchaImageMid,
   verifyUserMid,
   crptyPasswordMid,
   registerMid,
   IndexCon('注册成功！')
 )
 
-// 退出方法
+// 注册
+router.get('/captchaImage', captchaImageMid, IndexCon())
+
+// 退出账号
 router.delete('/logout', userLogoutMid, IndexCon('退出账号成功！'))
 
 // 获取用户及权限角色信息

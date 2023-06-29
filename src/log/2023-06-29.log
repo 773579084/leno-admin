@@ -1,0 +1,14 @@
+[2023-06-29 08:28:00] [error] [/user/getInfo] 无效的token
+[2023-06-29 09:19:44] [error] [/user/getInfo] jwt malformed
+[2023-06-29 09:22:20] [error] [/user/getInfo] jwt malformed
+[2023-06-29 09:47:58] [error] [/user/logout] Cannot destructure property 'session' of 'ctx.state.user' as it is undefined.
+[2023-06-29 09:48:09] [error] [/user/logout] Cannot destructure property 'session' of 'ctx.state.user' as it is undefined.
+[2023-06-29 09:48:32] [error] [/user/logout] Cannot destructure property 'session' of 'ctx.state.user' as it is undefined.
+[2023-06-29 09:52:51] [error] [/user/logout] Cannot destructure property 'session' of 'ctx.state.user' as it is undefined.
+[2023-06-29 09:53:16] [error] [/user/logout] Cannot destructure property 'session' of 'ctx.state.user' as it is undefined.
+[2023-06-29 09:54:28] [error] [/user/logout] Cannot destructure property 'session' of 'ctx.state.user' as it is undefined.
+[2023-06-29 09:55:38] [error] [/user/logout] Cannot destructure property 'session' of 'ctx.state.user' as it is undefined.
+[2023-06-29 09:58:54] [error] [/user/logout] jwt must be provided
+[2023-06-29 10:00:53] [error] [/user/logout] jwt must be provided
+[2023-06-29 10:02:01] [error] [/user/logout] jwt must be provided
+[2023-06-29 10:05:33] [error] [/user/logout] jwt must be provided

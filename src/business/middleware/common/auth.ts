@@ -5,13 +5,15 @@ import { IuserTokenType } from '@/types/auth'
 import { judgeKeyOverdue, queryKeyValue, removeListKey, resetTime } from '@/business/utils/auth'
 const { invalidToken, accessAuthErr } = errors
 const { JWT_SECRET } = process.env
+import { authWhites } from '@/config'
 
 // 权限过期判断
 export const auth = async (ctx: Context, next: () => Promise<void>) => {
   const { authorization = '' } = ctx.request.header
   const token = authorization.replace('Bearer ', '')
 
-  if (ctx.request.url !== '/user/login' && ctx.request.url !== '/user/register') {
+  // 权限白名单
+  if (!authWhites.includes(ctx.request.url)) {
     // user中包含了payload的信息(userId, userName)
     const user = jwt.verify(token, JWT_SECRET) as IuserTokenType
 

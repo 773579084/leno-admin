@@ -100,3 +100,17 @@ export const removeSet = async (setName: string, keys: string[]) => {
   await redis.srem(setName, keys)
   recordNum(redisType.srem)
 }
+
+/**
+ * 存储 key value 键值对
+ * @param key
+ * @param value
+ * @param time 过期时间设置(min)
+ */
+export const saveKey = async (key: string, value: any, time = 60) => {
+  await redis.set(key, value)
+  recordNum(redisType.set)
+  // 对象过期时间设置
+  redis.expire(key, time * 60)
+  recordNum(redisType.expire)
+}
