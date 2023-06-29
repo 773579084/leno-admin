@@ -36,7 +36,7 @@ router.post(
   getUserInfoMid,
   getPermRoleMid,
   loginMid,
-  IndexCon('用户登录成功！')
+  IndexCon('用户登录成功')
 )
 
 // 注册
@@ -47,17 +47,17 @@ router.post(
   verifyUserMid,
   crptyPasswordMid,
   registerMid,
-  IndexCon('注册成功！')
+  IndexCon('注册成功')
 )
 
 // 注册
 router.get('/captchaImage', captchaImageMid, IndexCon())
 
 // 退出账号
-router.delete('/logout', userLogoutMid, IndexCon('退出账号成功！'))
+router.delete('/logout', userLogoutMid, IndexCon('退出账号成功'))
 
 // 获取用户及权限角色信息
-router.get('/getInfo', queryUserInfoMid, IndexCon('获取用户个人信息成功！'))
+router.get('/getInfo', queryUserInfoMid, IndexCon('获取用户个人信息成功'))
 
 // 查询routers菜单
 router.get('/menu/getRouters', conversionMid, getRouterMid, IndexCon())
@@ -68,7 +68,7 @@ router.get(
   hasPermi('profile:list'),
   queryUserInfoMid,
   getProfile,
-  IndexCon('获取用户个人信息成功！')
+  IndexCon('获取用户个人信息成功')
 )
 
 // 修改用户密码
@@ -77,7 +77,7 @@ router.put(
   hasPermi('profile:list'),
   pwdSchema,
   updatePwdMid,
-  IndexCon('密码修改成功！')
+  IndexCon('密码修改成功')
 )
 
 // 修改用户个人信息
@@ -90,7 +90,7 @@ router.post(
   contrastFileSizeSchema(),
   judImgFormatSchema(),
   uploadAvatarMid,
-  IndexCon('用户上传头像成功！')
+  IndexCon('用户上传头像成功')
 )
 
 module.exports = router

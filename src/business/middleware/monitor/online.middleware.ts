@@ -58,7 +58,7 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
     const newV = values.map((item, index) => {
       return {
         tokenId: onlineTokens[index],
-        os: item.os,
+        os: item?.os,
         loginTime: item.loginTime,
         loginLocation: item.address,
         deptName: item.userInfo.dept.deptName,

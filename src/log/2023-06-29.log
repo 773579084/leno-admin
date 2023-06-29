@@ -12,3 +12,9 @@
 [2023-06-29 10:00:53] [error] [/user/logout] jwt must be provided
 [2023-06-29 10:02:01] [error] [/user/logout] jwt must be provided
 [2023-06-29 10:05:33] [error] [/user/logout] jwt must be provided
+[2023-06-29 15:46:43] [error] [/system/roleUser/list?pageNum=1&pageSize=10&roleId=13] 获取列表失败
+[2023-06-29 15:46:49] [error] [/system/roleUser/list?pageNum=1&pageSize=10&roleId=13] 获取列表失败
+[2023-06-29 15:46:49] [error] [/system/roleUser/unallocatedList?pageNum=1&pageSize=10&roleId=13] 获取列表失败
+[2023-06-29 15:47:36] [error] [/system/roleUser/unallocatedList?pageNum=1&pageSize=10&roleId=13] 获取列表失败
+[2023-06-29 15:47:36] [error] [/system/roleUser/list?pageNum=1&pageSize=10&roleId=13] 获取列表失败
+[2023-06-29 16:05:31] [error] [/monitor/online/list?pageNum=1&pageSize=10] 获取列表失败

@@ -17,11 +17,11 @@ const IndexCon = (message?: string) => {
       } else {
         body = {
           code: 200,
-          message: message || '操作成功！'
+          message: message || '操作成功'
         }
         const repObj = {
           code: 200,
-          message: message || '操作成功！'
+          message: message || '操作成功'
         }
         ctx.state.formatData &&
           Object.assign(repObj, {

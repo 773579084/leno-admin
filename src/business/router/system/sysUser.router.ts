@@ -101,7 +101,7 @@ router.post(
     'sex',
     'status'
   ]),
-  IndexCon('用户信息导入成功！')
+  IndexCon('用户信息导入成功')
 )
 
 // 导出用户excel模板

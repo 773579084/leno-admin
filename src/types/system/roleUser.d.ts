@@ -30,6 +30,7 @@ export interface IroleUserQuerySerType {
   pageSize: number
   user_name?: { [OpTypes.like]: string }
   phonenumber?: { [OpTypes.like]: string }
+  del_flag?: string
 }
 
 export interface IroleUser {}

@@ -94,6 +94,7 @@ export const unallocatedListMid = async (ctx: Context, next: () => Promise<void>
 
     params.userName ? (newParams.user_name = { [Op.like]: params.userName + '%' }) : null
     params.phonenumber ? (newParams.phonenumber = { [Op.like]: params.phonenumber + '%' }) : null
+    newParams.del_flag = '0'
     newParams.user_id = { [Op.notIn]: userIds }
 
     const res = await getListSer<IroleUserQuerySerType>(LenoUser, newParams)

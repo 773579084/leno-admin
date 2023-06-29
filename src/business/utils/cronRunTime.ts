@@ -168,7 +168,7 @@ export const cronRunTime = (cron: string, num = 5) => {
             // 获取达到条件的日期是星期X
             const thisWeek = formatDate(
               new Date(YY + '-' + MM + '-' + thisDD + ' 00:00:00'),
-              'week',
+              'week'
             )
             // 当星期日时
             if (thisWeek == 1) {
@@ -225,7 +225,7 @@ export const cronRunTime = (cron: string, num = 5) => {
             // 获取月末最后一天是星期几
             const thisWeek = formatDate(
               new Date(YY + '-' + MM + '-' + thisDD + ' 00:00:00'),
-              'week',
+              'week'
             )
             // 找到要求中最近的那个星期几
             if (dayRuleSup < thisWeek) {
@@ -322,11 +322,11 @@ export const cronRunTime = (cron: string, num = 5) => {
     }
     // 判断100年内的结果条数
     if (resultArr.length == 0) {
-      resultList = ['没有达到条件的结果！']
+      resultList = ['没有达到条件的结果']
     } else {
       resultList = resultArr
       if (resultArr.length !== num) {
-        resultList.push('最近100年内只有上面' + resultArr.length + '条结果！')
+        resultList.push('最近100年内只有上面' + resultArr.length + '条结果')
       }
     }
   }

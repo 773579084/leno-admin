@@ -18,7 +18,12 @@ router.get('/roleUser/list', hasPermi('system:roleUser:list'), getListMid, forma
 router.post('/roleUser/authorization', hasPermi('system:roleUser:list'), getAddMid, IndexCon())
 
 // 取消授权
-router.delete('/roleUser/authorization', hasPermi('system:roleUser:list'), delMid, IndexCon())
+router.delete(
+  '/roleUser/authorization',
+  hasPermi('system:roleUser:list'),
+  delMid,
+  IndexCon('取消授权')
+)
 
 // 选择用户列表
 router.get(

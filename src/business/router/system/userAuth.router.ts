@@ -16,6 +16,6 @@ router.get(
 )
 
 //设置 用户 角色信息
-router.put('/user/userAuth', hasPermi('system:userAuth:list'), getAddMid, IndexCon())
+router.put('/user/userAuth', hasPermi('system:userAuth:list'), getAddMid, IndexCon('授权成功'))
 
 module.exports = router
