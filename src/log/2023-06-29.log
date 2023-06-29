@@ -37,3 +37,4 @@
 [2023-06-29 16:29:54] [error] [/system/post/list?pageNum=1&pageSize=10] 获取列表失败
 [2023-06-29 16:30:04] [error] [/system/post/list?pageNum=1&pageSize=10&status=1] 获取列表失败
 [2023-06-29 16:30:47] [error] [/system/post/list?pageNum=1&pageSize=10] 无效的token
+[2023-06-29 16:39:38] [error] [/system/post/list?pageNum=1&pageSize=10] 获取列表失败

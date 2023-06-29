@@ -24,6 +24,9 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
     newParams.del_flag = { [Op.eq]: '0' }
 
     const res = await getListSer<IpostQuerySerType>(SysPost, newParams)
+
+    ctx.state.formatData = res
+    await next()
   } catch (error) {
     console.error('查询列表失败', error)
     return ctx.app.emit('error', getListErr, ctx)
