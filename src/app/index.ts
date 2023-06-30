@@ -39,8 +39,11 @@ app.use(
 // 配置静态资源网址访问
 app.use(koaStatic(path.join(__dirname, '../upload')))
 
-app.use(history())
-
+app.use(
+  history({
+    whiteList: []
+  })
+)
 // 配置静态文件目录
 app.use(koaStatic(path.join(__dirname, '../public')))
 

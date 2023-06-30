@@ -196,3 +196,11 @@
 [2023-06-30 10:50:17] [error] [/system/static/js/1154.244d1854.js] jwt must be provided
 [2023-06-30 10:51:25] [error] [/system/user] jwt must be provided
 [2023-06-30 10:51:30] [error] [/system] jwt must be provided
+[2023-06-30 11:13:49] [error] [/prod-api/user/captchaImage] jwt must be provided
+[2023-06-30 11:14:07] [error] [/prod-api/user/captchaImage] jwt must be provided
+[2023-06-30 11:14:40] [error] [/prod-api/user/captchaImage] jwt must be provided
+[2023-06-30 11:15:48] [error] [/prod-api/user/captchaImage] jwt must be provided
+[2023-06-30 11:15:55] [error] [/prod-api/user/captchaImage] jwt must be provided
+[2023-06-30 11:17:17] [error] [/prod-api/user/captchaImage] jwt must be provided
+[2023-06-30 11:18:13] [error] [/prod-api/user/captchaImage] jwt must be provided
+[2023-06-30 11:18:34] [error] [/user/logout] jwt must be provided
