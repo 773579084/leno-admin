@@ -5,6 +5,7 @@ import errHandlerFn from './errHandler'
 import path from 'path'
 import koaStatic from 'koa-static'
 import userAgent from 'koa-useragent'
+import history from 'koa2-connect-history-api-fallback'
 
 // 引入路由
 import router from '@/business/router'
@@ -18,7 +19,7 @@ import initDB from '@/mysql/db'
 initDB()
 
 // 注册中间件
-// app.use(cors()) // 解决跨域问题
+app.use(cors()) // 解决跨域问题
 
 app.use(
   KoaBody({
@@ -37,6 +38,11 @@ app.use(
 
 // 配置静态资源网址访问
 app.use(koaStatic(path.join(__dirname, '../upload')))
+
+app.use(history())
+
+// 配置静态文件目录
+app.use(koaStatic(path.join(__dirname, '../public')))
 
 // 统一权限判断
 app.use(auth)

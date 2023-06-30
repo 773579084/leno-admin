@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkleno_admin=self.webpackChunkleno_admin||[]).push([[2590],{12590:function(e,n,u){u.r(n),n.default={"h4-title":"uVNAdDQ9","base-info":"hP6djzWj"}}}]);

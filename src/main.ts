@@ -1,5 +1,6 @@
 import '@/config/config.default'
 import app from '@/app/index'
+
 const { APP_PORT, APP_HOST, APP_HTTP } = process.env
 
 app.listen(APP_PORT, () => {
