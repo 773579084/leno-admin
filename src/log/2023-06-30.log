@@ -1,0 +1,9 @@
+[2023-06-30 08:30:26] [error] [/user/getInfo] 无效的token
+[2023-06-30 08:30:26] [error] [/user/getInfo] 无效的token
+[2023-06-30 08:35:36] [error] [/user/getInfo] 无效的token
+[2023-06-30 08:35:36] [error] [/user/getInfo] 无效的token
+[2023-06-30 08:36:17] [error] [/user/captchaImage/cc] jwt must be provided
+[2023-06-30 08:36:24] [error] [/user/captchaImage/cc] jwt must be provided
+[2023-06-30 08:40:13] [error] [/user/captchaImage1] jwt must be provided
+[2023-06-30 08:43:44] [error] [/user/captchaImage2] jwt must be provided
+[2023-06-30 08:43:46] [error] [/user/captchaImage2] jwt must be provided

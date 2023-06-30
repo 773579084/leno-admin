@@ -32,7 +32,6 @@ const parsingFunStr = (str: string): { fun: string; par: string[] } => {
  */
 export const addEditJob = (ctx: Context, job: IjobSer) => {
   const { fun, par } = parsingFunStr(job.invoke_target)
-  console.log(35, job)
 
   schedule.scheduleJob(String(job.job_id), job.cron_expression, () => {
     target[fun](ctx, job, ...par)

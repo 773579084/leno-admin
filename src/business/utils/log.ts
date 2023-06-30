@@ -46,7 +46,6 @@ export const writeLog = async (
 
       await addSer(SysLogininfor, loginLog)
     }
-    console.log()
 
     // 写入操作日志
     if (!logWhites.includes(ctx.request.url) && ctx.request.method !== 'GET') {
