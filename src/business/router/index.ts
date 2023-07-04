@@ -16,6 +16,7 @@ function registerRouter(basePath: string, routerPath: string) {
     }
   })
 }
+
 registerRouter(__dirname, './')
 
 export default router

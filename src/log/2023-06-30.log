@@ -204,3 +204,5 @@
 [2023-06-30 11:17:17] [error] [/prod-api/user/captchaImage] jwt must be provided
 [2023-06-30 11:18:13] [error] [/prod-api/user/captchaImage] jwt must be provided
 [2023-06-30 11:18:34] [error] [/user/logout] jwt must be provided
+[2023-06-30 13:35:02] [error] [/system/role/list?pageNum=1&pageSize=10] 无效的token
+[2023-06-30 13:36:05] [error] [/monitor/online/list?pageNum=1&pageSize=10] 获取列表失败
