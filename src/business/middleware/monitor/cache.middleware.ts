@@ -149,14 +149,19 @@ export const clearCacheAllMid = async (ctx: Context, next: () => Promise<void>) 
   try {
     // 查询全部的缓存列表
     const sets = await querySetKeys()
+
     for (let i = 0; i < sets.length; i++) {
-      // 获取结合内所有的值
-      const setKeys = await getSetsValue(sets[i])
-      // 删除由集合内值绑定集合外的所有值
-      await removeKey(setKeys)
-      // 删除集合内所有的值
-      await removeSet(sets[i], setKeys)
+      // 代码生成的sql redis不在清理之内
+      if (sets[i] !== 'tool_sql_names') {
+        // 获取结合内所有的值
+        const setKeys = await getSetsValue(sets[i])
+        // 删除由集合内值绑定集合外的所有值
+        await removeKey(setKeys)
+        // 删除集合内所有的值
+        await removeSet(sets[i], setKeys)
+      }
     }
+    await next()
   } catch (error) {
     console.error('删除缓存失败', error)
     return ctx.app.emit('error', delErr, ctx)

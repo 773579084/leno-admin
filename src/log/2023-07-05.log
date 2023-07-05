@@ -2,3 +2,15 @@
 
 [2023-07-05 13:59:11] [error] [/system/dictData/type/sys_normal_disable] 无效的token
 [2023-07-05 13:59:11] [error] [/system/role/list?pageNum=1&pageSize=10] 无效的token
+[2023-07-05 16:01:35] [error] [/monitor/cacheList] 无效的token
+[2023-07-05 16:01:35] [error] [/monitor/cacheKeys/] 无效的token
+[2023-07-05 16:01:54] [error] [/monitor/cacheList] 无效的token
+[2023-07-05 16:01:54] [error] [/monitor/cacheKeys/] 无效的token
+[2023-07-05 16:03:19] [error] [/monitor/cacheList] 无效的token
+[2023-07-05 16:03:31] [error] [/monitor/cacheKeys/] 无效的token
+[2023-07-05 16:04:17] [error] [/monitor/cacheList] 无效的token
+[2023-07-05 16:04:34] [error] [/monitor/cacheKeys/login_tokens] 无效的token
+[2023-07-05 16:05:23] [error] [/monitor/cacheKeys/login_tokens] 无效的token
+[2023-07-05 16:05:40] [error] [/monitor/cacheList] 无效的token
+[2023-07-05 16:05:41] [error] [/monitor/cacheList] 无效的token
+[2023-07-05 16:06:20] [error] [/monitor/cacheKeys/login_tokens] 无效的token
