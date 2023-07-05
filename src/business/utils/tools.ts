@@ -233,25 +233,25 @@ const typeCreate = (data: ColumnType[], type: string) => {
     if (type === 'Query') {
       switch (item.queryType) {
         case 'between':
-          typeString += `${item.tsField}?: {
+          typeString += `  ${item.tsField}?: {
       beginTime: ${item.tsType}
       endTime: ${item.tsType}
     }\n   `
           break
 
         default:
-          typeString += `${item.tsField}?: ${item.tsType}\n`
+          typeString += `  ${item.tsField}?: ${item.tsType}\n`
           break
       }
     }
     if (type === 'QuerySer' && item.isQuery === '0') {
-      typeString += `${item.columnName}?: { [OpTypes.${item.queryType}]: string }\n   `
+      typeString += `  ${item.columnName}?: { [OpTypes.${item.queryType}]: string }\n   `
     }
     if ((type === 'List' && item.isInsert === '0') || (type === 'List' && item.isEdit === '0')) {
-      typeString += `${item.tsField}?: ${item.tsType}\n    `
+      typeString += `  ${item.tsField}?: ${item.tsType}\n    `
     }
     if (type === 'ListSer') {
-      typeString += `${item.columnName}?: ${item.tsType}\n    `
+      typeString += `  ${item.columnName}?: ${item.tsType}\n`
     }
   })
 
@@ -547,11 +547,11 @@ import {
 } from '@/business/middleware/${data.moduleName}/${data.businessName}.middleware'
 import { addEditSchema, judgeIdSchema } from '@/business/schema'
 ${
-  data.tplCategory === 'tree'
-    ? ``
-    : `import { exportExcelMid } from '@/business/middleware/common/common.middleware'
-    import ${data.className} from '@/mysql/model/${data.moduleName}/${data.businessName}.model'
-    import { exportExcelSer } from '@/business/service'`
+  data.tplCategory !== 'tree'
+    ? `import { exportExcelMid } from '@/business/middleware/common/common.middleware'
+import ${data.className} from '@/mysql/model/${data.moduleName}/${data.businessName}.model'
+import { exportExcelSer } from '@/business/service'`
+    : ''
 }
 import { addJudg, putJudg } from '@/business/schema/${data.moduleName}/${data.businessName}.schema'
 import { hasPermi } from '@/business/middleware/common/auth'
@@ -591,19 +591,17 @@ router.put(
 )
 
 ${
-  data.tplCategory === 'tree'
-    ? ``
-    : `// 导出列表(excel)
-    router.post(
-      '/${data.businessName}/export',
-      hasPermi('${data.moduleName}:${data.businessName}:export'),
-      exportExcelMid(exportExcelSer, ${data.className}, ${excelDictConversion(data.columns)}),
-      exportMid,
-      IndexCon()
-    )`
-}
-
-module.exports = router`
+  data.tplCategory !== 'tree'
+    ? `// 导出列表(excel)
+router.post(
+  '/${data.businessName}/export',
+  hasPermi('${data.moduleName}:${data.businessName}:export'),
+  exportExcelMid(exportExcelSer, ${data.className}, ${excelDictConversion(data.columns)}),
+  exportMid,
+  IndexCon()
+)\n`
+    : ''
+}module.exports = router`
 
   // 第三步 生成 middleware 业务层
   codes[`middleware.ts`] = `import { Context } from 'koa'
@@ -615,12 +613,11 @@ import {  I${data.businessName}QueryType, I${data.businessName}QuerySerType, I${
 import errors from '@/app/err.type'
 import { formatHumpLineTransfer } from '@/business/utils'
 ${
-  data.tplCategory === 'tree'
-    ? ``
-    : `import { excelJsExport } from '@/business/utils/excel'
-    import {  excelBaseStyle } from '@/business/public/excelMap'`
-}
-import ${data.className} from '@/mysql/model/${data.moduleName}/${data.businessName}.model'
+  data.tplCategory !== 'tree'
+    ? `import { excelJsExport } from '@/business/utils/excel'
+import {  excelBaseStyle } from '@/business/public/excelMap'\n`
+    : ''
+}import ${data.className} from '@/mysql/model/${data.moduleName}/${data.businessName}.model'
 import { Op } from 'sequelize'
 const { uploadParamsErr, getListErr, sqlErr, delErr, ${
     data.tplCategory === 'tree' ? `` : `exportExcelErr`
@@ -631,9 +628,7 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const { pageNum, pageSize, ...params } = ctx.query as unknown as I${data.businessName}QueryType
     let newParams = { pageNum, pageSize } as I${data.businessName}QuerySerType
-
     ${listSearch(data.columns)}
-
     const res = await getListSer<I${data.businessName}QuerySerType>(${data.className}, newParams)
 
     ctx.state.formatData = res
@@ -663,15 +658,15 @@ export const getAddMid = async (ctx: Context, next: () => Promise<void>) => {
 // 删除
 export const delMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    ${
-      data.columns.find((item) => item.htmlType === 'editor')
-        ? `// 拿取图片信息，有则删除
+${
+  data.columns.find((item) => item.htmlType === 'editor')
+    ? `// 拿取图片信息，有则删除
     const { imgs } = await getDetailSer<InoticeSer>(SysNotice, { notice_id: ctx.state.ids })
     if (imgs) {
       JSON.parse(imgs).forEach((item: string) => removeSpecifyFile(item))
     }`
-        : ``
-    }
+    : ``
+}
     await delSer(${data.className}, { ${
     data.columns.find((item) => item.isPk === '0').columnName
   }: ctx.state.ids })
@@ -751,31 +746,31 @@ export const exportMid = async (ctx: Context, next: () => Promise<void>) => {
 
 // 验证新增信息 nick 必传字符串
 export const addJudg = Joi.object({
-  ${addEditSchema(data.columns, true)}})
+${addEditSchema(data.columns, true)}})
 
 // 验证编辑信息 nick 必传字符串
 export const putJudg = Joi.object({
   ${mainIdKey}:Joi.number().required(),
-  ${addEditSchema(data.columns, false)}})`
+${addEditSchema(data.columns, false)}})`
 
   // 第五步 生成 typescript 接口类型文件
   codes[`node.d.ts`] = `
   // 后端 类型文件
-  export interface I${data.businessName}QueryType {
-    pageNum: number
-    pageSize: number
-    ${typeCreate(data.columns, 'Query')}}
+export interface I${data.businessName}QueryType {
+  pageNum: number
+  pageSize: number
+${typeCreate(data.columns, 'Query')}}
 
-  export interface I${data.businessName}QuerySerType {
-    pageNum: number
-    pageSize: number
-    ${typeCreate(data.columns, 'QuerySer')}}
+export interface I${data.businessName}QuerySerType {
+  pageNum: number
+  pageSize: number
+${typeCreate(data.columns, 'QuerySer')}}
 
-  export interface I${data.businessName} {
-    ${typeCreate(data.columns, 'List')}}
+export interface I${data.businessName} {
+${typeCreate(data.columns, 'List')}}
 
-  export interface I${data.businessName}Ser {
-    ${typeCreate(data.columns, 'ListSer')}}`
+export interface I${data.businessName}Ser {
+${typeCreate(data.columns, 'ListSer')}}`
 
   // 第六步 前端 生成api接口
   codes[`api.ts`] = `import { http } from '@/api'
@@ -857,26 +852,24 @@ import { I${data.businessName}Type  ${
   }} from '@/type/modules/${data.moduleName}/${data.businessName}'
 ${
   data.columns.find((item) => item.htmlType === 'datetime')
-    ? 'const { RangePicker } = DatePicker'
+    ? 'const { RangePicker } = DatePicker\n'
     : ''
-}
-import ColorBtn from '@/components/ColorBtn'
+}import ColorBtn from '@/components/ColorBtn'
 import { hasPermi } from '@/utils/auth'
 import { IdictType } from '@/type/modules/system/sysDictData'
 ${data.columns.find((item) => item.dictType) ? "import DictTag from '@/components/DictTag'" : ''}
-${data.tplCategory === 'tree' ? `import { generalTreeFn } from '@/utils/smallUtils'` : ''}
-${data.columns.find((item) => item.htmlType === 'datetime') ? `import dayjs from 'dayjs'` : ``}
-${
-  data.columns.find((item) => item.htmlType === 'editor')
-    ? `import TextEditor from '@/components/TextEditor'
+${data.tplCategory === 'tree' ? `import { generalTreeFn } from '@/utils/smallUtils'\n` : ''}${
+    data.columns.find((item) => item.htmlType === 'datetime') ? `import dayjs from 'dayjs'\n` : ``
+  }${
+    data.columns.find((item) => item.htmlType === 'editor')
+      ? `import TextEditor from '@/components/TextEditor'
 import { IDomEditor } from '@wangeditor/editor'
-import { commonDelImgAPI } from '@/api/modules/common'`
-    : ``
-}
-
-const ${stringFirst(data.className)} = () => {
-  ${data.columns.find((item) => item.htmlType === 'textarea') ? 'const { TextArea } = Input' : ''}
-  const [queryForm] = Form.useForm()
+import { commonDelImgAPI } from '@/api/modules/common'\n`
+      : ''
+  }const ${stringFirst(data.className)} = () => {
+  ${
+    data.columns.find((item) => item.htmlType === 'textarea') ? 'const { TextArea } = Input\n' : ''
+  }const [queryForm] = Form.useForm()
   const [addEditForm] = Form.useForm()
   const { confirm } = Modal
 
@@ -885,7 +878,6 @@ const ${stringFirst(data.className)} = () => {
     data.businessName
   }Type>({ pageNum: 1, pageSize: 10 })
   // 列表数据
- 
   ${
     data.tplCategory === 'tree'
       ? `const [dataList, setDataList] = useState([])`
@@ -901,13 +893,13 @@ const ${stringFirst(data.className)} = () => {
     data.tplCategory === 'tree'
       ? ``
       : `// 非单个禁用
-      const [single, setSingle] = useState(true)
-      // 非多个禁用
-      const [multiple, setMultiple] = useState(true)
-      // 保存table 选择的key
-      const [selectKeys, setSelectKeys] = useState<React.Key[]>([])
-      //  table 后台使用的key
-      const [rowKeys, setRowKeys] = useState('')`
+  const [single, setSingle] = useState(true)
+  // 非多个禁用
+  const [multiple, setMultiple] = useState(true)
+  // 保存table 选择的key
+  const [selectKeys, setSelectKeys] = useState<React.Key[]>([])
+  //  table 后台使用的key
+  const [rowKeys, setRowKeys] = useState('')`
   }
   // 控制搜索隐藏显示
   const [searchShow, setSearchShow] = useState(true)
@@ -919,17 +911,14 @@ const ${stringFirst(data.className)} = () => {
       ? `// editor
       const editorRef = useRef()
       const [editorHtml, setEditorHtml] = useState<string>('')
-      const [imgs, setImgs] = useState<string>('')`
+      const [imgs, setImgs] = useState<string>('')\n`
       : ''
-  }
-  ${
+  }${
     data.tplCategory === 'tree'
       ? `  //  行展开
-  const [expandKeys, setExpandKeys] = useState<any>({})`
+  const [expandKeys, setExpandKeys] = useState<any>({})\n`
       : ''
-  }
-  ${getDictsState(data.columns)}
-  useEffect(() => {
+  }${getDictsState(data.columns)}useEffect(() => {
     try {
       const getDictsFn = async () => {
         ${getDicts(data.columns)}}
@@ -975,7 +964,6 @@ const ${stringFirst(data.className)} = () => {
     ${data.tplCategory === 'tree' ? `` : `setSelectKeys([])`}
     setQueryParams({ pageNum: 1, pageSize: 10 })
   }
-
   ${
     data.columns.find((item) => item.htmlType === 'editor')
       ? `  // 添加编辑 确认
@@ -1006,14 +994,13 @@ const ${stringFirst(data.className)} = () => {
     }', html)
 
     addEditForm.submit()
-  }`
+  }\n`
       : ``
   }
-
   ${
     data.tplCategory === 'tree'
       ? ``
-      : `  // row-select
+      : `// row-select
   const rowSelection = {
     selectedRowKeys: selectKeys,
     onChange: (selectedRowKeys: React.Key[], selectedRows: I${data.businessName}Type[]) => {
@@ -1029,7 +1016,6 @@ const ${stringFirst(data.className)} = () => {
   }`
   }
 
-
   // 获取详情
   const handleEditForm = async (id: number) => {
     try {
@@ -1037,10 +1023,11 @@ const ${stringFirst(data.className)} = () => {
       ${
         data.columns.find((item) => item.htmlType === 'editor')
           ? `setEditorHtml(data.result.noticeContent as string)
-          setImgs(data.result.${data.columns.find((item) => item.htmlType === 'editor')} as string)`
+          setImgs(data.result.${data.columns.find(
+            (item) => item.htmlType === 'editor'
+          )} as string)\n`
           : ``
-      }
-      setCurrentId(id)
+      }setCurrentId(id)
       setIsModalOpen(true)
       setIsAdd(false)
       addEditForm.setFieldsValue(data.result as unknown as I${data.businessName}Type)
@@ -1089,7 +1076,6 @@ const ${stringFirst(data.className)} = () => {
   }`
   }
 
-
   // 删除
   const delFn = (ids: string) => {
     confirm({
@@ -1133,11 +1119,9 @@ const ${stringFirst(data.className)} = () => {
         expandedRowKeys: ids,
       })
     }
-  }`
+  }\n`
       : ''
-  }
-
-  // table
+  }// table
   let columns = [
     {
       title: '编码',
@@ -1391,11 +1375,9 @@ ${
     ? `export interface ITreeType {
       ${typeCreate(data.columns, 'Query')}
       children?: any[]
-    }`
+    }\n`
     : ''
-}
-
-// 新增，修改，删除 成功返回
+}// 新增，修改，删除 成功返回
 export interface IsuccessTypeAPI {
   code: number
   message: string
