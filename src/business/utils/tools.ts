@@ -1178,6 +1178,7 @@ const ${stringFirst(data.className)} = () => {
   const tableData = dataList.rows
 
   return (
+  <div className="app-container">
     <Row gutter={16}>
       <Col span={24}>
         <Form
@@ -1351,6 +1352,7 @@ const ${stringFirst(data.className)} = () => {
         </Modal>
       </Col>
     </Row>
+  </div>
   )
 }
 
