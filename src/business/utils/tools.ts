@@ -1254,7 +1254,7 @@ const ${stringFirst(data.className)} = () => {
                     hidden={hasPermi('${data.moduleName}:${data.businessName}:export')}
                     color="warning"
                     icon={<VerticalAlignBottomOutlined />}
-                    onClick={() => download('/${data.moduleName}/${data.businessName}/export', 'sys_dict_type')}
+                    onClick={() => download('/${data.moduleName}/${data.businessName}/export')}
                   >
                     导出
                   </ColorBtn>
