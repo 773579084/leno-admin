@@ -182,10 +182,13 @@ export const flatten = (obj: any) => {
 
   let process = (key: string, value: string | any[]) => {
     // 首先判断是基础数据类型还是引用数据类型
-    if (Object(value) !== value) {
-      // 基础数据类型
-      if (key) {
-        result[key] = value
+    if (Object.prototype.toString.call(value) === '[object Object]') {
+      let objArr = Object.keys(value)
+      objArr.forEach((item) => {
+        process(key ? `${key}.${item}` : `${item}`, value[item])
+      })
+      if (objArr.length === 0 && key) {
+        result[key] = {}
       }
     } else if (Array.isArray(value)) {
       for (let i = 0; i < value.length; i++) {
@@ -195,12 +198,9 @@ export const flatten = (obj: any) => {
         result[key] = []
       }
     } else {
-      let objArr = Object.keys(value)
-      objArr.forEach((item) => {
-        process(key ? `${key}.${item}` : `${item}`, value[item])
-      })
-      if (objArr.length === 0 && key) {
-        result[key] = {}
+      // 基础数据类型
+      if (key) {
+        result[key] = value
       }
     }
   }

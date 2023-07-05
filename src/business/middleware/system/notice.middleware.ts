@@ -98,6 +98,7 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
 export const exportMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const list = ctx.state.formatData
+    const dicts = ctx.state.dicts
 
     // 表格数据
     const buffer = await excelJsExport({
@@ -110,7 +111,8 @@ export const exportMid = async (ctx: Context, next: () => Promise<void>) => {
         { title: '创建者', dataIndex: 'create_by' },
         { title: '创建时间', dataIndex: ' created_at' }
       ],
-      tableData: list
+      tableData: list,
+      dicts: dicts
     })
     ctx.state.buffer = buffer
     await next()

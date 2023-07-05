@@ -101,6 +101,7 @@ export const getDetailMid = async (ctx: Context, next: () => Promise<void>) => {
 export const exportMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const list = ctx.state.formatData
+    const dicts = ctx.state.dicts
 
     // 表格数据
     const buffer = await excelJsExport({
@@ -116,7 +117,8 @@ export const exportMid = async (ctx: Context, next: () => Promise<void>) => {
         { title: '操作状态（0正常 1异常）', dataIndex: 'status' },
         { title: '操作时间', dataIndex: 'oper_time' }
       ],
-      tableData: list
+      tableData: list,
+      dicts: dicts
     })
     ctx.state.buffer = buffer
     await next()

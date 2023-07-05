@@ -50,7 +50,7 @@ export const excelJsExport = async (options: excelParamsType) => {
       dictMap = dictMapFn(options.dicts)
     }
 
-    tableData.forEach((table) => {
+    tableData.forEach((table: { [x: string]: string | number }) => {
       let obj = {}
       const tableFlat = flatten(table)
 

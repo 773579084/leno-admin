@@ -189,6 +189,7 @@ export const jobRunOneMid = async (ctx: Context, next: () => Promise<void>) => {
 export const exportMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const list = ctx.state.formatData
+    const dicts = ctx.state.dicts
 
     // 表格数据
     const buffer = await excelJsExport({
@@ -201,7 +202,8 @@ export const exportMid = async (ctx: Context, next: () => Promise<void>) => {
         { title: '任务名称', dataIndex: 'job_name' },
         { title: '状态（0正常 1暂停）', dataIndex: 'status' }
       ],
-      tableData: list
+      tableData: list,
+      dicts: dicts
     })
     ctx.state.buffer = buffer
     await next()

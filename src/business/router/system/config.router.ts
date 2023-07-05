@@ -44,7 +44,7 @@ router.put('/config', hasPermi('system:config:edit'), addEditSchema(putJudg), pu
 router.post(
   '/config/export',
   hasPermi('system:config:export'),
-  exportExcelMid(exportExcelSer, SysConfig, { config_type: 'sys_normal_disable' }),
+  exportExcelMid(exportExcelSer, SysConfig, { config_type: 'sys_yes_no' }),
   exportMid,
   IndexCon()
 )

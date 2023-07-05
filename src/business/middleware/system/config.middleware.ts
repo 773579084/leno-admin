@@ -99,6 +99,7 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
 export const exportMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const list = ctx.state.formatData
+    const dicts = ctx.state.dicts
 
     // 表格数据
     const buffer = await excelJsExport({
@@ -109,10 +110,11 @@ export const exportMid = async (ctx: Context, next: () => Promise<void>) => {
         { title: '参数键名', dataIndex: 'config_key' },
         { title: '参数键值', dataIndex: 'config_value' },
         { title: '系统内置（Y是 N否）', dataIndex: 'config_type' },
-        { title: '创建时间', dataIndex: 'create_time' },
+        { title: '创建时间', dataIndex: 'created_at' },
         { title: '备注', dataIndex: 'remark' }
       ],
-      tableData: list
+      tableData: list,
+      dicts: dicts
     })
     ctx.state.buffer = buffer
     await next()

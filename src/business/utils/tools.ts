@@ -727,13 +727,15 @@ ${
 export const exportMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
     const list = ctx.state.formatData
+    const dicts = ctx.state.dicts
 
     // 表格数据
     const buffer = await excelJsExport({
       sheetName: '${data.tableComment}',
       style: excelBaseStyle,
       headerColumns: ${excelHeaderCreate(data.columns)},
-      tableData: list
+      tableData: list,
+      dicts: dicts
     })
     ctx.state.buffer = buffer
     await next()
