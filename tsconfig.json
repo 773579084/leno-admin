@@ -21,6 +21,8 @@
   // 需要编译的的文件和目录
   "include": [
     "src",
+    "react-ui",
+    "node_modules/react-ui",
   ],
   "exclude": [
     "node_modules",

@@ -10,6 +10,7 @@ import { getUserRoleSer } from '@/business/service/system/user.service'
 import SysRoleMenu from '@/mysql/model/system/sys_role_menu.model'
 import { Op } from 'sequelize'
 import { bindCheck } from '@/business/utils/bind'
+import { saveMenuMes } from '@/business/utils/redis'
 const { delErr, getRoutersErr, getListErr, uploadParamsErr, addErr, sqlErr } = errors
 
 // 获取菜单数据并进行数据转换
@@ -90,7 +91,7 @@ export const getRouterMid = async (ctx: Context, next: () => Promise<void>) => {
         delete route.children
       }
     }
-
+    saveMenuMes(routers)
     ctx.state.formatData = routers
     // 按照路由格式存储一级菜单
   } catch (error) {

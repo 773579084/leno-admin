@@ -7,7 +7,7 @@ import { queryMenuMes } from './redis'
 import { queryKeyValue } from './auth'
 import { IuserTokenType } from '@/types/auth'
 import SysOperLog from '@/mysql/model/system/operlog.model'
-import { menusType } from '@/types/system/system_menu'
+import { menusType, RouteType } from '@/types/system/system_menu'
 import dayjs from 'dayjs'
 import fs from 'fs'
 import { IjobSer } from '@/types/monitor/job'
@@ -51,12 +51,12 @@ export const writeLog = async (
     if (!logWhites.includes(ctx.request.url) && ctx.request.method !== 'GET') {
       // 1 查询日志所属的 系统模块 操作类型
       const menus = await queryMenuMes()
-      const { business_type } = filterModule(menus, ctx)
+      const { business_type, title } = filterModule(menus, ctx)
       // 2 查询 用户信息 拿去请求用户 设备信息
       const userMes = await queryKeyValue(user.session)
 
       const operLog = {
-        title: filterCtxUrl(ctx.request.url, ctx.request.method),
+        title: title,
         business_type,
         method: '',
         request_method: ctx.request.method,
@@ -66,7 +66,10 @@ export const writeLog = async (
         oper_url: ctx.request.url,
         oper_ip: userMes.ip,
         oper_location: userMes.address,
-        oper_param: JSON.stringify(ctx.request['body']),
+        oper_param:
+          JSON.stringify(ctx.request['body']).length > 200
+            ? '上传数据超长，未存储到数据库'
+            : JSON.stringify(ctx.request['body']),
         json_result: JSON.stringify(data),
         status: type,
         error_msg: type === '1' ? data.message : '',
@@ -80,8 +83,8 @@ export const writeLog = async (
     console.log(
       type === '0' ? '\x1b[32m%s\x1b[0m' : '\x1b[31m%s\x1b[0m',
       `[${dayjs().format('YYYY-MM-DD HH:mm:ss')}] [${type === '0' ? 'success' : 'error'}] [${
-        ctx.request.url
-      }] ${data.message}`
+        process.env.APP_HOST
+      }:${process.env.APP_PORT}] [${ctx.request.url}] ${data.message}`
     )
 
     // 写入到文件中 （按每天日期写入）
@@ -91,8 +94,8 @@ export const writeLog = async (
     console.log(
       '\x1b[31m%s\x1b[0m',
       `[${dayjs().format('YYYY-MM-DD HH:mm:ss')}] [${type === '0' ? 'success' : 'error'}] [${
-        ctx.request.url
-      }] 写入日志失败`
+        process.env.APP_HOST
+      }:${process.env.APP_PORT}] [${ctx.request.url}] 写入日志失败`
     )
   }
 }
@@ -135,7 +138,7 @@ export const writeFileLog = (
   const fileName = __dirname.split('\\src')[0] + `/src/log/${currentTime}.log`
   const content = `[${dayjs().format('YYYY-MM-DD HH:mm:ss')}] [${
     type === '0' ? 'success' : 'error'
-  }] [${ctx.request.url}] ${data.message}\n`
+  }] [${process.env.APP_HOST}:${process.env.APP_PORT}] [${ctx.request.url}] ${data.message}\n`
 
   // 写入文件
   if (fs.existsSync(fileName)) {
@@ -170,24 +173,33 @@ export const filterCtxUrl = (url: string, method: string) => {
  * @returns {title:string,business_type:string}
  */
 export const filterModule = (
-  menus: menusType[],
+  menus: RouteType[],
   ctx: Context
 ): { title: string; business_type: string } => {
   const urlList = ctx.request.url.split('/')
   let title = '',
     business_type = ''
-  for (let i = 0; i < menus.length; i++) {
-    let path = menus[i].path
-    if (menus[i].path.indexOf('/:') !== -1) {
-      path = menus[i].path.split('/:')[0]
-    }
-    if (urlList.includes(path)) {
-      title = menus[i].menuName
-      break
-    }
-  }
 
-  //
+  // 系统模块判断
+  function forMenus(menus: RouteType[]) {
+    menus.forEach((menu) => {
+      // 如果 menu.name是 动态路由则将动态路由/:去掉
+      if (menu.name.indexOf('/:') !== -1) {
+        menu.name = menu.name.split('/:')[0]
+      }
+
+      if (ctx.request.url.indexOf(menu.name) !== -1) {
+        if (menu.children) {
+          forMenus(menu.children)
+        } else {
+          title = menu.meta.title
+        }
+      }
+    })
+  }
+  forMenus(menus)
+
+  // 操作类型
   const specialEvents = [
     {
       type: 'authorization',
@@ -206,7 +218,7 @@ export const filterModule = (
       value: '7'
     },
     {
-      type: 'generatedCode',
+      type: 'tool',
       value: '8'
     },
     {

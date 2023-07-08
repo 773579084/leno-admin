@@ -1,9 +1,7 @@
 import { redisType } from '@/config/redis.config'
-import SysMenu from '@/mysql/model/system/menu.model'
 import redis from '@/redis'
-import { menusType } from '@/types/system/system_menu'
+import { RouteType } from '@/types/system/system_menu'
 import { formatHumpLineTransfer } from '.'
-import { getListSer } from '../service'
 
 export interface menuQueryType {
   pageNum: number
@@ -13,15 +11,10 @@ export interface menuQueryType {
 
 /**
  * 存储所有菜单的信息（供全局调用）
+ * @param menus
  */
-export const saveMenuMes = async () => {
-  const { rows } = await getListSer<menuQueryType>(SysMenu, {
-    pageNum: 1,
-    pageSize: 1000,
-    menu_type: 'C'
-  })
-
-  const res = formatHumpLineTransfer(rows)
+export const saveMenuMes = async (menus: RouteType[]) => {
+  const res = formatHumpLineTransfer(menus)
   redis.set('menu_message', JSON.stringify(res))
   recordNum(redisType.set)
 }
@@ -31,7 +24,7 @@ export const saveMenuMes = async () => {
  */
 export const queryMenuMes = async () => {
   recordNum(redisType.get)
-  return JSON.parse(await redis.get('menu_message')) as menusType[]
+  return JSON.parse(await redis.get('menu_message')) as RouteType[]
 }
 
 /**

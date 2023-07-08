@@ -20,7 +20,7 @@ import ToolGenColumn from '@/mysql/model/tool/gen_column.model'
 import fs from 'fs'
 import archiver from 'archiver'
 import SysMenu from '@/mysql/model/system/menu.model'
-import { recordNum, saveMenuMes } from '@/business/utils/redis'
+import { recordNum } from '@/business/utils/redis'
 import { redisType } from '@/config/redis.config'
 
 // 查询数据库所有的表 -》 并将表数据转换为代码生成表的数据
@@ -178,8 +178,6 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
     })
 
     await next()
-    // 刷新redis 表信息
-    saveMenuMes()
   } catch (error) {
     console.error('修改失败', error)
     return ctx.app.emit('error', uploadParamsErr, ctx)

@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkleno_admin=self.webpackChunkleno_admin||[]).push([[1607],{1607:function(e,n,l){l.r(n);var u=l(67294);n.default=function(){return u.createElement("div",null,"Hello Home")}}}]);
