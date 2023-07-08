@@ -17,5 +17,6 @@ export const redisType = {
 // redis 集合类型 key 含义
 export const redisListType = {
   // tool_sql_names: 'sql表',
-  login_tokens: '用户信息'
+  login_tokens: '用户信息',
+  update_userInfo: '用户信息待更新id'
 }

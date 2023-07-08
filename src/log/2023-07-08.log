@@ -52,3 +52,10 @@
 [2023-07-08 15:40:38] [error] [localhost:3010] [/user/login] 密码错误
 [2023-07-08 15:41:10] [error] [localhost:3010] [/user/login] 密码错误
 [2023-07-08 15:58:38] [error] [localhost:3010] [/user/login] 用户账号已被停用，请联系管理人员
+[2023-07-08 16:06:30] [error] [localhost:3010] [/system/dictData/type/sys_normal_disable] 无访问权限
+[2023-07-08 16:07:24] [error] [localhost:3010] [/system/dictData/type/sys_user_sex] 无访问权限
+[2023-07-08 16:08:04] [error] [localhost:3010] [/system/dictData/type/sys_normal_disable] 无访问权限
+[2023-07-08 16:08:16] [error] [localhost:3010] [/system/dictData/type/sys_normal_disable] 无访问权限
+[2023-07-08 16:09:35] [error] [localhost:3010] [/system/dictData/type/sys_normal_disable] 无访问权限
+[2023-07-08 16:13:05] [error] [localhost:3010] [/system/dictData/type/sys_normal_disable] 无访问权限
+[2023-07-08 16:16:52] [error] [localhost:3010] [/system/dept/list?pageNum=1&pageSize=10] 无访问权限

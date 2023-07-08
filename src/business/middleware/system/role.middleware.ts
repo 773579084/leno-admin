@@ -158,7 +158,9 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
     await addAllSer(SysRoleMenu, RoleMenu)
     await next()
     // 查询该角色绑定的用户id
-    const userIds = (await queryConditionsData(SysUserRole, { role_id })).map((item) => item.id)
+    const userIds = (await queryConditionsData(SysUserRole, { role_id })).map(
+      (item) => item.user_id
+    )
 
     // 更新redis的userInfo
     updateUserInfo('update_userInfo', userIds)
