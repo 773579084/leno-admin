@@ -51,3 +51,4 @@
 [2023-07-08 15:40:22] [error] [localhost:3010] [/user/login] 密码错误
 [2023-07-08 15:40:38] [error] [localhost:3010] [/user/login] 密码错误
 [2023-07-08 15:41:10] [error] [localhost:3010] [/user/login] 密码错误
+[2023-07-08 15:58:38] [error] [localhost:3010] [/user/login] 用户账号已被停用，请联系管理人员

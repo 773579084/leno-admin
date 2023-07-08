@@ -20,7 +20,7 @@ import { userListType, userType, IUserDetail, userQueryType, userQuerySerType } 
 import { IdJudge, checkPwdJudg } from '@/business/schema/system/sys_user.schema'
 import { updatePassword, getAllUserInfoSer } from '@/business/service/user.service'
 import errors from '@/app/err.type'
-import { formatHumpLineTransfer, timeChange } from '@/business/utils'
+import { formatHumpLineTransfer, pwdHash, timeChange } from '@/business/utils'
 import { excelJsExport } from '@/business/utils/excel'
 import { excelBaseStyle, userExcelHeader, userTemExcelHeader } from '@/business/public/excelMap'
 import SysDept from '@/mysql/model/system/dept.model'
@@ -222,7 +222,7 @@ export const updatePwdMid = async (ctx: Context, next: () => Promise<void>) => {
   }
 
   try {
-    await updatePassword({ newPwd: password, userId, update_by: userName })
+    await updatePassword({ newPwd: pwdHash(password), userId, update_by: userName })
   } catch (error) {
     console.error('服务器错误', error)
     return ctx.app.emit('error', sqlErr, ctx)

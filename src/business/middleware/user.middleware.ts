@@ -13,7 +13,7 @@ import {
 import errors from '@/app/err.type'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import { createHash, formatHumpLineTransfer, removeSpecifyFile } from '@/business/utils'
+import { createHash, formatHumpLineTransfer, pwdHash, removeSpecifyFile } from '@/business/utils'
 import dayjs from 'dayjs'
 import { queryConditionsData } from '../service'
 import { Op } from 'sequelize'
@@ -109,11 +109,7 @@ export const verifyUserMid = async (ctx: Context, next: () => Promise<void>) => 
 export const crptyPasswordMid = async (ctx: Context, next: () => Promise<void>) => {
   const { password } = ctx.request['body'] as userType
 
-  const salt = bcrypt.genSaltSync(10)
-
-  const hash = bcrypt.hashSync(password as string, salt)
-
-  ctx.request['body'].password = hash
+  ctx.request['body'].password = pwdHash(password)
 
   await next()
 }
@@ -266,8 +262,7 @@ export const updatePwdMid = async (ctx: Context, next: () => Promise<void>) => {
     return ctx.app.emit('error', enteredPasswordsDiffer, ctx)
   }
   // 将 新密码加密 更新到数据库内
-  const salt = bcrypt.genSaltSync(10)
-  const hash = bcrypt.hashSync(newPwd as string, salt)
+  const hash = pwdHash(newPwd)
 
   if (await updatePassword({ newPwd: hash, userId, update_by: userName })) {
     await next()

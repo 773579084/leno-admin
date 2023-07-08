@@ -4,6 +4,7 @@ import dayjs from 'dayjs'
 import { dictMapListType, dictMapType } from '@/types'
 import os from 'os'
 const { APP_PORT, APP_HTTP } = process.env
+import bcrypt from 'bcryptjs'
 
 /** 删除文件
  * @param {string} filename
@@ -270,4 +271,14 @@ export const createHash = (hashLength = 30) => {
   return Array.from(Array(Number(hashLength)), () =>
     Math.floor(Math.random() * 36).toString(36)
   ).join('')
+}
+
+/**
+ * 密码加密
+ * @param newPwd
+ * @returns
+ */
+export const pwdHash = (newPwd: string) => {
+  const salt = bcrypt.genSaltSync(10)
+  return bcrypt.hashSync(newPwd, salt)
 }

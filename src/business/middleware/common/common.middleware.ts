@@ -6,6 +6,7 @@ import { getDataTypeSer } from '@/business/service/system/dict_data.service'
 import {
   accessSrcFn,
   formatHumpLineTransfer,
+  pwdHash,
   removeSpecifyFile,
   timeChange
 } from '@/business/utils'
@@ -20,7 +21,6 @@ const {
   delErr
 } = errors
 import { userExcelHeader } from '@/business/public/excelMap'
-import bcrypt from 'bcryptjs'
 import XLSX from 'exceljs'
 import { ModelStatic, Op } from 'sequelize'
 
@@ -134,9 +134,7 @@ export const importExcelsMid = (option: { password: boolean }) => {
                 obj[headerKeys[index]] = item
               }
               if (password) {
-                const salt = bcrypt.genSaltSync(10)
-                const hash = bcrypt.hashSync('123456', salt)
-                obj['password'] = hash
+                obj['password'] = pwdHash('123456')
               }
             })
             dataSource.push(obj)
