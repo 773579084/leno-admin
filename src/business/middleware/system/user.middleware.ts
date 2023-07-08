@@ -31,6 +31,7 @@ import { IdeptSer } from '@/types/system/dept'
 import { delSer } from '@/business/service'
 import SysUserRole from '@/mysql/model/system/sys_user_role.model'
 import SysUserPost from '@/mysql/model/system/sys_user_post.model'
+import { updateUserInfo } from '@/business/utils/redis'
 const {
   checkUserIdErr,
   getDeptTreeErr,
@@ -307,6 +308,8 @@ export const putUserMid = async (ctx: Context, next: () => Promise<void>) => {
       await addUserPostSer(createPost)
     }
     await next()
+    // 更新redis的userInfo
+    updateUserInfo('update_userInfo', [user.userId])
   } catch (error) {
     console.error('修改用户失败', error)
     return ctx.app.emit('error', putUserErr, ctx)

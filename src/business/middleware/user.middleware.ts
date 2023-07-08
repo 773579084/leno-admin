@@ -4,7 +4,6 @@ import { userType, pwdType, imgType, IuserInfoType, ILoginType } from '@/types'
 import {
   createdUser,
   deletFrontAvatarSer,
-  getAllUserInfoSer,
   getUserInfo,
   updateAvatarSer,
   updatePassword,
@@ -16,20 +15,18 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { createHash, formatHumpLineTransfer, removeSpecifyFile } from '@/business/utils'
 import dayjs from 'dayjs'
-import { getUserRoleSer } from '../service/system/user.service'
 import { queryConditionsData } from '../service'
-import SysRole from '@/mysql/model/system/role.model'
 import { Op } from 'sequelize'
-import SysRoleMenu from '@/mysql/model/system/sys_role_menu.model'
-import SysMenu from '@/mysql/model/system/menu.model'
 import { addSession, queryKeyValue, removeKey, removeListKey } from '../utils/auth'
 import SysUserPost from '@/mysql/model/system/sys_user_post.model'
 import SysPost from '@/mysql/model/system/post.model'
 import { queryUserMachine, writeLog } from '../utils/log'
-import { saveKey } from '../utils/redis'
+import { saveKey, updateUserInfo } from '../utils/redis'
 import os from 'os'
 const { APP_PORT, APP_HTTP } = process.env
 import svgCode from '../utils/svgCode'
+import { IuserTokenType } from '@/types/auth'
+import { getUserInfoAll } from '../utils/userInfo'
 
 const {
   userExisting,
@@ -185,7 +182,7 @@ export const registerMid = async (ctx: Context, next: () => Promise<void>) => {
 
 // 登录
 export const loginMid = async (ctx: Context, next: () => Promise<void>) => {
-  const data = ctx.state.formatData as IuserInfoType
+  const { userId, userName } = ctx.state.user
 
   // 获取用户信息（token 中包含 userId，userName） expiresIn : token有效时间
   try {
@@ -196,8 +193,8 @@ export const loginMid = async (ctx: Context, next: () => Promise<void>) => {
     ctx.state.formatData = {
       token: jwt.sign(
         {
-          userId: data.userInfo.userId,
-          userName: data.userInfo.userName,
+          userId: userId,
+          userName: userName,
           session: hash,
           exp: dayjs().add(100, 'y').valueOf()
         },
@@ -207,36 +204,14 @@ export const loginMid = async (ctx: Context, next: () => Promise<void>) => {
     // 2-2 获取请求用户的设备信息
     const machine = await queryUserMachine(ctx)
 
+    // 2-3 获取用户的个人信息（权限部门等）
+    const data = await getUserInfoAll(userId)
+
     // 3 将登录基本信息存储到 redis的login_token，并且设置过期时间
     addSession(hash, { ...machine, loginTime: new Date(), ...data })
     await next()
   } catch (error) {
     console.error('用户登录失败', error)
-    return ctx.app.emit('error', getUserInfoErr, ctx)
-  }
-}
-
-// 获取用户基本信息
-export const getUserInfoMid = async (ctx: Context, next: () => Promise<void>) => {
-  const { userId } = ctx.state.user as userType
-
-  try {
-    const { password, ...res } = await getAllUserInfoSer({ userId })
-    // 查询用户关联角色id
-    const roleIds = (await getUserRoleSer(userId)) as unknown as { role_id: number }[]
-    const ids = roleIds.map((item) => item.role_id)
-
-    const roleMessage = await queryConditionsData(SysRole, {
-      role_id: {
-        [Op.in]: ids
-      }
-    })
-    res.roles = roleMessage
-    const data = formatHumpLineTransfer(res)
-    ctx.state.formatData = data
-    await next()
-  } catch (error) {
-    console.error('用户获取个人信息失败', error)
     return ctx.app.emit('error', getUserInfoErr, ctx)
   }
 }
@@ -279,56 +254,6 @@ export const getProfile = async (ctx: Context, next: () => Promise<void>) => {
   }
 }
 
-// 获取权限
-export const getPermRoleMid = async (ctx: Context, next: () => Promise<void>) => {
-  const userInfo = ctx.state.formatData as userType
-  const roles = []
-  const permissionsIds = []
-  const permissions = []
-  userInfo.roles.forEach((item) => {
-    if (item.roleKey === 'admin') {
-      permissions.push('*:*:*')
-      roles.push('admin')
-    } else {
-      roles.push(item.roleKey)
-      permissionsIds.push(item.roleId)
-    }
-  })
-
-  // 返回权限 如果 permissions 有值，则表示为超级管理员，否则
-  if (permissions.length < 1) {
-    // 查询角色关联的菜单ids
-    const menuRole = (await queryConditionsData(
-      SysRoleMenu,
-      {
-        role_id: {
-          [Op.in]: permissionsIds
-        }
-      },
-      { attributes: ['menu_id'] }
-    )) as { menu_id: number }[]
-    const menuIds = menuRole.map((item) => item.menu_id)
-
-    // 查寻找角色相关的菜单
-    const menus = (await queryConditionsData(SysMenu, {
-      menu_id: {
-        [Op.in]: Array.from(new Set(menuIds))
-      }
-    })) as { perms: string }[]
-
-    menus.forEach((menu) => {
-      if (menu.perms) permissions.push(menu.perms)
-    })
-  }
-
-  ctx.state.formatData = {
-    userInfo,
-    roles,
-    permissions
-  }
-  await next()
-}
-
 // 重置密码
 export const updatePwdMid = async (ctx: Context, next: () => Promise<void>) => {
   const { oldPwd, newPwd } = ctx.request['body'] as pwdType
@@ -356,22 +281,18 @@ export const updatePwdMid = async (ctx: Context, next: () => Promise<void>) => {
 export const updateUserInfoMid = async (ctx: Context, next: () => Promise<void>) => {
   // 获得 userId 将更新的数据插入到数据库
   const { email, nickName, phonenumber, sex } = ctx.request['body'] as userType
-  const { userId, userName } = ctx.state.user as userType
+  const { userId, userName } = ctx.state.user as IuserTokenType
+  const updateInfo = { userId, email, nickName, phonenumber, sex, update_by: userName }
 
-  const res = await getUserInfo({ userId })
+  try {
+    await updateUserInfoSer(updateInfo)
 
-  if (res) {
-    if (
-      await updateUserInfoSer({ userId, email, nickName, phonenumber, sex, update_by: userName })
-    ) {
-      await next()
-    } else {
-      console.error('个人信息修改失败')
-      return ctx.app.emit('error', reviseErr, ctx)
-    }
-  } else {
-    console.error('个人用户信息更新未查到该用户')
-    return ctx.app.emit('error', userDoesNotExist, ctx)
+    await next()
+    // 更新redis的userInfo
+    updateUserInfo('update_userInfo', [userId])
+  } catch (error) {
+    console.error('个人信息修改失败')
+    return ctx.app.emit('error', reviseErr, ctx)
   }
 }
 
@@ -385,6 +306,7 @@ export const uploadAvatarMid = async (ctx: Context, next: () => Promise<void>) =
   if (avatar) {
     // 删除上一次存储的图片
     const { avatar } = await deletFrontAvatarSer({ userId })
+
     if (avatar) {
       removeSpecifyFile(avatar)
     }
@@ -394,7 +316,6 @@ export const uploadAvatarMid = async (ctx: Context, next: () => Promise<void>) =
       ctx.state.formatData = {
         avatarImg: basePath
       }
-      await next()
     } else {
       console.error('数据库用户头像地址更新失败')
       return ctx.app.emit('error', updateAvatarErr, ctx)
@@ -403,11 +324,15 @@ export const uploadAvatarMid = async (ctx: Context, next: () => Promise<void>) =
     console.error('用户头像上传失败')
     return ctx.app.emit('error', updateAvatarErr, ctx)
   }
+  await next()
+  // 存储需要更新的用户信息 id
+  updateUserInfo('update_userInfo', [userId])
 }
 
 // 初始化查询个人信息（权限、角色）
 export const queryUserInfoMid = async (ctx: Context, next: () => Promise<void>) => {
   const { session } = ctx.state.user
+
   const userData = await queryKeyValue(session)
 
   const ip = os.networkInterfaces()['WLAN'][1].address

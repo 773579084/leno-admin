@@ -6,11 +6,9 @@ import {
   isUserStatusMid,
   registerMid,
   loginMid,
-  getUserInfoMid,
   updatePwdMid,
   updateUserInfoMid,
   uploadAvatarMid,
-  getPermRoleMid,
   getUserBaseMid,
   getProfile,
   userLogoutMid,
@@ -33,8 +31,6 @@ router.post(
   isUserStatusMid,
   loginValidatorMid,
   getUserBaseMid,
-  getUserInfoMid,
-  getPermRoleMid,
   loginMid,
   IndexCon('用户登录成功')
 )

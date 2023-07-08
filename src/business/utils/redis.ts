@@ -64,6 +64,15 @@ export const querySetKeys = async () => {
 }
 
 /**
+ * 存储 集合 值
+ * @param key
+ * @param ids
+ */
+export const updateUserInfo = async (key: string, ids: number[]) => {
+  await redis.sadd(key, ids)
+}
+
+/**
  * 获取 集合 的 所有的值
  * @param key string
  * @returns string[]

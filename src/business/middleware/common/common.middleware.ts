@@ -85,7 +85,7 @@ export const importExcelsMid = (option: { password: boolean }) => {
   return async (ctx: Context, next: () => Promise<void>) => {
     try {
       const { password } = option
-      const fileExistPath = path.resolve() + '\\src\\upload'
+      const fileExistPath = path.resolve() + '\\src\\static'
       const fileNames = await getExcelAddress(fileExistPath)
 
       // 获取字典的值

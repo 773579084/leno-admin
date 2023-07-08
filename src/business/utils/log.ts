@@ -53,30 +53,32 @@ export const writeLog = async (
       const menus = await queryMenuMes()
       const { business_type, title } = filterModule(menus, ctx)
       // 2 查询 用户信息 拿去请求用户 设备信息
-      const userMes = await queryKeyValue(user.session)
+      if (user) {
+        const userMes = await queryKeyValue(user.session)
+        const operLog = {
+          title: title,
+          business_type,
+          method: '',
+          request_method: ctx.request.method,
+          operator_type: '',
+          oper_name: userMes.userInfo.userName,
+          dept_name: userMes.userInfo.dept.deptName,
+          oper_url: ctx.request.url,
+          oper_ip: userMes.ip,
+          oper_location: userMes.address,
+          oper_param:
+            JSON.stringify(ctx.request['body']).length > 200
+              ? '上传数据超长，未存储到数据库'
+              : JSON.stringify(ctx.request['body']),
+          json_result: JSON.stringify(data),
+          status: type,
+          error_msg: type === '1' ? data.message : '',
+          oper_time: new Date()
+        }
 
-      const operLog = {
-        title: title,
-        business_type,
-        method: '',
-        request_method: ctx.request.method,
-        operator_type: '',
-        oper_name: userMes.userInfo.userName,
-        dept_name: userMes.userInfo.dept.deptName,
-        oper_url: ctx.request.url,
-        oper_ip: userMes.ip,
-        oper_location: userMes.address,
-        oper_param:
-          JSON.stringify(ctx.request['body']).length > 200
-            ? '上传数据超长，未存储到数据库'
-            : JSON.stringify(ctx.request['body']),
-        json_result: JSON.stringify(data),
-        status: type,
-        error_msg: type === '1' ? data.message : '',
-        oper_time: new Date()
+        await addSer(SysOperLog, operLog)
+      } else {
       }
-
-      await addSer(SysOperLog, operLog)
     }
 
     // 接口请求操作 终端打印

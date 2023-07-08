@@ -10,7 +10,7 @@ const { APP_PORT, APP_HTTP } = process.env
  * @return {boolean}
  */
 export const removeSpecifyFile = (filename: string): boolean => {
-  const filePath = path.join(__dirname, '../../upload')
+  const filePath = path.join(__dirname, '../../static')
   if (fs.existsSync(filePath)) {
     fs.unlinkSync(filePath + '/' + filename)
   } else {

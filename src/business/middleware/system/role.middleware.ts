@@ -9,13 +9,7 @@ import {
   queryConditionsData
 } from '@/business/service'
 import { userType } from '@/types'
-import {
-  IroleQueryType,
-  IroleQuerySerType,
-  Irole,
-  IroleSer,
-  IroleMenuType
-} from '@/types/system/role'
+import { IroleQueryType, IroleQuerySerType, Irole, IroleSer } from '@/types/system/role'
 import errors from '@/app/err.type'
 import { formatHumpLineTransfer } from '@/business/utils'
 import { excelJsExport } from '@/business/utils/excel'
@@ -26,6 +20,7 @@ import SysRoleMenu from '@/mysql/model/system/sys_role_menu.model'
 import { getRoleMenuIdSer } from '@/business/service/system/role.service'
 import { bindCheck } from '@/business/utils/bind'
 import SysUserRole from '@/mysql/model/system/sys_user_role.model'
+import { updateUserInfo } from '@/business/utils/redis'
 const { uploadParamsErr, getListErr, sqlErr, delErr, exportExcelErr } = errors
 
 // 获取列表
@@ -137,7 +132,7 @@ export const getDetailMid = async (ctx: Context, next: () => Promise<void>) => {
 // 修改
 export const putMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    const { userName } = ctx.state.user as userType
+    const { userName, userId } = ctx.state.user as userType
     const res = ctx.request['body'] as Irole
     const lineData = formatHumpLineTransfer(res, 'line') as IroleSer
     const { role_id, ...data } = lineData
@@ -162,6 +157,11 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
     })
     await addAllSer(SysRoleMenu, RoleMenu)
     await next()
+    // 查询该角色绑定的用户id
+    const userIds = (await queryConditionsData(SysUserRole, { role_id })).map((item) => item.id)
+
+    // 更新redis的userInfo
+    updateUserInfo('update_userInfo', userIds)
   } catch (error) {
     console.error('修改失败', error)
     return ctx.app.emit('error', uploadParamsErr, ctx)
