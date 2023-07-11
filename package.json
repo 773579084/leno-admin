@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development tsnd -r tsconfig-paths/register --respawn src/main.ts",
-    "build": "cross-env NODE_ENV=production npm-run-all resetFolder compile && tsc-alias",
+    "build": "npm-run-all resetFolder compile && tsc-alias",
+    "prod:start": "cross-env NODE_ENV=production node dist/main.js",
     "compile": "tsc",
     "resetFolder": "rimraf dist/*",
     "lint": "npx eslint src/** --fix"
