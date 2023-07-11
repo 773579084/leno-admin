@@ -4,7 +4,7 @@ import SysOperLog from '@/mysql/model/system/operlog.model'
 import { IjobSer } from '@/types/monitor/job'
 import { Context } from 'koa'
 import { Op } from 'sequelize'
-import { delFiles } from '.'
+import { delFiles } from '../utils'
 import { delSer } from '../service'
 import { writeJobLog } from './log'
 

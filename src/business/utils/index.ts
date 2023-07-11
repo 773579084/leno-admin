@@ -11,7 +11,7 @@ import bcrypt from 'bcryptjs'
  * @return {boolean}
  */
 export const removeSpecifyFile = (filename: string): boolean => {
-  const filePath = path.join(__dirname, '../../static')
+  const filePath = path.join(__dirname, '../../../static')
   if (fs.existsSync(filePath)) {
     fs.unlinkSync(filePath + '/' + filename)
   } else {

@@ -1,0 +1,37 @@
+[2023-07-10 08:32:00] [error] [localhost:3010] [/user/getInfo] 无效的token
+[2023-07-10 08:32:00] [error] [localhost:3010] [/user/getInfo] 无效的token
+[2023-07-10 08:32:02] [error] [localhost:3010] [/error] jwt must be provided
+[2023-07-10 08:32:02] [error] [localhost:3010] [/user/captchaImage] jwt must be provided
+[2023-07-10 08:32:03] [error] [localhost:3010] [/user/captchaImage] jwt must be provided
+[2023-07-10 08:33:49] [error] [localhost:3010] [/profile] jwt must be provided
+[2023-07-10 08:34:32] [error] [localhost:3010] [/error] jwt must be provided
+[2023-07-10 08:34:32] [error] [localhost:3010] [/user/captchaImage] jwt must be provided
+[2023-07-10 08:34:42] [error] [localhost:3010] [/error] jwt must be provided
+[2023-07-10 08:34:42] [error] [localhost:3010] [/user/captchaImage] jwt must be provided
+[2023-07-10 08:34:54] [error] [localhost:3010] [/user/captchaImage] jwt must be provided
+[2023-07-10 09:48:41] [error] [localhost:9000] [/user/getInfo] 无效的token
+[2023-07-10 09:48:41] [error] [localhost:9000] [/user/getInfo] 无效的token
+[2023-07-10 09:48:45] [error] [localhost:9000] [/error] jwt must be provided
+[2023-07-10 10:31:26] [error] [localhost:9000] [/] jwt must be provided
+[2023-07-10 10:31:37] [error] [localhost:9000] [/] jwt must be provided
+[2023-07-10 10:31:40] [error] [localhost:9000] [/] jwt must be provided
+[2023-07-10 10:31:41] [error] [localhost:9000] [/] jwt must be provided
+[2023-07-10 10:33:41] [error] [localhost:9000] [/] jwt must be provided
+[2023-07-10 10:34:57] [error] [localhost:9000] [/] jwt must be provided
+[2023-07-10 10:43:30] [error] [localhost:9000] [/] jwt must be provided
+[2023-07-10 10:44:06] [error] [localhost:9000] [/] jwt must be provided
+[2023-07-10 10:44:26] [error] [localhost:9000] [/305ba77e29baf4eefecfb9000.jpeg] jwt must be provided
+[2023-07-10 10:48:08] [error] [localhost:9000] [/] jwt must be provided
+[2023-07-10 10:52:02] [error] [localhost:9000] [/] jwt must be provided
+[2023-07-10 10:54:42] [error] [localhost:9000] [/] jwt must be provided
+[2023-07-10 10:55:07] [error] [localhost:9000] [/] jwt must be provided
+[2023-07-10 14:00:12] [error] [localhost:9000] [/user/getInfo] 无效的token
+[2023-07-10 14:00:12] [error] [localhost:9000] [/user/getInfo] 无效的token
+[2023-07-10 14:00:21] [error] [localhost:9000] [/305ba77e29baf4eefecfb9000.jpeg] jwt must be provided
+[2023-07-10 14:03:53] [error] [localhost:9000] [/305ba77e29baf4eefecfb9000.jpeg] jwt must be provided
+[2023-07-10 14:03:59] [error] [localhost:9000] [/305ba77e29baf4eefecfb9000.jpeg] jwt must be provided
+[2023-07-10 14:04:45] [error] [localhost:9000] [/305ba77e29baf4eefecfb9000.jpeg] jwt must be provided
+[2023-07-10 14:06:26] [error] [localhost:9000] [/305ba77e29baf4eefecfb9000.jpeg] jwt must be provided
+[2023-07-10 14:06:28] [error] [localhost:9000] [/305ba77e29baf4eefecfb9000.jpeg] jwt must be provided
+[2023-07-10 14:07:45] [error] [localhost:9000] [/305ba77e29baf4eefecfb9000.jpeg] jwt must be provided
+[2023-07-10 14:07:46] [error] [localhost:9000] [/favicon.ico] jwt must be provided

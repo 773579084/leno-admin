@@ -46,7 +46,7 @@ router.post(
   IndexCon('注册成功')
 )
 
-// 注册
+// 验证码
 router.get('/captchaImage', captchaImageMid, IndexCon())
 
 // 退出账号

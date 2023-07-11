@@ -1,7 +1,7 @@
 import { redisType } from '@/config/redis.config'
 import redis from '@/redis'
 import { RouteType } from '@/types/system/system_menu'
-import { formatHumpLineTransfer } from '.'
+import { formatHumpLineTransfer } from '../utils'
 
 export interface menuQueryType {
   pageNum: number

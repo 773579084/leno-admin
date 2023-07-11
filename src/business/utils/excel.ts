@@ -2,7 +2,7 @@ import { dictMapType, excelParamsType } from '@/types'
 import XLSX from 'exceljs'
 import fs from 'fs'
 import path from 'path'
-import { dictMapFn, flatten } from '.'
+import { dictMapFn, flatten } from '../utils'
 
 /**
  * excel 导出

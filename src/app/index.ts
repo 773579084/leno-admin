@@ -5,8 +5,6 @@ import errHandlerFn from './errHandler'
 import path from 'path'
 import koaStatic from 'koa-static'
 import userAgent from 'koa-useragent'
-import history from 'koa2-connect-history-api-fallback'
-import helmet from 'koa-helmet'
 
 // 引入路由
 import router from '@/business/router'
@@ -29,7 +27,7 @@ app.use(
       // 文件上传的详细配置
       // 在配制选项option里, 不推荐使用相对路径
       // 在option里的相对路径, 不是相对的当前文件. 相对process.cwd()
-      uploadDir: path.join(__dirname, '../static'), // 上传的文件放置到哪个路径下
+      uploadDir: path.join(__dirname, '../../static'), // 上传的文件放置到哪个路径下
       maxFileSize: 1000 * 1024 * 1024, // 设置上传文件大小最大限制
       keepExtensions: true // 是否保留文件的扩展名
     },
@@ -38,33 +36,7 @@ app.use(
 )
 
 // 配置静态资源网址访问
-app.use(koaStatic(path.join(__dirname, '../static')))
-
-// csp防范策略
-app.use(
-  helmet.contentSecurityPolicy({
-    directives: {
-      // 指定默认的资源加载源
-      defaultSrc: ["'self'", 'cdn.example.com', 'example.com'],
-      // 限制JavaScript脚本的加载源
-      scriptSrc: ["'self'", 'cdn.example.com', 'example.com'],
-      // 限制CSS样式表的加载源
-      styleSrc: ["'self'", 'cdn.example.com', 'example.com']
-      // 限制图像的加载源 img-src
-      // 限制网络请求的源 connect-src
-      // 限制字体文件的加载源 font-src
-      // 限制嵌入框架的源 frame-src
-    }
-  })
-)
-
-// app.use(
-//   history({
-//     whiteList: []
-//   })
-// )
-// // 配置静态文件目录
-// app.use(koaStatic(path.join(__dirname, '../../react-ui')))
+app.use(koaStatic(path.join(__dirname, '../../static')))
 
 // 统一权限判断
 app.use(auth)
