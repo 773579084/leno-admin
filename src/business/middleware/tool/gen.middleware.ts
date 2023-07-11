@@ -236,7 +236,7 @@ export const batchGenCodeMid = async (ctx: Context, next: () => Promise<void>) =
     // 1 创建放置前端代码和后端代码的文件夹
     const createFile = ['node', 'react']
     createFile.forEach((fileName) => {
-      fs.mkdir(`src/${fileName}`, (err) => {
+      fs.mkdir(`/${fileName}`, (err) => {
         if (err) console.log(236, err)
       })
     })
@@ -246,7 +246,7 @@ export const batchGenCodeMid = async (ctx: Context, next: () => Promise<void>) =
       const code = generateCode(row)
       // 3 创建业务模块 文件
       createFile.forEach((fileName) => {
-        fs.mkdir(`src/${fileName}/${row.businessName}`, (err) => {
+        fs.mkdir(`/${fileName}/${row.businessName}`, (err) => {
           if (err) console.log(246, err)
         })
       })
@@ -264,7 +264,7 @@ export const batchGenCodeMid = async (ctx: Context, next: () => Promise<void>) =
           }
 
           fs.writeFile(
-            `src/node/${row.businessName}/${row.businessName}.${newKey}`,
+            `/node/${row.businessName}/${row.businessName}.${newKey}`,
             code[key],
             (err) => {
               if (err) console.log(266, err)
@@ -284,7 +284,7 @@ export const batchGenCodeMid = async (ctx: Context, next: () => Promise<void>) =
               ? `${row.businessName}.${newKey}`
               : row.businessName + '.' + newKey.split('.')[newKey.split('.').length - 1]
 
-          fs.writeFile(`src/react/${row.businessName}/${businessName}`, code[key], (err) => {
+          fs.writeFile(`/react/${row.businessName}/${businessName}`, code[key], (err) => {
             if (err) console.log(282, err)
           })
         }
@@ -297,7 +297,7 @@ export const batchGenCodeMid = async (ctx: Context, next: () => Promise<void>) =
 
   try {
     // 5 压缩刚刚创建的代码文件
-    const filePaths = ['src\\node', 'src\\react']
+    const filePaths = ['\\node', '\\react']
 
     const output = fs.createWriteStream('leno-admin.zip')
     const archive = archiver('zip', {
@@ -354,7 +354,7 @@ export const genCodeMid = async (ctx: Context, next: () => Promise<void>) => {
     newRows.forEach((row: GenType) => {
       // 创建业务文件夹
       const packageName = row.packageName.split('.').join('/')
-      const genPath = row.genPath === '/' ? `src/${packageName}` : row.genPath
+      const genPath = row.genPath === '/' ? `/${packageName}` : row.genPath
 
       fs.mkdir(`${genPath}/${row.businessName}`, (err) => {
         if (err) console.log(246, err)
@@ -365,7 +365,7 @@ export const genCodeMid = async (ctx: Context, next: () => Promise<void>) => {
       const frontFile = ['api.ts', 'index.tsx', 'index-tree.tsx', 'react.d.ts']
       const code = generateCode(row)
       const packageName = row.packageName.split('.').join('/')
-      const genPath = row.genPath === '/' ? `src/${packageName}` : row.genPath
+      const genPath = row.genPath === '/' ? `/${packageName}` : row.genPath
 
       // 在业务文件内创建 node 和 react 文件夹
       fs.mkdir(`${genPath}/${row.businessName}/node`, (err) => {

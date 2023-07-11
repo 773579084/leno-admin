@@ -20,10 +20,11 @@ import { Op } from 'sequelize'
 import { addSession, queryKeyValue, removeKey, removeListKey } from '../utils/auth'
 import SysUserPost from '@/mysql/model/system/sys_user_post.model'
 import SysPost from '@/mysql/model/system/post.model'
-import { queryUserMachine, writeLog } from '../utils/log'
+import { queryUserMachine } from '../utils/log'
 import { saveKey, updateUserInfo } from '../utils/redis'
 import os from 'os'
-const { APP_PORT, APP_HTTP } = process.env
+import env from '@/config/default'
+const { APP_PORT, APP_HTTP } = env()
 import svgCode from '../utils/svgCode'
 import { IuserTokenType } from '@/types/auth'
 import { getUserInfoAll } from '../utils/userInfo'
@@ -194,7 +195,7 @@ export const loginMid = async (ctx: Context, next: () => Promise<void>) => {
           session: hash,
           exp: dayjs().add(100, 'y').valueOf()
         },
-        process.env.JWT_SECRET
+        env().JWT_SECRET
       )
     }
     // 2-2 获取请求用户的设备信息

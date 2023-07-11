@@ -3,7 +3,8 @@ import path from 'path'
 import dayjs from 'dayjs'
 import { dictMapListType, dictMapType } from '@/types'
 import os from 'os'
-const { APP_PORT, APP_HTTP } = process.env
+import env from '@/config/default'
+const { APP_PORT, APP_HTTP } = env()
 import bcrypt from 'bcryptjs'
 
 /** 删除文件

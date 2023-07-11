@@ -10,7 +10,7 @@ import {
   resetTime
 } from '@/business/utils/auth'
 const { invalidToken, accessAuthErr } = errors
-const { JWT_SECRET } = process.env
+import env from '@/config/default'
 import { authWhites } from '@/config'
 import { getUserInfoAll } from '@/business/utils/userInfo'
 import { getSetsValue, removeSetKeys } from '@/business/utils/redis'
@@ -23,7 +23,7 @@ export const auth = async (ctx: Context, next: () => Promise<void>) => {
   // 权限白名单
   if (!authWhites.includes(ctx.request.url)) {
     // user中包含了payload的信息(userId, userName)
-    const user = jwt.verify(token, JWT_SECRET) as IuserTokenType
+    const user = jwt.verify(token, env().JWT_SECRET) as IuserTokenType
 
     // 查询 sessionId 过期了没
     if (!(await judgeKeyOverdue(user.session))) {

@@ -1,3 +1,4 @@
 [2023-07-11 09:05:33] [error] [localhost:9000] [/system/dictData/type/sys_normal_disable] 无效的token
 [2023-07-11 10:49:48] [error] [localhost:9000] [/system/dictData/type/sys_user_sex] 无效的token
 [2023-07-11 10:49:48] [error] [localhost:9000] [/user/profile] 无效的token
+[2023-07-11 13:49:32] [error] [localhost:9000] [/system/user/list?pageNum=1&pageSize=20&userName=admin&phonenumber=14312341235&status=0&beginTime=2023-03-26%2008:51:31&endTime=2023-03-26%2008:51:31] 无效的token

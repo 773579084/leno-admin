@@ -1,6 +1,7 @@
 import { Sequelize } from 'sequelize'
+import env from '@/config/default'
 
-const { MYSQL_HOST, MYSQL_USER, MYSQL_PWD, MYSQL_DB } = process.env
+const { MYSQL_HOST, MYSQL_USER, MYSQL_PWD, MYSQL_DB } = env()
 
 const seq = new Sequelize(MYSQL_DB as string, MYSQL_USER as string, MYSQL_PWD as string, {
   host: MYSQL_HOST,

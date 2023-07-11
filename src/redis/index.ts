@@ -1,5 +1,6 @@
 import redis from 'ioredis'
-const { REDIS_PORT, REDIS_HOST, REDIS_PASSWORD, REDIS_DB } = process.env as any
+import env from '@/config/default'
+const { REDIS_PORT, REDIS_HOST, REDIS_PASSWORD, REDIS_DB } = env()
 
 export default new redis({
   port: REDIS_PORT,

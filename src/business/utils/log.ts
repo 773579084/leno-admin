@@ -7,7 +7,7 @@ import { queryMenuMes } from './redis'
 import { queryKeyValue } from './auth'
 import { IuserTokenType } from '@/types/auth'
 import SysOperLog from '@/mysql/model/system/operlog.model'
-import { menusType, RouteType } from '@/types/system/system_menu'
+import { RouteType } from '@/types/system/system_menu'
 import dayjs from 'dayjs'
 import fs from 'fs'
 import { IjobSer } from '@/types/monitor/job'
@@ -15,6 +15,7 @@ import MonitorJobLog from '@/mysql/model/monitor/jobLog.model'
 import errors from '@/app/err.type'
 const { logErr } = errors
 import { logWhites } from '@/config'
+import env from '@/config/default'
 
 /**
  * 写入 日志
@@ -85,8 +86,8 @@ export const writeLog = async (
     console.log(
       type === '0' ? '\x1b[32m%s\x1b[0m' : '\x1b[31m%s\x1b[0m',
       `[${dayjs().format('YYYY-MM-DD HH:mm:ss')}] [${type === '0' ? 'success' : 'error'}] [${
-        process.env.APP_HOST
-      }:${process.env.APP_PORT}] [${ctx.request.url}] ${data.message}`
+        env().APP_HOST
+      }:${env().APP_PORT}] [${ctx.request.url}] ${data.message}`
     )
 
     // 写入到文件中 （按每天日期写入）
@@ -96,8 +97,8 @@ export const writeLog = async (
     console.log(
       '\x1b[31m%s\x1b[0m',
       `[${dayjs().format('YYYY-MM-DD HH:mm:ss')}] [${type === '0' ? 'success' : 'error'}] [${
-        process.env.APP_HOST
-      }:${process.env.APP_PORT}] [${ctx.request.url}] 写入日志失败`
+        env().APP_HOST
+      }:${env().APP_PORT}] [${ctx.request.url}] 写入日志失败`
     )
   }
 }
@@ -126,7 +127,7 @@ export const writeJobLog = async (ctx: Context, job: IjobSer, type: string, mess
 }
 
 /**
- * 将日志 写道 src/log文件夹中 以.log格式存储
+ * 将日志 写道 /log文件夹中 以.log格式存储
  * @param type 登录状态 0 成功 1 失败
  * @param ctx koa请求信息
  * @param data 其他信息
@@ -137,10 +138,10 @@ export const writeFileLog = (
   data?: { code: string | number; message: string }
 ) => {
   const currentTime = dayjs().format('YYYY-MM-DD')
-  const fileName = __dirname.split('\\src')[0] + `/src/log/${currentTime}.log`
+  const fileName = __dirname.split('\\') + `../../log/${currentTime}.log`
   const content = `[${dayjs().format('YYYY-MM-DD HH:mm:ss')}] [${
     type === '0' ? 'success' : 'error'
-  }] [${process.env.APP_HOST}:${process.env.APP_PORT}] [${ctx.request.url}] ${data.message}\n`
+  }] [${env().APP_HOST}:${env().APP_PORT}] [${ctx.request.url}] ${data.message}\n`
 
   // 写入文件
   if (fs.existsSync(fileName)) {
