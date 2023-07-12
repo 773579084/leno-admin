@@ -90,7 +90,7 @@ export const writeLog = async (
       }:${env().APP_PORT}] [${ctx.request.url}] ${data.message}`
     )
 
-    // 写入到文件中 （按每天日期写入）pm2 下不开启写入log文件，由pm2生成log文件，如果不使用PM2，则开启此log日志文件写入
+    // 写入到文件中 （按每天日期写入）: pm2 下不开启写入log文件，由pm2生成log文件，如果不使用PM2，则开启此log日志文件写入
     //  writeFileLog(type, ctx, data)
   } catch (error) {
     console.error('写入日志失败', error)
