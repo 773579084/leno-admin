@@ -1,0 +1,3 @@
+(node:23788) [SEQUELIZE0002] DeprecationWarning: The logging-option should be either a function or false. Default: console.log
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[WARN] Redis server does not require a password, but a password was supplied.

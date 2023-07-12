@@ -1,0 +1,50 @@
+5 {
+  APP_HOST: 'localhost',
+  APP_PORT: 9000,
+  APP_HTTP: 'http',
+  MYSQL_HOST: 'localhost',
+  MYSQL_PORT: 3306,
+  MYSQL_USER: 'root',
+  MYSQL_PWD: 'admin123',
+  MYSQL_DB: 'leno_admin',
+  JWT_SECRET: 'lenoAdmin',
+  JWT_REFRESH_SECRET: 'refreshToken',
+  REDIS_PORT: 6379,
+  REDIS_HOST: 'localhost',
+  REDIS_PASSWORD: 'admin123',
+  REDIS_DB: 0
+} localhost
+数据库连接成功
+服务器启动成功,running [38;2;39;184;219mhttp://localhost:9000[0m
+Executing (default): SELECT 1+1 AS result
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'sys_logininfor' AND TABLE_SCHEMA = 'leno_admin'
+Executing (default): SHOW INDEX FROM `sys_logininfor`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'sys_oper_log' AND TABLE_SCHEMA = 'leno_admin'
+Executing (default): SHOW INDEX FROM `sys_oper_log`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'monitor_job_log' AND TABLE_SCHEMA = 'leno_admin'
+Executing (default): SHOW INDEX FROM `monitor_job_log`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'sys_menu' AND TABLE_SCHEMA = 'leno_admin'
+Executing (default): SHOW INDEX FROM `sys_menu`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'sys_role' AND TABLE_SCHEMA = 'leno_admin'
+Executing (default): SHOW INDEX FROM `sys_role`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'sys_role_menu' AND TABLE_SCHEMA = 'leno_admin'
+Executing (default): SHOW INDEX FROM `sys_role_menu`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'sys_dept' AND TABLE_SCHEMA = 'leno_admin'
+Executing (default): SHOW INDEX FROM `sys_dept`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'leno_user' AND TABLE_SCHEMA = 'leno_admin'
+Executing (default): SHOW INDEX FROM `leno_user`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'sys_post' AND TABLE_SCHEMA = 'leno_admin'
+Executing (default): SHOW INDEX FROM `sys_post`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'sys_user_role' AND TABLE_SCHEMA = 'leno_admin'
+Executing (default): SHOW INDEX FROM `sys_user_role`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'sys_user_post' AND TABLE_SCHEMA = 'leno_admin'
+Executing (default): SHOW INDEX FROM `sys_user_post`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'tool_gen' AND TABLE_SCHEMA = 'leno_admin'
+Executing (default): SHOW INDEX FROM `tool_gen`
+Executing (default): SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME = 'tool_gen_column' AND TABLE_SCHEMA = 'leno_admin'
+Executing (default): SHOW INDEX FROM `tool_gen_column`
+Executing (default): SELECT count(DISTINCT(`config_id`)) AS `count` FROM `sys_config` AS `sys_config`;
+Executing (default): SELECT `dict_code`, `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `update_by`, `remark`, `created_at`, `updated_at` FROM `sys_dict_data` AS `sys_dict_data` WHERE `sys_dict_data`.`dict_type` = 'sys_yes_no' ORDER BY `sys_dict_data`.`dict_sort` ASC;
+Executing (default): SELECT `config_id`, `config_name`, `config_key`, `config_value`, `config_type`, `create_by`, `created_at`, `update_by`, `updated_at`, `remark` FROM `sys_config` AS `sys_config` LIMIT 0, 10;
+[32m[2023-07-12 13:40:29] [success] [localhost:9000] [/system/dictData/type/sys_yes_no] 操作成功[0m
+[32m[2023-07-12 13:40:29] [success] [localhost:9000] [/system/config/list?pageNum=1&pageSize=10] 操作成功[0m

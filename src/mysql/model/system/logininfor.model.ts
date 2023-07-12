@@ -1,4 +1,3 @@
-
 import { DataTypes } from 'sequelize'
 import seq from '@/mysql/db/seq.db'
 
@@ -7,54 +6,53 @@ const SysLogininfor = seq.define(
   'sys_logininfor',
   {
     info_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        unique: true,
-        autoIncrement: true,
-        primaryKey: true,
-        comment: "访问ID"
-      },
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      unique: true,
+      autoIncrement: true,
+      primaryKey: true,
+      comment: '访问ID'
+    },
     user_name: {
-        type: DataTypes.STRING,
-        defaultValue:null,
-        comment: "用户账号"
-      },
+      type: DataTypes.STRING,
+      defaultValue: null,
+      comment: '用户账号'
+    },
     ipaddr: {
-        type: DataTypes.STRING,
-        defaultValue:null,
-        comment: "登录IP地址"
-      },
+      type: DataTypes.STRING,
+      defaultValue: null,
+      comment: '登录IP地址'
+    },
     login_location: {
-        type: DataTypes.STRING,
-        defaultValue:null,
-        comment: "登录地点"
-      },
+      type: DataTypes.STRING,
+      defaultValue: null,
+      comment: '登录地点'
+    },
     browser: {
-        type: DataTypes.STRING,
-        defaultValue:null,
-        comment: "浏览器类型"
-      },
+      type: DataTypes.STRING,
+      defaultValue: null,
+      comment: '浏览器类型'
+    },
     os: {
-        type: DataTypes.STRING,
-        defaultValue:null,
-        comment: "操作系统"
-      },
+      type: DataTypes.STRING,
+      defaultValue: null,
+      comment: '操作系统'
+    },
     status: {
-        type: DataTypes.STRING,
-        defaultValue:null,
-        comment: "登录状态（0成功 1失败）"
-      },
+      type: DataTypes.STRING,
+      defaultValue: null,
+      comment: '登录状态（0成功 1失败）'
+    },
     msg: {
-        type: DataTypes.STRING,
-        defaultValue:null,
-        comment: "提示消息"
-      },
+      type: DataTypes.STRING,
+      defaultValue: null,
+      comment: '提示消息'
+    },
     login_time: {
-        type: DataTypes.DATE,
-        defaultValue:null,
-        comment: "访问时间"
-      },
-
+      type: DataTypes.DATE,
+      defaultValue: null,
+      comment: '访问时间'
+    }
   },
   {
     tableName: 'sys_logininfor', // 强制创建表名
