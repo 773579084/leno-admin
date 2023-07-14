@@ -138,7 +138,7 @@ export const writeFileLog = (
   data?: { code: string | number; message: string }
 ) => {
   const currentTime = dayjs().format('YYYY-MM-DD')
-  const fileName = __dirname.split('\\') + `../../log/${currentTime}.log`
+  const fileName = __dirname.split('/') + `../../log/${currentTime}.log`
   const content = `[${dayjs().format('YYYY-MM-DD HH:mm:ss')}] [${
     type === '0' ? 'success' : 'error'
   }] [${env().APP_HOST}:${env().APP_PORT}] [${ctx.request.url}] ${data.message}\n`

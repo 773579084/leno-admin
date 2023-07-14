@@ -105,7 +105,7 @@ export const getExcelAddress = async (fileExistPath: string) => {
 export const parsingExcel = async (fileName: string, fileExistPath: string) => {
   const workbook = new XLSX.Workbook()
   //整个文件的绝对路径
-  const absoluteFilePath = fileExistPath + '\\' + fileName
+  const absoluteFilePath = fileExistPath + '/' + fileName
   //这种方式是解析buffer
   return await workbook.xlsx.load(fs.readFileSync(absoluteFilePath))
 }

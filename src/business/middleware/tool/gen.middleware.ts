@@ -236,7 +236,7 @@ export const batchGenCodeMid = async (ctx: Context, next: () => Promise<void>) =
     // 1 创建放置前端代码和后端代码的文件夹
     const createFile = ['node', 'react']
     createFile.forEach((fileName) => {
-      fs.mkdir(`/${fileName}`, (err) => {
+      fs.mkdir(__dirname + `/${fileName}`, (err) => {
         if (err) console.log(236, err)
       })
     })
@@ -246,7 +246,7 @@ export const batchGenCodeMid = async (ctx: Context, next: () => Promise<void>) =
       const code = generateCode(row)
       // 3 创建业务模块 文件
       createFile.forEach((fileName) => {
-        fs.mkdir(`/${fileName}/${row.businessName}`, (err) => {
+        fs.mkdir(__dirname + `/${fileName}/${row.businessName}`, (err) => {
           if (err) console.log(246, err)
         })
       })
@@ -264,7 +264,7 @@ export const batchGenCodeMid = async (ctx: Context, next: () => Promise<void>) =
           }
 
           fs.writeFile(
-            `/node/${row.businessName}/${row.businessName}.${newKey}`,
+            __dirname + `/node/${row.businessName}/${row.businessName}.${newKey}`,
             code[key],
             (err) => {
               if (err) console.log(266, err)
@@ -284,9 +284,13 @@ export const batchGenCodeMid = async (ctx: Context, next: () => Promise<void>) =
               ? `${row.businessName}.${newKey}`
               : row.businessName + '.' + newKey.split('.')[newKey.split('.').length - 1]
 
-          fs.writeFile(`/react/${row.businessName}/${businessName}`, code[key], (err) => {
-            if (err) console.log(282, err)
-          })
+          fs.writeFile(
+            __dirname + `/react/${row.businessName}/${businessName}`,
+            code[key],
+            (err) => {
+              if (err) console.log(282, err)
+            }
+          )
         }
       }
     })
@@ -297,7 +301,7 @@ export const batchGenCodeMid = async (ctx: Context, next: () => Promise<void>) =
 
   try {
     // 5 压缩刚刚创建的代码文件
-    const filePaths = ['\\node', '\\react']
+    const filePaths = ['/node', '/react']
 
     const output = fs.createWriteStream('leno-admin.zip')
     const archive = archiver('zip', {
@@ -310,7 +314,7 @@ export const batchGenCodeMid = async (ctx: Context, next: () => Promise<void>) =
 
     archive.pipe(output)
     for (const i of filePaths) {
-      archive.directory(i, 'leno-admin\\' + i.split('\\')[1])
+      archive.directory(i, __dirname + 'leno-admin/' + i.split('/')[1])
     }
     // 生成完后将zip文件删除
     output.on('close', () => {

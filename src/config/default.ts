@@ -1,10 +1,12 @@
 export default () => {
   // 重要：需要 cross-env 注入变量启动，才能够全局使用，直接用node启动文件无法获取变量
   if (process.env.NODE_ENV === 'development') {
+    console.log(4, process.env.NODE_ENV)
+
     return {
       // 服务器运行地址及端口
       APP_HOST: 'localhost',
-      APP_PORT: 9000,
+      APP_PORT: 9090,
       APP_HTTP: 'http',
       // mysql
       MYSQL_HOST: 'localhost',
@@ -21,17 +23,17 @@ export default () => {
       REDIS_PASSWORD: 'admin123',
       REDIS_DB: 0
     }
-  } else if (process.env.NODE_ENV === 'production') {
+  } else {
     return {
       // 服务器运行地址及端口
-      APP_HOST: 'localhost',
+      APP_HOST: '120.79.243.62',
       APP_PORT: 9000,
       APP_HTTP: 'http',
       // mysql
       MYSQL_HOST: 'localhost',
       MYSQL_PORT: 3306,
       MYSQL_USER: 'root',
-      MYSQL_PWD: 'admin123',
+      MYSQL_PWD: 'Aa363689;',
       MYSQL_DB: 'leno_admin',
       // JWT
       JWT_SECRET: 'lenoAdmin',
@@ -39,7 +41,7 @@ export default () => {
       // redis
       REDIS_PORT: 6379,
       REDIS_HOST: 'localhost',
-      REDIS_PASSWORD: 'admin123',
+      // REDIS_PASSWORD: 'admin123',
       REDIS_DB: 0
     }
   }

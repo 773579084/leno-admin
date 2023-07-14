@@ -22,9 +22,8 @@ import SysUserPost from '@/mysql/model/system/sys_user_post.model'
 import SysPost from '@/mysql/model/system/post.model'
 import { queryUserMachine } from '../utils/log'
 import { saveKey, updateUserInfo } from '../utils/redis'
-import os from 'os'
 import env from '@/config/default'
-const { APP_PORT, APP_HTTP } = env()
+const { APP_PORT, APP_HTTP, APP_HOST } = env()
 import svgCode from '../utils/svgCode'
 import { IuserTokenType } from '@/types/auth'
 import { getUserInfoAll } from '../utils/userInfo'
@@ -331,13 +330,11 @@ export const queryUserInfoMid = async (ctx: Context, next: () => Promise<void>) 
 
   const userData = await queryKeyValue(session)
 
-  const ip = os.networkInterfaces()['WLAN'][1].address
-
   ctx.state.formatData = {
     userInfo: {
       ...userData.userInfo,
       avatar: userData.userInfo.avatar
-        ? `${APP_HTTP}://${ip}:${APP_PORT}/${userData.userInfo.avatar}`
+        ? `${APP_HTTP}://${APP_HOST}:${APP_PORT}/${userData.userInfo.avatar}`
         : ''
     },
     roles: userData.roles,

@@ -13,7 +13,7 @@ function registerRouter(basePath: string) {
     if (stats.isDirectory()) {
       // 遇到文件夹则递归回调
       fs.readdirSync(basePath).forEach((file) => {
-        registerRouter(`${basePath}\\${file}`)
+        registerRouter(`${basePath}/${file}`)
       })
     } else if (stats.isFile()) {
       if (basePath.indexOf('index') === -1) {

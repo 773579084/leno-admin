@@ -31,7 +31,7 @@ const addEditFn = (ctx: Context, job: IjobSer, a: string, b: string, c: string) 
 const timingCleanLog = async (ctx: Context, job: IjobSer) => {
   try {
     // 清除 log 下的日志文件
-    delFiles(__dirname.split('\\')[0] + `/log`)
+    delFiles(__dirname.split('/')[0] + `/log`)
     // 清除 操作日志
     await delSer(SysOperLog, { oper_id: { [Op.ne]: null } })
     // 清除 登录日志
