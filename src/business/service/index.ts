@@ -1,7 +1,7 @@
 /**
  * 通用Ser方法
  */
-import { ModelStatic, Optional, FindOptions, Includeable, Op } from 'sequelize'
+import { ModelStatic, Optional, FindOptions, Includeable } from 'sequelize'
 
 /**
  * 获取列表

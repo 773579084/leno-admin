@@ -26,7 +26,7 @@ export default () => {
   } else {
     return {
       // 服务器运行地址及端口
-      APP_HOST: '120.79.243.62',
+      APP_HOST: 'localhost',
       APP_PORT: 9000,
       APP_HTTP: 'http',
       // mysql
@@ -41,7 +41,7 @@ export default () => {
       // redis
       REDIS_PORT: 6379,
       REDIS_HOST: 'localhost',
-      // REDIS_PASSWORD: 'admin123',
+      REDIS_PASSWORD: 'admin123',
       REDIS_DB: 0
     }
   }
