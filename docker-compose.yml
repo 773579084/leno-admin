@@ -3,7 +3,6 @@ version: "3"
 networks:
   app-leno-admin-web:
     driver: bridge
-    # external: true
 
 services:
   mysql:
