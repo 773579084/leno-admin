@@ -25,6 +25,8 @@
   "exclude": [
     "node_modules",
     "dist",
-    "static"
+    "leno-react",
+    "static",
+    "docker"
   ]
 }
