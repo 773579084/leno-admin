@@ -31,7 +31,7 @@ services:
       - TZ=Asia/Guangzhou
       - REDIS_PASSWORD=admin123
 
-  devEnv:
+  backend:
     image: registry.cn-shenzhen.aliyuncs.com/zwc-docker/leno_admin:leno-admin-dev-1.0
     ports:
       - 9900:9900
