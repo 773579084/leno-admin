@@ -1,0 +1,6 @@
+/*
+  此样式文件是为了解决 antDesign.css 样式文件直接引入会报错做的中转，方法为github上的大佬提供的解决方案
+  https://github.com/ant-design/ant-design/issues/33327
+*/
+/* @import 'antd/dist/antd.css'; */
+@import 'antd/dist/antd.variable.min.css';

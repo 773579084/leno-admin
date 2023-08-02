@@ -1,0 +1,25 @@
+.layout-tabs {
+  position: relative;
+  padding-left: 16px;
+  border-bottom: 1px solid #eae6e6;
+
+  .del-icon {
+    margin-left: 7px;
+  }
+
+  .layout-tabs-page {
+    width: 80vw;
+  }
+
+  // 局部修改 antd 样式
+  :global {
+
+    .ant-tabs-nav {
+      margin: 0!important;
+    }
+
+    .anticon {
+      margin-right: 7px!important;
+    }
+  }
+}

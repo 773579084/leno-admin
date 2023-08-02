@@ -1,0 +1,55 @@
+.cron-com {
+
+  :global {
+
+    .ant-input-number {
+      margin: 0 10px;
+    }
+
+    .ant-card-body {
+      padding-top: 10px;
+      box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+    }
+  }
+
+  .corn-time {
+    margin: 10px 0;
+
+    .titile {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 9px;
+    }
+  }
+
+  .run-time {
+
+    :global {
+      .ant-card-body {
+        padding-top: 10px;
+        padding-bottom: 0;
+      }
+
+      .title {
+        font-size: 12px;
+        text-align: center;
+        color: #707070;
+      }
+
+      ul>li {
+        font-size: 14px;
+        color: #606266;
+      }
+    }
+  }
+
+  .week-font {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    margin:  7px 10px 0;
+  }
+}
+

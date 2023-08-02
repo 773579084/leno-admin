@@ -1,0 +1,34 @@
+$color:#babcbe;
+$boderColor:#dfe6ec;
+
+.site-layout-background {
+  height: 100%;
+
+  :global {
+
+    .src-components-SvgIcon-index-module__svg-class {
+      font-size: 15px;
+    }
+
+    .header {
+      border-bottom: 1px solid $boderColor;
+      padding-bottom: 15px;
+      margin-bottom: 10px;
+      font-weight: bold;
+      color: #9093a6;
+    }
+
+    .ant-card {
+      height: 100%;
+    }
+
+    .ant-card-bordered {
+      border: 1px solid $color;
+      box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+    }
+
+    .ant-card-head {
+      border-bottom: 1px solid $boderColor;
+    }
+  }
+}

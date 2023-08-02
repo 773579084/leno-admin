@@ -1,0 +1,52 @@
+.profile {
+  border-radius: 5px;
+
+  .user-info {
+    padding: 10px;
+
+    .avatar {
+      display: flex;
+      justify-content: center;
+    }
+
+    li {
+      padding: 11px 0;
+      border-bottom: 1px solid #e7eaec;
+
+      div {
+        display: flex;
+        align-items: center;
+      }
+    }
+
+    li:nth-of-type(n+2){
+      display: flex;
+      justify-content: space-between;
+      align-content:center;
+    }
+
+    .user-string {
+      margin-left: 5px;
+    }
+  }
+
+  :global {
+    .ant-upload.ant-upload-select-picture-card {
+      border-radius: 50%;
+      overflow: hidden;
+    }
+
+    .ant-upload-picture-card-wrapper {
+      width: auto;
+    }
+
+    .ant-card {
+      box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+    }
+
+    .ant-card-body {
+      padding: 12px 24px 24px;
+    }
+  }
+}
+

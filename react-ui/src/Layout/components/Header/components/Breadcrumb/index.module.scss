@@ -1,0 +1,30 @@
+$other-color:rgba(238, 238, 238, 0.75);
+$current-color:#fff;
+
+.bread-crumb {
+
+  .home {
+    color: $other-color;
+    cursor: pointer;
+  }
+
+  .current-home {
+    color: $current-color;
+    cursor: pointer;
+  }
+
+  .current-bread {
+    color: $current-color;
+  }
+
+  .nocurrent-bread {
+    color: $other-color;
+  }
+
+  :global {
+
+    .ant-breadcrumb-separator {
+      color: $other-color;
+    }
+  }
+}

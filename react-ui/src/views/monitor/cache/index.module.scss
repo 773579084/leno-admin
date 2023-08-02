@@ -1,0 +1,38 @@
+$color:#babcbe;
+$boderColor:#dfe6ec;
+
+.site-layout-background {
+  .echarts {
+    height:350px;
+  }
+
+  :global {
+
+    .src-components-SvgIcon-index-module__svg-class {
+      font-size: 15px;
+    }
+
+    .header {
+      border-bottom: 1px solid $boderColor;
+      padding-bottom: 15px;
+      margin-bottom: 10px;
+      font-weight: bold;
+      color: #9093a6;
+    }
+
+    .body {
+      border-bottom: 1px solid $boderColor;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+      color: #606266;
+    }
+
+    .ant-card-bordered {
+      box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+    }
+
+    .ant-card-head {
+      border-bottom: 1px solid $boderColor;
+    }
+  }
+}

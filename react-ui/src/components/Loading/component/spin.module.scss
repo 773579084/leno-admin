@@ -1,0 +1,75 @@
+$BackColor:rgba(97, 218, 251,1);
+
+.loading-global {
+
+  .ring1, .ring2, .ring3, .dot {
+    border-radius: 50%;
+    border: 1px solid $BackColor;
+  }
+  .ring2, .ring3, .dot {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .ring1 {
+    height: 110px;
+    width: 110px;
+    position: relative;
+    margin: 20px auto;
+  }
+  .ring2 {
+    height: 88px;
+    width: 88px;
+  }
+  .ring3 {
+    height: 66px;
+    width: 66px;
+  }
+  .dot {
+    height: 33px;
+    width: 33px;
+    background-color: $BackColor;
+  }
+  /* 圆环上的小圆点 */
+  .ring1:after, .ring2:after, .ring3:after  {
+    content: " ";
+    position: absolute;
+    height: 8px;
+    width: 8px;
+    border-radius: 50%;
+    background: $BackColor;
+    left: 50%;
+    margin-left: -4px;
+    margin-top: -4px;
+  }
+
+  // loading 文字展示
+  .laoding-font {
+    text-align: center;
+  }
+}
+
+
+
+// 动画
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.ring1:after {
+  transform-origin: 4px 59px;
+  animation: rotation 3s infinite linear;
+}
+.ring2:after {
+  transform-origin: 4px 48px;
+  animation: rotation 2s infinite linear;
+}
+.ring3:after {
+  transform-origin: 4px 37px;
+  animation: rotation 1.2s infinite linear;
+}

@@ -1,0 +1,24 @@
+$color-class:'primary-normal' 'primary-disabled' 'success-normal' 'success-disabled' 'danger-normal' 'danger-disabled' 'info-normal' 'info-disabled' 'warning-normal' 'warning-disabled';
+$btn-color:#1890ff #1890ffa6 #13ce66 #71e2a3 #f88182 #ff9292 #909399 #bcbec2 #ffba00 #f0c78a;
+$btn-color-hoover:white #1890ffa6 white #71e2a3 white #ff9292 white #bcbec2 white #f0c78a;
+$btn-backgroud:#e8f4ff #e8f4ff #e7faf0 #e7faf0 #ffeded #ffeded #f4f4f5 #f4f4f5 #fff8e6 #fdf6ec;
+$btn-backgroud-hover:#1890ff #e8f4ff #71e2a3 #e7faf0 #ff4949 #ffeded #909399 #f4f4f5 #ffba00 #fdf6ec;
+$btn-border-color:#a3d3ff #c4e3ff #a1ebc2 #d0f5e0 #ffb6b6 #ffdbdb #d3d4d6 #d3d4d6 #ffe399 #faecd8;
+
+@each $class,$color,$colorHover,$background,$backgroundHover,$boder in zip($color-class,$btn-color,$btn-color-hoover,$btn-backgroud,$btn-backgroud-hover,$btn-border-color,) {
+  .color-#{$class} {
+    :global {
+      .ant-btn-default{
+        border-radius: 5px;
+        color: $color;
+        background: $background;
+        border-color: $boder;
+      }
+      .ant-btn-default:hover {
+        background: $backgroundHover;
+        color: $colorHover;
+        border-color: $boder;
+      }
+    }
+  }
+};

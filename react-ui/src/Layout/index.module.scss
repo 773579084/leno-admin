@@ -1,0 +1,64 @@
+.layout-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+
+  // logo
+  .logo {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 56px;
+
+    .logo-image {
+      width: 30px;
+      height: 30px;
+      background: url('@/assets/images/logo.png') no-repeat;
+      background-size: 100%;
+    }
+
+    .logo-font {
+      color: rgb(255, 255, 255);
+      margin-top: -3px;
+      font-size: 23px;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+  }
+
+  // menu
+  .sider-menu {
+    overflow-y: auto;
+    height: 100%;
+    border-right: 1px solid #eae6e6;
+    padding-bottom: 20px;
+  }
+}
+
+#components-layout-demo-custom-trigger .trigger {
+  padding: 0 24px;
+  font-size: 18px;
+  line-height: 64px;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+#components-layout-demo-custom-trigger .trigger:hover {
+  color: #1890ff;
+}
+
+#components-layout-demo-custom-trigger .logo {
+  height: 32px;
+  margin: 16px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+// 顶部与内容区背景色
+.site-layout {
+
+  :global {
+    .ant-layout-content{
+      position: relative;
+    }
+  }
+}

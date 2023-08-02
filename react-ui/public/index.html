@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leno Admin</title>
+  <!-- loading -->
+  <style>
+    .loading-g {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .ring1,
+    .ring2,
+    .ring3,
+    .dot {
+      border-radius: 50%;
+      border: 1px solid rgba(97, 218, 251, 1);
+    }
+
+    .ring2,
+    .ring3,
+    .dot {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .ring1 {
+      height: 110px;
+      width: 110px;
+      position: relative;
+      margin: 20px auto;
+    }
+
+    .ring2 {
+      height: 88px;
+      width: 88px;
+    }
+
+    .ring3 {
+      height: 66px;
+      width: 66px;
+    }
+
+    .dot {
+      height: 33px;
+      width: 33px;
+      background-color: rgba(97, 218, 251, 1);
+    }
+
+    /* 圆环上的小圆点 */
+    .ring1:after,
+    .ring2:after,
+    .ring3:after {
+      content: " ";
+      position: absolute;
+      height: 8px;
+      width: 8px;
+      border-radius: 50%;
+      background: rgba(97, 218, 251, 1);
+      left: 50%;
+      margin-left: -4px;
+      margin-top: -4px;
+    }
+
+    /*  loading 文字展示 */
+    .laoding-font {
+      text-align: center;
+    }
+
+    /* 动画 */
+    @keyframes rotation {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .ring1:after {
+      transform-origin: 4px 59px;
+      animation: rotation 3s infinite linear;
+    }
+
+    .ring2:after {
+      transform-origin: 4px 48px;
+      animation: rotation 2s infinite linear;
+    }
+
+    .ring3:after {
+      transform-origin: 4px 37px;
+      animation: rotation 1.2s infinite linear;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 容器节点 -->
+  <div id="root">
+    <div class="loading-g">
+      <div class="ring1">
+        <div class="ring2"></div>
+        <div class="ring3"></div>
+        <div class="dot"></div>
+      </div>
+      <div class="laoding-font">Loading...</div>
+    </div>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,123 @@
+$theme-color:#b2aeae;
+
+.login-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+
+  .svg-bg {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    transform: scale(1.1);
+    z-index: -10;
+  }
+
+  .login-sencond-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 96vw;
+    height: 94vh;
+    padding: 0 4vw 0 0;
+    overflow: hidden;
+    background-color: hsla(0, 0%, 100%, 0.8);
+    border-radius: 10px;
+  }
+
+  /* 左边图像 */
+  .left-img {
+    display: flex;
+    flex: 12;
+    justify-content: center;
+    align-items: center;
+
+    .react-logo {
+      width: 16vw;
+      height: 16vw;
+      background: url('@/assets/images/logo.png') no-repeat center;
+      background-size: 65%;
+    }
+
+    .project-name {
+      padding:20px 0 0 0 ;
+      font-size: 3.5vw;
+      font-weight: 700;
+    }
+  }
+
+  /* LOGIN */
+  .login-box {
+    // flex: 6;
+    width: 500px;
+    padding: 5vh 4vh;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 2px 2px 20px 2px #c7cdcfa3;
+
+    .login-form {
+      position: relative;
+      padding: 0px 20px 0;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+
+    /* login title byte */
+    .title-container {
+      position: relative;
+
+      .title {
+        margin-bottom: 15px;
+        font-size: 30px;
+        font-weight: 700;
+        color: #b2aeae;
+      }
+    }
+
+    // login 按钮
+    .login-btn {
+      border-radius: 2px;
+      margin:0px 30px 0 0;
+    }
+
+    // 局部修改 antd 样式
+    :global {
+
+      .ant-input-affix-wrapper,.ant-input {
+        background-color: transparent!important;
+        color: $theme-color;
+      }
+
+      .ant-form-item-control-input-content {
+         display: flex;
+         align-items: center;
+       }
+
+      .ant-input-affix-wrapper {
+        line-height: 2.6;
+      }
+
+      .anticon {
+        color: $theme-color;
+      }
+
+      .ant-input-affix-wrapper {
+        color: $theme-color;
+      }
+    }
+  }
+
+  /* 去掉谷歌 记住账号 默认背景色 */
+  input:-webkit-autofill , textarea:-webkit-autofill, select:-webkit-autofill {
+    -webkit-text-fill-color: $theme-color!important;
+    background-color:transparent;
+    background-image: none;
+    transition: background-color 50000s ease-in-out 0s; //背景色透明  生效时长  过渡效果  启用时延迟的时间
+  }
+}

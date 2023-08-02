@@ -1,0 +1,14 @@
+@import '@/assets/style';
+
+.svg-class {
+  display: inline-block;
+  overflow: hidden;
+  font-size: 12px;
+  min-width: 12px;
+  width: 1em;
+  height: 1em;
+}
+
+.icon-i {
+  @include dis-center
+}
