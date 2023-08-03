@@ -3,13 +3,7 @@ import { dictMapListType, imgType } from '@/types'
 import errors from '@/app/err.type'
 import { getExcelAddress, parsingExcel } from '@/business/utils/excel'
 import { getDataTypeSer } from '@/business/service/system/dict_data.service'
-import {
-  accessSrcFn,
-  formatHumpLineTransfer,
-  pwdHash,
-  removeSpecifyFile,
-  timeChange
-} from '@/business/utils'
+import { formatHumpLineTransfer, pwdHash, removeSpecifyFile, timeChange } from '@/business/utils'
 import path from 'path'
 const {
   importUserListErr,
@@ -240,7 +234,6 @@ export const commondUploadImgMid = async (ctx: Context, next: () => Promise<void
     const basePath = path.basename(filepath) as string
 
     ctx.state.formatData = {
-      imgUrl: accessSrcFn([basePath])[0],
       imgName: basePath
     }
     await next()

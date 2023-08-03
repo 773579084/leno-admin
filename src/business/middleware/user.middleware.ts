@@ -334,8 +334,6 @@ export const queryUserInfoMid = async (ctx: Context, next: () => Promise<void>) 
     userInfo: {
       ...userData.userInfo,
       avatar: userData.userInfo.avatar
-        ? `${APP_HTTP}://${APP_HOST}:${APP_PORT}/${userData.userInfo.avatar}`
-        : ''
     },
     roles: userData.roles,
     permissions: userData.permissions

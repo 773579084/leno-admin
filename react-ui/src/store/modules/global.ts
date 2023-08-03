@@ -7,12 +7,18 @@ export default class useGlobalStore {
   globalLoadingTimeMobx: number = 0 // 控制全局loading显示时间
   siderStatus: boolean = false
   logout: boolean = true // 退出弹窗控制
+  address: string = '' // 路径地址
 
   constructor() {
     makeAutoObservable(this)
     makePersistable(this, {
       name: 'siderStatus',
       properties: ['siderStatus'],
+      storage: window.localStorage,
+    })
+    makePersistable(this, {
+      name: 'address',
+      properties: ['address'],
       storage: window.localStorage,
     })
   }
@@ -34,5 +40,9 @@ export default class useGlobalStore {
 
   changeLogout = (bol: boolean) => {
     this.logout = bol
+  }
+
+  setAddress = (string: string) => {
+    this.address = string
   }
 }

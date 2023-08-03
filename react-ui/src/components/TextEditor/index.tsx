@@ -3,6 +3,7 @@ import { Editor, Toolbar } from '@wangeditor/editor-for-react'
 import { IDomEditor, IEditorConfig, IToolbarConfig, SlateElement } from '@wangeditor/editor'
 import './index.module.scss'
 import { commonUploadImgAPI } from '@/api/modules/common'
+import useStore from '@/store'
 
 type ImageElement = SlateElement & {
   src: string
@@ -20,6 +21,9 @@ const TextEditor = (props: { editorHtml: string; imgs: string }, ref: any) => {
   const [html, setHtml] = useState(editorHtml)
   // 存储上传的图片
   const [uploadedImg, setUploadedImg] = useState<string[]>([])
+  const {
+    useGlobalStore: { address },
+  } = useStore()
 
   useEffect(() => {
     setHtml(editorHtml)
@@ -81,10 +85,10 @@ const TextEditor = (props: { editorHtml: string; imgs: string }, ref: any) => {
         fd.append('avatar', file)
         const {
           data: {
-            result: { imgUrl },
+            result: { imgName },
           },
         } = await commonUploadImgAPI(fd)
-        insertFn(imgUrl, '', '')
+        insertFn(address + imgName, '', '')
       },
     }
 

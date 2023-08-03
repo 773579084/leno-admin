@@ -227,19 +227,6 @@ export const dictMapFn = (dicts: dictMapListType): dictMapType => {
 }
 
 /**
- * 文件名转访问路径
- * @param filesName
- */
-export const accessSrcFn = (filesName: string[]) => {
-  const srcs = []
-  const ip = getIpAddress()
-  filesName.forEach((fileName) => {
-    srcs.push(`${APP_HTTP}://${ip}:${APP_PORT}/${fileName}`)
-  })
-  return srcs
-}
-
-/**
  * 下划线转首字母和下划线后首字母大写，并去掉下划线
  * @param str
  * @returns

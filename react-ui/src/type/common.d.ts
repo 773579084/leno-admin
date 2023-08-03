@@ -2,7 +2,7 @@
 export interface IcommonUploadImgType {
   code: number
   message: string
-  result: { imgUrl: string }
+  result: { imgName: string }
 }
 
 // 公用多文件多图片上传

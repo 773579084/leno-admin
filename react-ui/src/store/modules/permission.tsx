@@ -95,8 +95,6 @@ export default class useRoutersStore {
 
   // 路由表目录路径
   routerDirectory(routers: RouteType[]) {
-    console.log(86, routers)
-
     const list = [] as string[]
     const keeps = [] as string[]
     function handleRouter(routers: RouteType[], beforePath = '') {

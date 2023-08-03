@@ -35,6 +35,7 @@ const avatarCom = () => {
   const {
     useUserStore: { removeUserInfo, userInfo },
     useLayoutStore: { changeTabsListMobx, layoutSet, setLayoutSet },
+    useGlobalStore: { address },
   } = useStore()
 
   const [isOpen, setIsOpen] = useState(false)
@@ -142,7 +143,7 @@ const avatarCom = () => {
         placement="bottomLeft"
         arrow={{ pointAtCenter: true }}
       >
-        <Avatar size="default" src={userInfo.avatar ? userInfo.avatar : avatar} />
+        <Avatar size="default" src={userInfo.avatar ? address + userInfo.avatar : avatar} />
       </Dropdown>
       <Modal
         title="提示"
