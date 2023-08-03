@@ -5,6 +5,7 @@ dist-ssr
 log
 pm2logs
 logs
+static
 
 # Editor directories and files
 .vscode/*
