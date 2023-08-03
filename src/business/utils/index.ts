@@ -2,10 +2,10 @@ import fs from 'fs'
 import path from 'path'
 import dayjs from 'dayjs'
 import { dictMapListType, dictMapType } from '@/types'
-import os from 'os'
 import env from '@/config/default'
 const { APP_PORT, APP_HTTP } = env()
 import bcrypt from 'bcryptjs'
+import { getIpAddress } from '@/business/utils/server'
 
 /** 删除文件
  * @param {string} filename
@@ -232,7 +232,7 @@ export const dictMapFn = (dicts: dictMapListType): dictMapType => {
  */
 export const accessSrcFn = (filesName: string[]) => {
   const srcs = []
-  const ip = os.networkInterfaces()['WLAN'][1].address
+  const ip = getIpAddress()
   filesName.forEach((fileName) => {
     srcs.push(`${APP_HTTP}://${ip}:${APP_PORT}/${fileName}`)
   })

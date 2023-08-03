@@ -4,6 +4,7 @@ import errors from '@/app/err.type'
 const { getListErr } = errors
 import os from 'os'
 import diskInfo from 'als-diskinfo'
+import { getIpAddress } from '@/business/utils/server'
 
 // 获取列表
 export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
@@ -52,8 +53,8 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
 
     // 服务器名称
     data.sys.computerName = os.hostname()
-    // 服务器IP
-    data.sys.computerIp = os.networkInterfaces()['WLAN'][1].address
+    // 服务器IP    
+    data.sys.computerIp = getIpAddress()
     // 操作系统
     data.sys.osName = os.type()
     // 系统架构
