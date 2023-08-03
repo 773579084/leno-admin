@@ -22,6 +22,7 @@ import archiver from 'archiver'
 import SysMenu from '@/mysql/model/system/menu.model'
 import { recordNum } from '@/business/utils/redis'
 import { redisType } from '@/config/redis.config'
+import path from 'path'
 
 // 查询数据库所有的表 -》 并将表数据转换为代码生成表的数据
 export const findAllSqlMid = async (ctx: Context, next: () => Promise<void>) => {
@@ -235,64 +236,70 @@ export const batchGenCodeMid = async (ctx: Context, next: () => Promise<void>) =
 
     // 1 创建放置前端代码和后端代码的文件夹
     const createFile = ['node', 'react']
-    createFile.forEach((fileName) => {
-      fs.mkdir(__dirname + `/${fileName}`, (err) => {
-        if (err) console.log(236, err)
-      })
-    })
-    // 2 遍历生成页面代码写入到文件夹里，然后统一打包成压缩包发送给前端
-    newRows.forEach((row: GenType) => {
-      const frontFile = ['api.ts', 'index.tsx', 'index-tree.tsx', 'react.d.ts']
-      const code = generateCode(row)
-      // 3 创建业务模块 文件
-      createFile.forEach((fileName) => {
-        fs.mkdir(__dirname + `/${fileName}/${row.businessName}`, (err) => {
-          if (err) console.log(246, err)
+    await Promise.all(
+      createFile.map((fileName) => {
+        return fs.mkdir(path.join(__dirname, fileName), (err) => {
+          if (err) console.log(236, err)
         })
       })
+    ).then((res) => {
+      // 2 遍历生成页面代码写入到文件夹里，然后统一打包成压缩包发送给前端
+      // await Promise.all()
+      newRows.forEach(async (row: GenType) => {
+        const frontFile = ['api.ts', 'index.tsx', 'index-tree.tsx', 'react.d.ts']
+        const code = generateCode(row)
+        // 3 创建业务模块 文件
+        await Promise.all(
+          createFile.map((fileName) => {
+            fs.mkdir(path.join(__dirname, `/${fileName}/${row.businessName}`), (err) => {
+              if (err) console.log(246, err)
+            })
+          })
+        ).then((res) => {
+          // 4、将业务文件分别写入 node 和 react 文件夹下
+          for (const key in code) {
+            if (!frontFile.includes(key)) {
+              let newKey = ''
+              if (key.indexOf('node') !== -1) {
+                const keyList = key.split('.')
+                keyList.splice(0, 1)
+                newKey = keyList.join('.')
+              } else {
+                newKey = key
+              }
 
-      // 4、将业务文件分别写入 node 和 react 文件夹下
-      for (const key in code) {
-        if (!frontFile.includes(key)) {
-          let newKey = ''
-          if (key.indexOf('node') !== -1) {
-            const keyList = key.split('.')
-            keyList.splice(0, 1)
-            newKey = keyList.join('.')
-          } else {
-            newKey = key
-          }
+              fs.writeFile(
+                path.join(__dirname, `/node/${row.businessName}/${row.businessName}.${newKey}`),
+                code[key],
+                (err) => {
+                  if (err) console.log(266, err)
+                }
+              )
+            } else {
+              let newKey = ''
+              if (key.indexOf('react') !== -1) {
+                const keyList = key.split('.')
+                keyList.splice(0, 1)
+                newKey = keyList.join('.')
+              } else {
+                newKey = key
+              }
+              const businessName =
+                newKey.indexOf('d.ts') !== -1
+                  ? `${row.businessName}.${newKey}`
+                  : row.businessName + '.' + newKey.split('.')[newKey.split('.').length - 1]
 
-          fs.writeFile(
-            __dirname + `/node/${row.businessName}/${row.businessName}.${newKey}`,
-            code[key],
-            (err) => {
-              if (err) console.log(266, err)
+              fs.writeFile(
+                path.join(__dirname, `/react/${row.businessName}/${businessName}`),
+                code[key],
+                (err) => {
+                  if (err) console.log(282, err)
+                }
+              )
             }
-          )
-        } else {
-          let newKey = ''
-          if (key.indexOf('react') !== -1) {
-            const keyList = key.split('.')
-            keyList.splice(0, 1)
-            newKey = keyList.join('.')
-          } else {
-            newKey = key
           }
-          const businessName =
-            newKey.indexOf('d.ts') !== -1
-              ? `${row.businessName}.${newKey}`
-              : row.businessName + '.' + newKey.split('.')[newKey.split('.').length - 1]
-
-          fs.writeFile(
-            __dirname + `/react/${row.businessName}/${businessName}`,
-            code[key],
-            (err) => {
-              if (err) console.log(282, err)
-            }
-          )
-        }
-      }
+        })
+      })
     })
   } catch (error) {
     console.error('生成代码）', error)
@@ -314,14 +321,14 @@ export const batchGenCodeMid = async (ctx: Context, next: () => Promise<void>) =
 
     archive.pipe(output)
     for (const i of filePaths) {
-      archive.directory(i, __dirname + 'leno-admin/' + i.split('/')[1])
+      archive.directory(i, path.join(__dirname, 'leno-admin/') + i.split('/')[1])
     }
     // 生成完后将zip文件删除
     output.on('close', () => {
       fs.unlinkSync('leno-admin.zip')
       // 6 删除刚刚生成的文件
-      filePaths.forEach((path) => {
-        removeFolder(path)
+      filePaths.forEach((filePath) => {
+        removeFolder(path.join(__dirname, filePath))
       })
     })
     archive.finalize()
