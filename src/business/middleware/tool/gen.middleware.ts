@@ -213,8 +213,6 @@ export const codePreviewMid = async (ctx: Context, next: () => Promise<void>) =>
     return ctx.app.emit('error', sqlErr, ctx)
   }
 }
-
-// 生成压缩包
 export const batchGenCodeMid = async (ctx: Context, next: () => Promise<void>) => {
   const ids = ctx.state.ids
 
@@ -236,108 +234,89 @@ export const batchGenCodeMid = async (ctx: Context, next: () => Promise<void>) =
 
     // 1 创建放置前端代码和后端代码的文件夹
     const createFile = ['node', 'react']
-    await Promise.all(
-      createFile.map((fileName) => {
-        return fs.mkdir(path.join(__dirname, fileName), (err) => {
-          if (err) console.log(236, err)
-        })
+    createFile.forEach((fileName) => {
+      const dirPath = path.join(__dirname, fileName)
+      if (!fs.existsSync(dirPath)) {
+        fs.mkdirSync(dirPath)
+      }
+    })
+
+    // 2 遍历生成页面代码写入到文件夹里，然后统一打包成压缩包发送给前端
+    newRows.forEach((row: GenType) => {
+      const frontFile = ['api.ts', 'index.tsx', 'index-tree.tsx', 'react.d.ts']
+      const code = generateCode(row)
+      createFile.forEach((fileName) => {
+        const dirPath = path.join(__dirname, fileName, row.businessName)
+        if (!fs.existsSync(dirPath)) {
+          fs.mkdirSync(dirPath)
+        }
       })
-    ).then((res) => {
-      // 2 遍历生成页面代码写入到文件夹里，然后统一打包成压缩包发送给前端
-      // await Promise.all()
-      newRows.forEach(async (row: GenType) => {
-        const frontFile = ['api.ts', 'index.tsx', 'index-tree.tsx', 'react.d.ts']
-        const code = generateCode(row)
-        // 3 创建业务模块 文件
-        await Promise.all(
-          createFile.map((fileName) => {
-            fs.mkdir(path.join(__dirname, `/${fileName}/${row.businessName}`), (err) => {
-              if (err) console.log(246, err)
-            })
-          })
-        ).then((res) => {
-          // 4、将业务文件分别写入 node 和 react 文件夹下
-          for (const key in code) {
-            if (!frontFile.includes(key)) {
-              let newKey = ''
-              if (key.indexOf('node') !== -1) {
-                const keyList = key.split('.')
-                keyList.splice(0, 1)
-                newKey = keyList.join('.')
-              } else {
-                newKey = key
-              }
-
-              fs.writeFile(
-                path.join(__dirname, `/node/${row.businessName}/${row.businessName}.${newKey}`),
-                code[key],
-                (err) => {
-                  if (err) console.log(266, err)
-                }
-              )
-            } else {
-              let newKey = ''
-              if (key.indexOf('react') !== -1) {
-                const keyList = key.split('.')
-                keyList.splice(0, 1)
-                newKey = keyList.join('.')
-              } else {
-                newKey = key
-              }
-              const businessName =
-                newKey.indexOf('d.ts') !== -1
-                  ? `${row.businessName}.${newKey}`
-                  : row.businessName + '.' + newKey.split('.')[newKey.split('.').length - 1]
-
-              fs.writeFile(
-                path.join(__dirname, `/react/${row.businessName}/${businessName}`),
-                code[key],
-                (err) => {
-                  if (err) console.log(282, err)
-                }
-              )
-            }
+      for (const key in code) {
+        if (!frontFile.includes(key)) {
+          let newKey = ''
+          if (key.indexOf('node') !== -1) {
+            const keyList = key.split('.')
+            keyList.splice(0, 1)
+            newKey = keyList.join('.')
+          } else {
+            newKey = key
           }
-        })
-      })
+          const filePath = path.join(
+            __dirname,
+            `node/${row.businessName}/${row.businessName}.${newKey}`
+          )
+          fs.writeFileSync(filePath, code[key])
+        } else {
+          let newKey = ''
+          if (key.indexOf('react') !== -1) {
+            const keyList = key.split('.')
+            keyList.splice(0, 1)
+            newKey = keyList.join('.')
+          } else {
+            newKey = key
+          }
+          const businessName =
+            newKey.indexOf('d.ts') !== -1
+              ? `${row.businessName}.${newKey}`
+              : row.businessName + '.' + newKey.split('.')[newKey.split('.').length - 1]
+          const filePath = path.join(__dirname, `react/${row.businessName}/${businessName}`)
+          fs.writeFileSync(filePath, code[key])
+        }
+      }
     })
-  } catch (error) {
-    console.error('生成代码）', error)
-    return ctx.app.emit('error', sqlErr, ctx)
-  }
 
-  try {
-    // 5 压缩刚刚创建的代码文件
-    const filePaths = ['/node', '/react']
-
-    const output = fs.createWriteStream('leno-admin.zip')
+    // 3 压缩刚刚创建的代码文件
+    const outputFilePath = path.join(__dirname, 'leno-admin.zip')
+    const output = fs.createWriteStream(outputFilePath)
     const archive = archiver('zip', {
-      zlib: { level: 9 } // 设置压缩级别
+      zlib: { level: 9 }
     })
 
-    archive.on('error', function (err) {
-      if (err) err
+    archive.on('error', (err) => {
+      throw err
+    })
+
+    createFile.forEach((fileName) => {
+      const dirPath = path.join(__dirname, fileName)
+      archive.directory(dirPath, fileName)
     })
 
     archive.pipe(output)
-    for (const i of filePaths) {
-      archive.directory(i, path.join(__dirname, 'leno-admin/') + i.split('/')[1])
-    }
+    archive.finalize()
+
+    ctx.state.buffer = archive
+    await next()
     // 生成完后将zip文件删除
     output.on('close', () => {
-      fs.unlinkSync('leno-admin.zip')
+      fs.unlinkSync(path.join(__dirname, 'leno-admin.zip'))
       // 6 删除刚刚生成的文件
-      filePaths.forEach((filePath) => {
+      createFile.forEach((filePath) => {
         removeFolder(path.join(__dirname, filePath))
       })
     })
-    archive.finalize()
-    ctx.state.buffer = archive
-
-    await next()
   } catch (error) {
-    console.error('生成压缩包', error)
-    return ctx.app.emit('error', sqlErr, ctx)
+    console.error('生成代码: ', error)
+    return ctx.app.emit('error', error, ctx)
   }
 }
 
@@ -364,26 +343,21 @@ export const genCodeMid = async (ctx: Context, next: () => Promise<void>) => {
     // 统一生成业务文件夹
     newRows.forEach((row: GenType) => {
       // 创建业务文件夹
-      const packageName = row.packageName.split('.').join('/')
-      const genPath = row.genPath === '/' ? `/${packageName}` : row.genPath
-
-      fs.mkdir(`${genPath}/${row.businessName}`, (err) => {
-        if (err) console.log(246, err)
+      fs.mkdir(`${row.genPath}/${row.businessName}`, (err) => {
+        if (err) console.log(347, err)
       })
     })
     // 遍历生成页面代码写入到文件夹里，然后统一打包成压缩包发送给前端
     newRows.forEach(async (row: GenType) => {
       const frontFile = ['api.ts', 'index.tsx', 'index-tree.tsx', 'react.d.ts']
       const code = generateCode(row)
-      const packageName = row.packageName.split('.').join('/')
-      const genPath = row.genPath === '/' ? `/${packageName}` : row.genPath
 
       // 在业务文件内创建 node 和 react 文件夹
-      fs.mkdir(`${genPath}/${row.businessName}/node`, (err) => {
-        if (err) console.log(236, err)
+      fs.mkdir(`${row.genPath}/${row.businessName}/node`, (err) => {
+        if (err) console.log(357, err)
       })
-      fs.mkdir(`${genPath}/${row.businessName}/react`, (err) => {
-        if (err) console.log(236, err)
+      fs.mkdir(`${row.genPath}/${row.businessName}/react`, (err) => {
+        if (err) console.log(360, err)
       })
 
       // 将业务文件分别写入 node 和 react 文件夹下
@@ -398,13 +372,10 @@ export const genCodeMid = async (ctx: Context, next: () => Promise<void>) => {
             newKey = key
           }
 
-          fs.writeFile(
-            `${genPath}/${row.businessName}/node/${row.businessName}.${newKey}`,
-            code[key],
-            (err) => {
-              if (err) console.log(266, err)
-            }
-          )
+          const filePath = `${row.genPath}/${row.businessName}/node/${row.businessName}.${newKey}`
+          fs.writeFile(filePath, code[key], (err) => {
+            if (err) console.log(377, err)
+          })
         } else {
           let newKey = ''
           if (key.indexOf('react') !== -1) {
@@ -418,9 +389,9 @@ export const genCodeMid = async (ctx: Context, next: () => Promise<void>) => {
             newKey.indexOf('d.ts') !== -1
               ? `${row.businessName}.${newKey}`
               : row.businessName + '.' + newKey.split('.')[newKey.split('.').length - 1]
-
-          fs.writeFile(`${genPath}/${row.businessName}/react/${businessName}`, code[key], (err) => {
-            if (err) console.log(282, err)
+          const filePath = `${row.genPath}/${row.businessName}/react/${businessName}`
+          fs.writeFile(filePath, code[key], (err) => {
+            if (err) console.log(394, err)
           })
         }
       }
