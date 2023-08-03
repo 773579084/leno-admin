@@ -4,7 +4,7 @@
 import { Context } from 'koa'
 import { writeLog } from '../utils/log'
 
-const IndexCon = (message?: string) => {
+const IndexCon = (message?: string) => {  
   return async (ctx: Context, next: () => Promise<void>) => {
     try {
       let body = {} as { code: string | number; message: string }

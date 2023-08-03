@@ -152,7 +152,7 @@ export const timeChange = (data: any[]): Array<any> => {
             item[key]
           )
         ) {
-          item[key] = dayjs(item[key]).format('YYYY:MM:DD hh:mm:ss')
+          item[key] = dayjs(item[key]).format('YYYY-MM-DD hh:mm:ss')
         }
         // 如果值为对象
         if (Object.prototype.toString.call(item[key]) === '[object Object]') {

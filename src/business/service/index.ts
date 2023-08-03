@@ -43,6 +43,7 @@ export const getListSer = async <T extends { pageNum?: number; pageSize?: number
     count: res.count,
     rows: res.rows || {}
   }
+    
   return list
 }
 
