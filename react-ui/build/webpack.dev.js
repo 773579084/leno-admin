@@ -69,7 +69,7 @@ module.exports = merge(baseConfig, {
         messages: [
           `App runing at:`,
           `Local: \x1b[38;2;39;184;219mhttp://localhost:${port}\x1b[0m`,
-          `Network: \x1b[38;2;39;184;219mhttp://${getLocalIpAddress()}: ${port}\x1b[0m`,
+          `Network: \x1b[38;2;39;184;219mhttp://${getLocalIpAddress()}:${port}\x1b[0m`,
           ``,
           `Note that the development build is not optimized.`
         ],

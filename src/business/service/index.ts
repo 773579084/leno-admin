@@ -35,6 +35,7 @@ export const getListSer = async <T extends { pageNum?: number; pageSize?: number
     where: {
       ...params
     },
+    order:[['created_at','DESC']],
     ...conditions?.otherWhere
   })
 
