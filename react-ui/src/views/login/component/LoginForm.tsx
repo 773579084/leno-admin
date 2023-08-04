@@ -32,8 +32,6 @@ const LoginForm = (props: any) => {
       }
       setToken(res.data.result?.token as string)
       // 获取访问后台路径(图片使用)
-      console.log(35, process.env.ENV, process.env.BASE_ENV + '/')
-
       if (process.env.ENV === 'development') {
         setAddress(process.env.BASE_ENV + '/')
       } else if (process.env.ENV === 'production') {

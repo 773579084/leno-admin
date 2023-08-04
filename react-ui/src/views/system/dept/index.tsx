@@ -39,8 +39,8 @@ const SysDept: React.FC = () => {
   const [addEditForm] = Form.useForm()
   const { confirm } = Modal
 
-  // 分页
-  const [queryParams, setQueryParams] = useState<IdeptType>({ pageNum: 1, pageSize: 10 })
+  // 搜索
+  const [queryParams, setQueryParams] = useState<IdeptType>({})
   // 列表数据
   const [dataList, setDataList] = useState<ITreeType[]>([])
   // table loading
@@ -74,7 +74,7 @@ const SysDept: React.FC = () => {
   // 查询列表
   const getList = async () => {
     try {
-      const { data } = await getListAPI(queryParams)
+      const { data } = await getListAPI()
 
       data.result.rows.sort((a, b) => {
         const a1 = a.orderNum as number
@@ -93,8 +93,6 @@ const SysDept: React.FC = () => {
   const searchQueryFn = () => {
     let form = queryForm.getFieldsValue()
     setQueryParams({
-      pageNum: 1,
-      pageSize: 10,
       ...form,
     })
   }
@@ -102,7 +100,7 @@ const SysDept: React.FC = () => {
   // 重置
   const resetQueryFn = () => {
     queryForm.resetFields()
-    setQueryParams({ pageNum: 1, pageSize: 10 })
+    setQueryParams({})
   }
 
   // 获取详情

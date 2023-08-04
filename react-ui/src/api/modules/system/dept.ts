@@ -7,7 +7,7 @@ import {
 } from '@/type/modules/system/dept'
 
 // 查询列表
-export const getListAPI = (data: IdeptType) => {
+export const getListAPI = (data?: IdeptType) => {
   return http<IgetListAPI>('GET', '/system/dept/list', data)
 }
 

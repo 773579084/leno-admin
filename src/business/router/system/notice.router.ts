@@ -9,7 +9,7 @@ import {
   putMid,
   delMid,
   getDeptsMid,
-  addNoticeRoleMid,
+  addNoticeDeptMid,
   noticeContentMid
 } from '@/business/middleware/system/notice.middleware'
 import { addEditSchema, judgeIdSchema } from '@/business/schema'
@@ -45,20 +45,19 @@ router.get(
   hasPermi('system:notice:notice'),
   judgeIdSchema(),
   getDeptsMid,
-  formatHandle,
   IndexCon()
 )
 
 // 新增通知部门关系
-router.get(
-  '/notice/addNoticeRole',
+router.post(
+  '/notice/addNoticeDept',
   hasPermi('system:notice:notice'),
-  addNoticeRoleMid,
+  addNoticeDeptMid,
   formatHandle,
   IndexCon()
 )
 
-// 用角色id 获取通知内容（其他模块使用）
+// 用部门id 获取通知内容（其他模块使用）
 router.get(
   '/notice/noticeContent/:id',
   hasPermi('home:list'),

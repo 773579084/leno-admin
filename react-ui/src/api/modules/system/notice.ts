@@ -3,7 +3,10 @@ import {
   InoticeType,
   IsuccessTypeAPI,
   IgetDetailTypeAPI,
-  IgetListAPI
+  IgetListAPI,
+  IgetDeptsAPI,
+  IaddNoticeDeptType,
+  IgetNoticeContentAPI,
 } from '@/type/modules/system/notice'
 
 // 查询列表
@@ -29,4 +32,19 @@ export const getDetailAPI = (id: number) => {
 // 修改
 export const putAPI = (data: InoticeType) => {
   return http<IsuccessTypeAPI>('PUT', '/system/notice', data)
+}
+
+// 用通知id 获取部门
+export const getDeptsAPI = (id: number) => {
+  return http<IgetDeptsAPI>('GET', '/system/notice/depts/' + id)
+}
+
+// 存储通知部门关系
+export const addNoticeDeptAPI = (data: IaddNoticeDeptType) => {
+  return http<IsuccessTypeAPI>('POST', '/system/notice/addNoticeDept', data)
+}
+
+// 用部门id 获取通知内容（其他模块使用）
+export const getNoticeContentAPI = (ids: string) => {
+  return http<IgetNoticeContentAPI>('GET', '/system/notice/noticeContent/' + ids)
 }

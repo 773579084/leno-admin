@@ -13,7 +13,7 @@ import {
   Radio,
   message,
   Checkbox,
-  Divider,
+  Tree,
 } from 'antd'
 import {
   SyncOutlined,
@@ -25,7 +25,16 @@ import {
   ExclamationCircleOutlined,
 } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
-import { getListAPI, delAPI, getDetailAPI, addAPI, putAPI } from '@/api/modules/system/notice'
+import {
+  getListAPI,
+  delAPI,
+  getDetailAPI,
+  addAPI,
+  putAPI,
+  addNoticeDeptAPI,
+  getDeptsAPI,
+  getNoticeContentAPI,
+} from '@/api/modules/system/notice'
 import { getDictsApi } from '@/api/modules/system/dictData'
 import { InoticeType } from '@/type/modules/system/notice'
 import ColorBtn from '@/components/ColorBtn'
@@ -35,13 +44,15 @@ import TextEditor from '@/components/TextEditor'
 import { IDomEditor } from '@wangeditor/editor'
 import { commonDelImgAPI } from '@/api/modules/common'
 import { hasPermi } from '@/utils/auth'
-const CheckboxGroup = Checkbox.Group
-import type { CheckboxChangeEvent } from 'antd/es/checkbox'
-import type { CheckboxValueType } from 'antd/es/checkbox/Group'
+import { CheckboxChangeEvent } from 'antd/lib/checkbox'
+import { ITreeType } from '@/type/modules/system/dept'
+import { getListAPI as getDeptListApi } from '@/api/modules/system/dept'
+import { generalTreeFn } from '@/utils/tree'
 
 const SysNotice: React.FC = () => {
   const [queryForm] = Form.useForm()
   const [addEditForm] = Form.useForm()
+  const [noticeForm] = Form.useForm()
   const { confirm } = Modal
 
   // 分页
@@ -56,10 +67,16 @@ const SysNotice: React.FC = () => {
   const [isAdd, setIsAdd] = useState(true)
   // 通知 model显隐
   const [isNoticeOpen, setIsNoticeOpen] = useState(false)
-  const [checkedList, setCheckedList] = useState<CheckboxValueType[]>()
-  const [indeterminate, setIndeterminate] = useState(true)
-  const [checkAll, setCheckAll] = useState(false)
-  const [plainOptions, setPlainOptions] = useState(['Apple', 'Pear', 'Orange'])
+  // 部门树
+  const [deptTree, setDeptTree] = useState<any>({
+    noticeId: '',
+    treeShow: false,
+    treeAll: false,
+    expandKeys: [],
+    checkedKeys: [],
+    deptData: [],
+    halfDeptCheckedKeys: [],
+  })
   // 非单个禁用
   const [single, setSingle] = useState(true)
   // 非多个禁用
@@ -100,7 +117,7 @@ const SysNotice: React.FC = () => {
   const getList = async () => {
     try {
       const { data } = await getListAPI(queryParams)
-
+      await getNoticeContentAPI('1,2,3,4')
       setDataList({ ...data.result })
       setLoading(false)
     } catch (error) {}
@@ -204,23 +221,72 @@ const SysNotice: React.FC = () => {
 
   // 通知
   const handleNotice = async (id: number) => {
-    console.log(183, id)
-
     try {
+      const { data } = await getDeptListApi()
+      data.result.rows.sort((a, b) => {
+        const a1 = a.orderNum as number
+        const b1 = b.orderNum as number
+        return a1 - b1
+      })
+      const treeData = generalTreeFn(data.result.rows, 'parentId', 'deptId') as ITreeType[]
+
+      // 回显
+      const res = await getDeptsAPI(id)
+      setDeptTree({ ...deptTree, checkedKeys: res.data.result, noticeId: id, deptData: treeData })
       setIsNoticeOpen(true)
     } catch (error) {}
   }
 
-  const onChange = (list: CheckboxValueType[]) => {
-    setCheckedList(list)
-    setIndeterminate(!!list.length && list.length < plainOptions.length)
-    setCheckAll(list.length === plainOptions.length)
+  const handleNoticeFormFinish = async (values: any) => {
+    await addNoticeDeptAPI({ noticeId: deptTree.noticeId, deptIds: deptTree.checkedKeys })
+    setIsNoticeOpen(false)
   }
 
-  const onCheckAllChange = (e: CheckboxChangeEvent) => {
-    setCheckedList(e.target.checked ? plainOptions : [])
-    setIndeterminate(false)
-    setCheckAll(e.target.checked)
+  // 展开
+  const onExpand = (expandedKeysValue: React.Key[]) => {
+    setDeptTree({ ...deptTree, expandKeys: expandedKeysValue })
+  }
+  const onCheck = (checkedKeysValue: React.Key[]) => {
+    setDeptTree({ ...deptTree, checkedKeys: checkedKeysValue })
+  }
+
+  const onShowChange = (e: CheckboxChangeEvent) => {
+    if (e.target.checked) {
+      setDeptTree({ ...deptTree, treeShow: true })
+      const ids: number[] = []
+      function checkChild(list: ITreeType[]) {
+        list.forEach((item) => {
+          if (item.children?.length) {
+            ids.push(item.deptId as number)
+            checkChild(item.children)
+          }
+        })
+      }
+      checkChild(deptTree.deptData)
+      setDeptTree({ ...deptTree, expandKeys: ids, treeShow: true })
+    } else {
+      setDeptTree({ ...deptTree, treeShow: false, expandKeys: [] })
+    }
+  }
+  const onAllChange = (e: CheckboxChangeEvent) => {
+    if (e.target.checked) {
+      setDeptTree({ ...deptTree, treeAll: true })
+      const ids: number[] = []
+      function checkChild(list: ITreeType[]) {
+        list.forEach((item) => {
+          if (item.children?.length) {
+            ids.push(item.deptId as number)
+            checkChild(item.children)
+          } else {
+            ids.push(item.deptId as number)
+          }
+        })
+      }
+      checkChild(deptTree.deptData)
+      setDeptTree({ ...deptTree, checkedKeys: ids, treeAll: true })
+    } else {
+      setDeptTree({ ...deptTree, treeAll: false, checkedKeys: [] })
+    }
   }
 
   // 分页
@@ -536,17 +602,47 @@ const SysNotice: React.FC = () => {
           <Modal
             title={'通知部门'}
             open={isNoticeOpen}
-            onOk={() => {}}
+            onOk={() => noticeForm.submit()}
             onCancel={() => {
               setIsNoticeOpen(false)
+              setDeptTree({
+                treeShow: false,
+                treeAll: false,
+                expandKeys: [],
+                checkedKeys: [],
+                deptData: [],
+                halfDeptCheckedKeys: [],
+              })
             }}
             width={700}
           >
-            <Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>
-              全选
-            </Checkbox>
-            <Divider />
-            <CheckboxGroup options={plainOptions} value={checkedList} onChange={onChange} />
+            <Form form={noticeForm} labelCol={{ span: 5 }} onFinish={handleNoticeFormFinish}>
+              <Form.Item>
+                <Checkbox checked={deptTree.treeShow} onChange={onShowChange}>
+                  展开/折叠
+                </Checkbox>
+                <Checkbox checked={deptTree.treeAll} onChange={onAllChange}>
+                  全选/全不选
+                </Checkbox>
+
+                <Tree
+                  checkable
+                  className="tree-border"
+                  fieldNames={{ key: 'deptId', title: 'deptName' }}
+                  onCheck={(checkedKeysValue, e) => {
+                    setDeptTree({
+                      ...deptTree,
+                      halfDeptCheckedKeys: e.halfCheckedKeys as React.Key[],
+                    })
+                    onCheck(checkedKeysValue as React.Key[])
+                  }}
+                  checkedKeys={deptTree.checkedKeys}
+                  expandedKeys={deptTree.expandKeys}
+                  onExpand={(values) => onExpand(values)}
+                  treeData={deptTree.deptData}
+                />
+              </Form.Item>
+            </Form>
           </Modal>
         </Col>
       </Row>

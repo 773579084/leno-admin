@@ -1,14 +1,21 @@
 import { Context } from 'koa'
-import { getListSer, addSer, putSer, getDetailSer, delSer } from '@/business/service'
+import {
+  getListSer,
+  addSer,
+  putSer,
+  getDetailSer,
+  delSer,
+  queryConditionsData,
+  addAllSer
+} from '@/business/service'
 import { userType } from '@/types'
 import { InoticeQueryType, InoticeQuerySerType, Inotice, InoticeSer } from '@/types/system/notice'
 import errors from '@/app/err.type'
 import { formatHumpLineTransfer, removeSpecifyFile } from '@/business/utils'
-import { excelJsExport } from '@/business/utils/excel'
-import { excelBaseStyle } from '@/business/public/excelMap'
 import SysNotice from '@/mysql/model/system/notice.model'
 import { Op } from 'sequelize'
-const { uploadParamsErr, getListErr, sqlErr, delErr, exportExcelErr } = errors
+import SysNoticeDept from '@/mysql/model/system/sys_notice_role.model'
+const { uploadParamsErr, getListErr, sqlErr, delErr } = errors
 
 // 获取列表
 export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
@@ -54,6 +61,9 @@ export const delMid = async (ctx: Context, next: () => Promise<void>) => {
       JSON.parse(imgs).forEach((item: string) => removeSpecifyFile(item))
     }
 
+    // 删除noticeId之前的关系
+    await delSer(SysNoticeDept, { notice_id: ctx.state.ids })
+
     await delSer(SysNotice, { notice_id: ctx.state.ids })
   } catch (error) {
     console.error('删除失败', error)
@@ -97,9 +107,10 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
 // 用通知id 获取部门
 export const getDeptsMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    const res = await getDetailSer<InoticeSer>(SysNotice, { notice_id: ctx.state.ids })
-
-    ctx.state.formatData = res
+    const depts = await queryConditionsData(SysNoticeDept, { notice_id: ctx.state.ids })
+    ctx.state.formatData = depts.map((item: any) => {
+      return item.dept_id
+    })
   } catch (error) {
     console.error('详细数据查询错误', error)
     return ctx.app.emit('error', sqlErr, ctx)
@@ -108,26 +119,49 @@ export const getDeptsMid = async (ctx: Context, next: () => Promise<void>) => {
   await next()
 }
 
-// 新增通知角色关系
-export const addNoticeRoleMid = async (ctx: Context, next: () => Promise<void>) => {
+// 存储通知部门关系
+export const addNoticeDeptMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    const res = await getDetailSer<InoticeSer>(SysNotice, { notice_id: ctx.state.ids })
+    const noticeDept = ctx.request?.body as {
+      noticeId: string
+      deptIds: string[]
+    }
+
+    // 删除noticeId之前的关系
+    await delSer(SysNoticeDept, { notice_id: noticeDept.noticeId })
+
+    // 重新新增关系
+    const res = await addAllSer(
+      SysNoticeDept,
+      noticeDept.deptIds.map((item) => {
+        return {
+          notice_id: noticeDept.noticeId,
+          dept_id: item
+        }
+      })
+    )
 
     ctx.state.formatData = res
   } catch (error) {
-    console.error('详细数据查询错误', error)
+    console.error('存储通知部门关系', error)
     return ctx.app.emit('error', sqlErr, ctx)
   }
 
   await next()
 }
 
-// 用角色id 获取通知内容（其他模块使用）
+// 用部门id 获取通知内容（其他模块使用）
 export const noticeContentMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    const res = await getDetailSer<InoticeSer>(SysNotice, { notice_id: ctx.state.ids })
+    // 获取noticeids
+    const noticeList = await queryConditionsData(SysNoticeDept, { dept_id: ctx.state.ids })
 
-    ctx.state.formatData = res
+    // 用noticeids获取notice们的noticeContent
+    const noticeIds = [...new Set(noticeList.map((item) => item.notice_id))]
+
+    const notices = await queryConditionsData(SysNotice, { notice_id: noticeIds })
+
+    ctx.state.formatData = notices
   } catch (error) {
     console.error('详细数据查询错误', error)
     return ctx.app.emit('error', sqlErr, ctx)

@@ -1,8 +1,6 @@
 // 前端 类型文件
 // 所有数据通用
 export interface IdeptType {
-  pageNum?: number
-  pageSize?: number
   deptId?: number
   parentId?: number
   ancestors?: string
