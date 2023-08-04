@@ -7,6 +7,8 @@ import { Op } from 'sequelize'
 import { delFiles } from '../utils'
 import { delSer } from '../service'
 import { writeJobLog } from './log'
+import path from 'path'
+import fs from 'fs'
 
 /**
  * 测试 立即执行
@@ -30,15 +32,21 @@ const addEditFn = (ctx: Context, job: IjobSer, a: string, b: string, c: string) 
  */
 const timingCleanLog = async (ctx: Context, job: IjobSer) => {
   try {
-    // 清除 log 下的日志文件
-    delFiles(__dirname.split('/')[0] + `/log`)
-    // 清除 操作日志
-    await delSer(SysOperLog, { oper_id: { [Op.ne]: null } })
-    // 清除 登录日志
-    await delSer(SysLogininfor, { info_id: { [Op.ne]: null } })
-    // 清除 调度日志
-    await delSer(MonitorJobLog, { job_log_id: { [Op.ne]: null } })
-    writeJobLog(ctx, job, '0', '定时清理 log成功')
+    const logsPath = path.join(__dirname, '../../../logs')
+    // 判断有无该文件夹
+    if (fs.existsSync(logsPath)) {
+      // 清除 logs 下的日志文件
+      delFiles(logsPath)
+      // 清除 操作日志
+      await delSer(SysOperLog, { oper_id: { [Op.ne]: null } })
+      // 清除 登录日志
+      await delSer(SysLogininfor, { info_id: { [Op.ne]: null } })
+      // 清除 调度日志
+      await delSer(MonitorJobLog, { job_log_id: { [Op.ne]: null } })
+      writeJobLog(ctx, job, '0', '定时清理 log成功')
+    } else {
+      writeJobLog(ctx, job, '1', '查询无logs文件夹')
+    }
   } catch (error) {
     console.error('定时清理 log失败', error)
     writeJobLog(ctx, job, '1', '定时清理 log失败')

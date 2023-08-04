@@ -57,11 +57,10 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
 
     // 4 提取前端需要信息
     const newV = values.map((item, index) => {
-      
       return {
         tokenId: onlineTokens[index],
         os: item?.os,
-        loginTime: dayjs(item.loginTime).format('YYYY-MM-DD HH:mm:ss'),
+        loginTime: item.loginTime && dayjs(item.loginTime).format('YYYY-MM-DD HH:mm:ss'),
         loginLocation: item.address,
         deptName: item.userInfo.dept.deptName,
         ipaddr: item.ip,
