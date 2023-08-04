@@ -44,8 +44,6 @@ const timingCleanLog = async (ctx: Context, job: IjobSer) => {
       // 清除 调度日志
       await delSer(MonitorJobLog, { job_log_id: { [Op.ne]: null } })
       writeJobLog(ctx, job, '0', '定时清理 log成功')
-    } else {
-      writeJobLog(ctx, job, '1', '查询无logs文件夹')
     }
   } catch (error) {
     console.error('定时清理 log失败', error)
