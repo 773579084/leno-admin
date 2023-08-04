@@ -116,12 +116,12 @@ const Menu: React.FC = () => {
 
   const handleEditForm = async (id: number) => {
     try {
-      setIsModalOpen(true)
-      setIsAdd(false)
       setCurrentId(id)
       const { data } = await getDetailAPI(id)
       addEditForm.setFieldsValue(data.result)
       setFormData({ menuType: data.result?.menuType as string, icon: data.result?.icon as string })
+      setIsModalOpen(true)
+      setIsAdd(false)
     } catch (error) {}
   }
 

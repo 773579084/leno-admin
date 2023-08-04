@@ -12,6 +12,8 @@ import {
   Modal,
   Radio,
   message,
+  Checkbox,
+  Divider,
 } from 'antd'
 import {
   SyncOutlined,
@@ -19,6 +21,7 @@ import {
   PlusOutlined,
   EditOutlined,
   DeleteOutlined,
+  BellOutlined,
   ExclamationCircleOutlined,
 } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
@@ -32,6 +35,9 @@ import TextEditor from '@/components/TextEditor'
 import { IDomEditor } from '@wangeditor/editor'
 import { commonDelImgAPI } from '@/api/modules/common'
 import { hasPermi } from '@/utils/auth'
+const CheckboxGroup = Checkbox.Group
+import type { CheckboxChangeEvent } from 'antd/es/checkbox'
+import type { CheckboxValueType } from 'antd/es/checkbox/Group'
 
 const SysNotice: React.FC = () => {
   const [queryForm] = Form.useForm()
@@ -48,6 +54,12 @@ const SysNotice: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   // 新增编辑判断
   const [isAdd, setIsAdd] = useState(true)
+  // 通知 model显隐
+  const [isNoticeOpen, setIsNoticeOpen] = useState(false)
+  const [checkedList, setCheckedList] = useState<CheckboxValueType[]>()
+  const [indeterminate, setIndeterminate] = useState(true)
+  const [checkAll, setCheckAll] = useState(false)
+  const [plainOptions, setPlainOptions] = useState(['Apple', 'Pear', 'Orange'])
   // 非单个禁用
   const [single, setSingle] = useState(true)
   // 非多个禁用
@@ -190,6 +202,28 @@ const SysNotice: React.FC = () => {
     } catch (error) {}
   }
 
+  // 通知
+  const handleNotice = async (id: number) => {
+    console.log(183, id)
+
+    try {
+      setIsNoticeOpen(true)
+    } catch (error) {}
+  }
+
+  const handleNoticeFormFinish = async () => {}
+  const onChange = (list: CheckboxValueType[]) => {
+    setCheckedList(list)
+    setIndeterminate(!!list.length && list.length < plainOptions.length)
+    setCheckAll(list.length === plainOptions.length)
+  }
+
+  const onCheckAllChange = (e: CheckboxChangeEvent) => {
+    setCheckedList(e.target.checked ? plainOptions : [])
+    setIndeterminate(false)
+    setCheckAll(e.target.checked)
+  }
+
   // 分页
   const onPagChange = async (pageNum: number, pageSize: number) => {
     setQueryParams({ pageNum, pageSize })
@@ -265,8 +299,18 @@ const SysNotice: React.FC = () => {
       key: 'operation',
       align: 'center',
       fixed: 'right',
+      width: 240,
       render: (_: any, record: InoticeType) => (
         <div>
+          <Button
+            hidden={hasPermi('system:notice:notice')}
+            onClick={() => handleNotice(record.noticeId as number)}
+            size="small"
+            icon={<BellOutlined />}
+            type="link"
+          >
+            通知
+          </Button>
           <Button
             hidden={hasPermi('system:notice:edit')}
             onClick={() => handleEditForm(record.noticeId as number)}
@@ -426,7 +470,7 @@ const SysNotice: React.FC = () => {
             />
           </div>
 
-          {/* 添加 编辑 用户 */}
+          {/* 添加 编辑 */}
           <Modal
             title={isAdd ? '添加通知公告' : '编辑通知公告'}
             open={isModalOpen}
@@ -487,6 +531,43 @@ const SysNotice: React.FC = () => {
                 <TextEditor ref={editorRef} editorHtml={editorHtml} imgs={imgs} />
               </Form.Item>
             </Form>
+          </Modal>
+
+          {/* 通知角色 */}
+          <Modal
+            title={'通知角色'}
+            open={isNoticeOpen}
+            onCancel={() => {
+              setIsNoticeOpen(false)
+            }}
+            footer={[
+              <Button type="primary" onClick={() => {}} key={2}>
+                通知
+              </Button>,
+              <Button
+                key={1}
+                onClick={() => {
+                  setIsNoticeOpen(false)
+                }}
+              >
+                确认
+              </Button>,
+              <Button
+                key={3}
+                onClick={() => {
+                  setIsNoticeOpen(false)
+                }}
+              >
+                取消
+              </Button>,
+            ]}
+            width={700}
+          >
+            <Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>
+              全选
+            </Checkbox>
+            <Divider />
+            <CheckboxGroup options={plainOptions} value={checkedList} onChange={onChange} />
           </Modal>
         </Col>
       </Row>
