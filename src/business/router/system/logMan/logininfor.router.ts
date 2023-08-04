@@ -15,7 +15,7 @@ import SysLogininfor from '@/mysql/model/system/logininfor.model'
 import { exportExcelSer } from '@/business/service'
 import { hasPermi } from '@/business/middleware/common/auth'
 
-const router = new Router({ prefix: '/system' })
+const router = new Router({ prefix: '/system/logMan' })
 // 查询列表
 router.get(
   '/logininfor/list',

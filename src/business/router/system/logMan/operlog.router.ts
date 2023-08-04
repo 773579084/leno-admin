@@ -15,7 +15,7 @@ import SysOperLog from '@/mysql/model/system/operlog.model'
 import { exportExcelSer } from '@/business/service'
 import { hasPermi } from '@/business/middleware/common/auth'
 
-const router = new Router({ prefix: '/system' })
+const router = new Router({ prefix: '/system/logMan' })
 // 查询列表
 router.get('/operlog/list', hasPermi('monitor:operlog:query'), getListMid, formatHandle, IndexCon())
 

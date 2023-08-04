@@ -8,20 +8,20 @@ import {
 
 // 查询列表
 export const getListAPI = (data: IoperlogType) => {
-  return http<IgetListAPI>('GET', '/system/operlog/list', data)
+  return http<IgetListAPI>('GET', '/system/logMan/operlog/list', data)
 }
 
 // 删除
 export function delAPI(ids: string) {
-  return http<IsuccessTypeAPI>('DELETE', '/system/operlog/' + ids)
+  return http<IsuccessTypeAPI>('DELETE', '/system/logMan/operlog/' + ids)
 }
 
 // 清空
 export function cleanAPI() {
-  return http<IsuccessTypeAPI>('DELETE', '/system/operlog/clean')
+  return http<IsuccessTypeAPI>('DELETE', '/system/logMan/operlog/clean')
 }
 
 // 获取详细数据
 export const getDetailAPI = (id: number) => {
-  return http<IgetDetailTypeAPI>('GET', '/system/operlog/detail/' + id)
+  return http<IgetDetailTypeAPI>('GET', '/system/logMan/operlog/detail/' + id)
 }

@@ -53,6 +53,8 @@ export const writeLog = async (
       // 1 查询日志所属的 系统模块 操作类型
       const menus = await queryMenuMes()
       const { business_type, title } = filterModule(menus, ctx)
+      console.log(56, ctx.request.headers['x-forwarded-for'], ctx.request.headers['x-real-ip'])
+
       // 2 查询 用户信息 拿去请求用户 设备信息
       if (user) {
         const userMes = await queryKeyValue(user.session)
@@ -181,26 +183,23 @@ export const filterModule = (
 ): { title: string; business_type: string } => {
   const urlList = ctx.request.url.split('/')
   let title = '',
-    business_type = ''
+    business_type = '',
+    judgeElement = []
 
   // 系统模块判断
   function forMenus(menus: RouteType[]) {
     menus.forEach((menu) => {
-      // 如果 menu.name是 动态路由则将动态路由/:去掉
-      if (menu.name.indexOf('/:') !== -1) {
-        menu.name = menu.name.split('/:')[0]
-      }
-
-      if (ctx.request.url.indexOf(menu.name) !== -1) {
-        if (menu.children) {
-          forMenus(menu.children)
-        } else {
-          title = menu.meta.title
-        }
+      if (menu.children) {
+        forMenus(menu.children)
+      } else {
+        judgeElement.push({ element: menu.element, title: menu.meta.title })
       }
     })
   }
   forMenus(menus)
+  // 判断请求请求路径与哪个element符合，赋值title
+  const findObj = judgeElement.find((item) => ctx.request.url.indexOf(item.element) !== -1)
+  findObj ? (title = findObj.title) : (title = '通用模块')
 
   // 操作类型
   const specialEvents = [
