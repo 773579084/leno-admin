@@ -94,30 +94,44 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
   }
 }
 
-// 导出
-export const exportMid = async (ctx: Context, next: () => Promise<void>) => {
+// 用通知id 获取部门
+export const getDeptsMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    const list = ctx.state.formatData
-    const dicts = ctx.state.dicts
+    const res = await getDetailSer<InoticeSer>(SysNotice, { notice_id: ctx.state.ids })
 
-    // 表格数据
-    const buffer = await excelJsExport({
-      sheetName: '通知公告表',
-      style: excelBaseStyle,
-      headerColumns: [
-        { title: '公告标题', dataIndex: 'notice_title' },
-        { title: '公告类型（1通知 2公告）', dataIndex: 'notice_type' },
-        { title: '公告状态（0正常 1关闭）', dataIndex: 'status' },
-        { title: '创建者', dataIndex: 'create_by' },
-        { title: '创建时间', dataIndex: ' created_at' }
-      ],
-      tableData: list,
-      dicts: dicts
-    })
-    ctx.state.buffer = buffer
-    await next()
+    ctx.state.formatData = res
   } catch (error) {
-    console.error('导出失败', error)
-    return ctx.app.emit('error', exportExcelErr, ctx)
+    console.error('详细数据查询错误', error)
+    return ctx.app.emit('error', sqlErr, ctx)
   }
+
+  await next()
+}
+
+// 新增通知角色关系
+export const addNoticeRoleMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    const res = await getDetailSer<InoticeSer>(SysNotice, { notice_id: ctx.state.ids })
+
+    ctx.state.formatData = res
+  } catch (error) {
+    console.error('详细数据查询错误', error)
+    return ctx.app.emit('error', sqlErr, ctx)
+  }
+
+  await next()
+}
+
+// 用角色id 获取通知内容（其他模块使用）
+export const noticeContentMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    const res = await getDetailSer<InoticeSer>(SysNotice, { notice_id: ctx.state.ids })
+
+    ctx.state.formatData = res
+  } catch (error) {
+    console.error('详细数据查询错误', error)
+    return ctx.app.emit('error', sqlErr, ctx)
+  }
+
+  await next()
 }

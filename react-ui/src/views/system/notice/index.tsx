@@ -211,7 +211,6 @@ const SysNotice: React.FC = () => {
     } catch (error) {}
   }
 
-  const handleNoticeFormFinish = async () => {}
   const onChange = (list: CheckboxValueType[]) => {
     setCheckedList(list)
     setIndeterminate(!!list.length && list.length < plainOptions.length)
@@ -533,34 +532,14 @@ const SysNotice: React.FC = () => {
             </Form>
           </Modal>
 
-          {/* 通知角色 */}
+          {/* 通知部门 */}
           <Modal
-            title={'通知角色'}
+            title={'通知部门'}
             open={isNoticeOpen}
+            onOk={() => {}}
             onCancel={() => {
               setIsNoticeOpen(false)
             }}
-            footer={[
-              <Button type="primary" onClick={() => {}} key={2}>
-                通知
-              </Button>,
-              <Button
-                key={1}
-                onClick={() => {
-                  setIsNoticeOpen(false)
-                }}
-              >
-                确认
-              </Button>,
-              <Button
-                key={3}
-                onClick={() => {
-                  setIsNoticeOpen(false)
-                }}
-              >
-                取消
-              </Button>,
-            ]}
             width={700}
           >
             <Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>

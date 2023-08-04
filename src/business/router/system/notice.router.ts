@@ -8,12 +8,11 @@ import {
   getDetailMid,
   putMid,
   delMid,
-  exportMid
+  getDeptsMid,
+  addNoticeRoleMid,
+  noticeContentMid
 } from '@/business/middleware/system/notice.middleware'
 import { addEditSchema, judgeIdSchema } from '@/business/schema'
-import { exportExcelMid } from '@/business/middleware/common/common.middleware'
-import SysNotice from '@/mysql/model/system/notice.model'
-import { exportExcelSer } from '@/business/service'
 import { addJudg, putJudg } from '@/business/schema/system/notice.schema'
 import { hasPermi } from '@/business/middleware/common/auth'
 
@@ -39,5 +38,34 @@ router.get(
 
 // 修改
 router.put('/notice', hasPermi('system:notice:edit'), addEditSchema(putJudg), putMid, IndexCon())
+
+// 用通知id 获取部门
+router.get(
+  '/notice/depts/:id',
+  hasPermi('system:notice:notice'),
+  judgeIdSchema(),
+  getDeptsMid,
+  formatHandle,
+  IndexCon()
+)
+
+// 新增通知部门关系
+router.get(
+  '/notice/addNoticeRole',
+  hasPermi('system:notice:notice'),
+  addNoticeRoleMid,
+  formatHandle,
+  IndexCon()
+)
+
+// 用角色id 获取通知内容（其他模块使用）
+router.get(
+  '/notice/noticeContent/:id',
+  hasPermi('home:list'),
+  judgeIdSchema(),
+  noticeContentMid,
+  formatHandle,
+  IndexCon()
+)
 
 module.exports = router
