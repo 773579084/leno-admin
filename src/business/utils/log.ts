@@ -53,7 +53,6 @@ export const writeLog = async (
       // 1 查询日志所属的 系统模块 操作类型
       const menus = await queryMenuMes()
       const { business_type, title } = filterModule(menus, ctx)
-      console.log(56, ctx.request.headers['x-forwarded-for'], ctx.request.headers['x-real-ip'])
 
       // 2 查询 用户信息 拿去请求用户 设备信息
       if (user) {
@@ -266,7 +265,7 @@ export const filterModule = (
  */
 export const queryUserMachine = async (ctx: Context): Promise<ImachineType> => {
   // 用户 ip 及 地址
-  const ip = ctx.request.header.origin?.split('//')[1].split(':')[0]
+  const ip = getUserIp(ctx)
   const address = await queryIpAdress(ip)
   // 浏览器
   const browser = ctx.userAgent._agent.browser + ' ' + ctx.userAgent._agent.version.split('.')[0]
@@ -299,4 +298,13 @@ export const queryIpAdress = async (ip: string) => {
   } catch (error) {
     console.error(' ip 查询地址失败', error)
   }
+}
+
+/**
+ * 获取访问用户的真是ip
+ * @param ctx
+ */
+export const getUserIp = (ctx: Context) => {
+  const ip = (ctx.request.headers['x-real-ip'] || ctx.request.ip) as string
+  return ip.split(':').slice(-1)[0]
 }
