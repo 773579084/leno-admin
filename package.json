@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development tsnd -r tsconfig-paths/register --respawn src/main.ts",
+    "docker:dev": "cross-env NODE_ENV=docker tsnd -r tsconfig-paths/register --respawn src/main.ts",
     "remote:dev": "cross-env NODE_ENV=remote tsnd -r tsconfig-paths/register --respawn src/main.ts",
     "build": "npm-run-all resetFolder compile && tsc-alias",
     "prod:start": "cross-env NODE_ENV=production node dist/main.js",

@@ -19,6 +19,8 @@ import { getSetsValue, removeSetKeys } from '@/business/utils/redis'
 export const auth = async (ctx: Context, next: () => Promise<void>) => {
   const { authorization = '' } = ctx.request.header
   const token = authorization.replace('Bearer ', '')
+  // 如果为访问静态文件时，直接放行
+  console.log(23)
 
   // 权限白名单
   if (!authWhites.includes(ctx.request.url)) {
