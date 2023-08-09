@@ -17,6 +17,8 @@ const {
 import { userExcelHeader } from '@/business/public/excelMap'
 import XLSX from 'exceljs'
 import { ModelStatic, Op } from 'sequelize'
+import env from '@/config/default'
+const { IMG_URL } = env()
 
 // 下划线转驼峰
 export const formatHandle = async (ctx: Context, next: () => Promise<void>) => {
@@ -234,7 +236,7 @@ export const commondUploadImgMid = async (ctx: Context, next: () => Promise<void
     const basePath = path.basename(filepath) as string
 
     ctx.state.formatData = {
-      imgName: basePath
+      imgName: IMG_URL + basePath
     }
     await next()
   } catch (error) {
@@ -265,14 +267,13 @@ export const commondUploadFilesMid = async (ctx: Context, next: () => Promise<vo
     if (Object.prototype.toString.call(files) === '[object Object]') {
       // 单
       const { newFilename } = files
-
-      ctx.state.formatData = [newFilename]
+      ctx.state.formatData = [IMG_URL + newFilename]
     } else {
       // 多
       const fileNames = []
       files.forEach((file: any) => {
         const { newFilename } = file
-        fileNames.push(newFilename)
+        fileNames.push(IMG_URL + newFilename)
       })
 
       ctx.state.formatData = fileNames

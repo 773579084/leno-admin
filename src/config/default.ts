@@ -22,7 +22,7 @@ export default () => {
       REDIS_PASSWORD: 'admin123',
       REDIS_DB: 0,
       // 图片路径
-      IMG_URL: 'http://localhost:9090/static'
+      IMG_URL: 'http://localhost:9090/static/'
     }
   } else if (process.env.NODE_ENV === 'docker') {
     return {
@@ -43,7 +43,9 @@ export default () => {
       REDIS_PORT: 6379,
       REDIS_HOST: 'host.docker.internal',
       REDIS_PASSWORD: 'admin123',
-      REDIS_DB: 0
+      REDIS_DB: 0,
+      // 图片路径
+      IMG_URL: 'http://localhost:9090/static'
     }
   } else if (process.env.NODE_ENV === 'remote') {
     return {
@@ -64,7 +66,9 @@ export default () => {
       REDIS_PORT: 6379,
       REDIS_HOST: '120.79.243.62',
       REDIS_PASSWORD: 'admin123',
-      REDIS_DB: 0
+      REDIS_DB: 0,
+      // 图片路径
+      IMG_URL: 'http://localhost:9090/static'
     }
   } else if (process.env.NODE_ENV === 'production') {
     return {
@@ -85,7 +89,9 @@ export default () => {
       REDIS_PORT: 6379,
       REDIS_HOST: 'redis',
       REDIS_PASSWORD: 'admin123',
-      REDIS_DB: 0
+      REDIS_DB: 0,
+      // 图片路径
+      IMG_URL: 'http://localhost:9090/static'
     }
   }
 }

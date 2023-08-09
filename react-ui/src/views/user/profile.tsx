@@ -35,7 +35,6 @@ const Profile = () => {
   const [userInfo, setUserInfo] = useState<userType>({})
   const {
     useUserStore: { setProfile },
-    useGlobalStore: { address },
   } = useStore()
 
   // 初始化将 userInfo 内的头像放置到此处，如果没有默认用 蜡笔小新头像
@@ -50,7 +49,7 @@ const Profile = () => {
       } = await getProfileAPI()
       setUserInfo(result)
 
-      result.avatar ? setImageUrl(address + result.avatar) : setImageUrl(avatarDef)
+      result.avatar ? setImageUrl(result.avatar) : setImageUrl(avatarDef)
     } catch (error) {}
   }
 

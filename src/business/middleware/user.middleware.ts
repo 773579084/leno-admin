@@ -23,7 +23,7 @@ import SysPost from '@/mysql/model/system/post.model'
 import { queryUserMachine } from '../utils/log'
 import { saveKey, updateUserInfo } from '../utils/redis'
 import env from '@/config/default'
-const { APP_PORT, APP_HTTP, APP_HOST } = env()
+const { IMG_URL } = env()
 import svgCode from '../utils/svgCode'
 import { IuserTokenType } from '@/types/auth'
 import { getUserInfoAll } from '../utils/userInfo'
@@ -202,6 +202,7 @@ export const loginMid = async (ctx: Context, next: () => Promise<void>) => {
 
     // 2-3 获取用户的个人信息（权限部门等）
     const data = await getUserInfoAll(userId)
+    data.userInfo.avatar = IMG_URL + data.userInfo.avatar
 
     // 3 将登录基本信息存储到 redis的login_token，并且设置过期时间
     addSession(hash, { ...machine, loginTime: new Date(), ...data })
@@ -309,7 +310,7 @@ export const uploadAvatarMid = async (ctx: Context, next: () => Promise<void>) =
     // 把用户头像名称保存到数据库
     if (await updateAvatarSer({ userId, basePath, update_by: userName })) {
       ctx.state.formatData = {
-        avatarImg: basePath
+        avatarImg: IMG_URL + basePath
       }
     } else {
       console.error('数据库用户头像地址更新失败')
@@ -333,7 +334,7 @@ export const queryUserInfoMid = async (ctx: Context, next: () => Promise<void>) 
   ctx.state.formatData = {
     userInfo: {
       ...userData.userInfo,
-      avatar: userData.userInfo.avatar
+      avatar: IMG_URL + userData.userInfo.avatar
     },
     roles: userData.roles,
     permissions: userData.permissions

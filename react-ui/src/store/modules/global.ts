@@ -16,11 +16,6 @@ export default class useGlobalStore {
       properties: ['siderStatus'],
       storage: window.localStorage,
     })
-    makePersistable(this, {
-      name: 'address',
-      properties: ['address'],
-      storage: window.localStorage,
-    })
   }
 
   // change Loading
@@ -40,9 +35,5 @@ export default class useGlobalStore {
 
   changeLogout = (bol: boolean) => {
     this.logout = bol
-  }
-
-  setAddress = (string: string) => {
-    this.address = string
   }
 }

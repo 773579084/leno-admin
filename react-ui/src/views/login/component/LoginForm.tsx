@@ -9,14 +9,10 @@ import classes from '../index.module.scss'
 // cookie
 import { setToken } from '@/utils/auth'
 import { parseSVG } from '@/utils'
-import useStore from '@/store'
 
 const LoginForm = (props: any) => {
   const navigate = useNavigate()
   const [form] = Form.useForm()
-  const {
-    useGlobalStore: { setAddress },
-  } = useStore()
 
   // props
   const { loginData, changeIsLogin, svgCode, getCaptchaImage } = props
@@ -31,13 +27,9 @@ const LoginForm = (props: any) => {
         return
       }
       setToken(res.data.result?.token as string)
-      // 获取访问后台路径(图片使用)
-      if (process.env.ENV === 'development') {
-        setAddress(process.env.BASE_ENV + '/')
-      } else if (process.env.ENV === 'production') {
-        setAddress(window.location.protocol + '//' + window.location.host + '/')
-      }
       message.success('登录成功')
+      console.log(41)
+
       navigate('/home')
     } catch (error) {}
   }

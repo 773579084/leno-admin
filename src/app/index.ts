@@ -36,7 +36,7 @@ app.use(
 )
 
 // 配置静态资源网址访问
-app.use(koaStatic(path.join(__dirname, '../../static')))
+app.use(koaStatic(path.join(__dirname, '../../')))
 
 // 统一权限判断
 app.use(auth)
