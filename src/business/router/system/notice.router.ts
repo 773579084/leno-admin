@@ -7,10 +7,7 @@ import {
   getAddMid,
   getDetailMid,
   putMid,
-  delMid,
-  getDeptsMid,
-  addNoticeDeptMid,
-  noticeContentMid
+  delMid
 } from '@/business/middleware/system/notice.middleware'
 import { addEditSchema, judgeIdSchema } from '@/business/schema'
 import { addJudg, putJudg } from '@/business/schema/system/notice.schema'
@@ -38,33 +35,5 @@ router.get(
 
 // 修改
 router.put('/notice', hasPermi('system:notice:edit'), addEditSchema(putJudg), putMid, IndexCon())
-
-// 用通知id 获取部门
-router.get(
-  '/notice/depts/:id',
-  hasPermi('system:notice:notice'),
-  judgeIdSchema(),
-  getDeptsMid,
-  IndexCon()
-)
-
-// 新增通知部门关系
-router.post(
-  '/notice/addNoticeDept',
-  hasPermi('system:notice:notice'),
-  addNoticeDeptMid,
-  formatHandle,
-  IndexCon()
-)
-
-// 用部门id 获取通知内容（其他模块使用）
-router.get(
-  '/notice/noticeContent/:id',
-  hasPermi('home:list'),
-  judgeIdSchema(),
-  noticeContentMid,
-  formatHandle,
-  IndexCon()
-)
 
 module.exports = router

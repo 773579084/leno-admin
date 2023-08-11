@@ -334,7 +334,7 @@ export const queryUserInfoMid = async (ctx: Context, next: () => Promise<void>) 
   ctx.state.formatData = {
     userInfo: {
       ...userData.userInfo,
-      avatar: IMG_URL + userData.userInfo.avatar
+      avatar: userData.userInfo.avatar
     },
     roles: userData.roles,
     permissions: userData.permissions
