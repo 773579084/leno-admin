@@ -39,23 +39,3 @@ export interface IsuccessTypeAPI {
   message: string
   result?: null
 }
-
-// 用通知id 获取部门
-export interface IgetDeptsAPI {
-  code: number
-  message: string
-  result: string[]
-}
-
-// 新增通知部门关系
-export interface IaddNoticeDeptType {
-  noticeId: string
-  deptIds: string[]
-}
-
-// 用部门id 获取通知内容（其他模块使用）
-export interface IgetNoticeContentAPI {
-  code: number
-  message: string
-  result: string[]
-}

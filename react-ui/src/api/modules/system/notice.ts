@@ -4,9 +4,6 @@ import {
   IsuccessTypeAPI,
   IgetDetailTypeAPI,
   IgetListAPI,
-  IgetDeptsAPI,
-  IaddNoticeDeptType,
-  IgetNoticeContentAPI,
 } from '@/type/modules/system/notice'
 
 // 查询列表

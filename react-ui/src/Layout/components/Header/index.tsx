@@ -37,6 +37,7 @@ const HeaderCom: React.FC<PropsType> = ({ collapsed, setCollapsed }) => {
 
         <div className={classes['header-right']}>
           <ScreenFull />
+          <NoticeCom />
           <Tooltip title="源码地址">
             <GithubOutlined
               style={{ fontSize: 18, cursor: 'pointer' }}
@@ -47,7 +48,6 @@ const HeaderCom: React.FC<PropsType> = ({ collapsed, setCollapsed }) => {
             <QuestionCircleOutlined style={{ fontSize: 18, cursor: 'pointer' }} />
           </Tooltip>
 
-          <NoticeCom />
           <AvatarCom />
         </div>
       </Header>
