@@ -27,7 +27,7 @@ import {
   CheckOutlined,
   DownOutlined,
 } from '@ant-design/icons'
-import classess from './index.module.scss'
+import classes from './index.module.scss'
 import { SketchPicker } from 'react-color'
 
 const avatarCom = () => {
@@ -49,7 +49,6 @@ const avatarCom = () => {
         theme: { primaryColor: layoutSet.theme },
       })
     }
-    console.log(53, userInfo)
   }, [])
 
   const handleOk = async () => {
@@ -165,18 +164,18 @@ const avatarCom = () => {
         onClose={onClose}
         open={open}
         closable={false}
-        className={classess['layout-drawer']}
+        className={classes['layout-drawer']}
       >
-        <h3 className={classess['title']}>主题风格设置</h3>
+        <h3 className={classes['title']}>主题风格设置</h3>
 
-        <Row className={classess['theme']} onClick={selectTheme}>
-          <Col id="pink" className={`${classess['theme-square']} ${classess['pink']}`}>
+        <Row className={classes['theme']} onClick={selectTheme}>
+          <Col id="pink" className={`${classes['theme-square']} ${classes['pink']}`}>
             <CheckOutlined
               hidden={layoutSet.headerTheme !== 'pink'}
               style={{ color: 'white', fontSize: 18 }}
             />
           </Col>
-          <Col id="darkGreen" className={`${classess['theme-square']} ${classess['darkGreen']}`}>
+          <Col id="darkGreen" className={`${classes['theme-square']} ${classes['darkGreen']}`}>
             <CheckOutlined
               hidden={layoutSet.headerTheme !== 'darkGreen'}
               style={{ color: 'white', fontSize: 18 }}
@@ -184,20 +183,20 @@ const avatarCom = () => {
           </Col>
           <Col
             id="cornflowerBlue"
-            className={`${classess['theme-square']} ${classess['cornflowerBlue']}`}
+            className={`${classes['theme-square']} ${classes['cornflowerBlue']}`}
           >
             <CheckOutlined
               hidden={layoutSet.headerTheme !== 'cornflowerBlue'}
               style={{ color: 'white', fontSize: 18 }}
             />
           </Col>
-          <Col id="goldenrod" className={`${classess['theme-square']} ${classess['goldenrod']}`}>
+          <Col id="goldenrod" className={`${classes['theme-square']} ${classes['goldenrod']}`}>
             <CheckOutlined
               hidden={layoutSet.headerTheme !== 'goldenrod'}
               style={{ color: 'white', fontSize: 18 }}
             />
           </Col>
-          <Col id="darkBlue" className={`${classess['theme-square']} ${classess['darkBlue']}`}>
+          <Col id="darkBlue" className={`${classes['theme-square']} ${classes['darkBlue']}`}>
             <CheckOutlined
               hidden={layoutSet.headerTheme !== 'darkBlue'}
               style={{ color: 'white', fontSize: 18 }}
@@ -205,10 +204,10 @@ const avatarCom = () => {
           </Col>
         </Row>
 
-        <Row className={classess['base-layout']} justify="space-between">
+        <Row className={classes['base-layout']} justify="space-between">
           <Col>主题颜色</Col>
 
-          <Col className={classess['theme-color']}>
+          <Col className={classes['theme-color']}>
             <Popover
               content={
                 <SketchPicker
@@ -226,8 +225,8 @@ const avatarCom = () => {
           </Col>
         </Row>
         <hr />
-        <h3 className={classess['title']}>系统布局配置</h3>
-        <Row className={classess['base-layout']} justify="space-between">
+        <h3 className={classes['title']}>系统布局配置</h3>
+        <Row className={classes['base-layout']} justify="space-between">
           <Col>开启 Tags-Views</Col>
           <Col>
             <Switch
@@ -238,7 +237,7 @@ const avatarCom = () => {
             />
           </Col>
         </Row>
-        <Row className={classess['base-layout']} justify="space-between">
+        <Row className={classes['base-layout']} justify="space-between">
           <Col>固定 Header</Col>
           <Col>
             <Switch
@@ -249,7 +248,7 @@ const avatarCom = () => {
             />
           </Col>
         </Row>
-        <Row className={classess['base-layout']} justify="space-between">
+        <Row className={classes['base-layout']} justify="space-between">
           <Col>显示 Logo</Col>
           <Col>
             <Switch
@@ -260,7 +259,7 @@ const avatarCom = () => {
             />
           </Col>
         </Row>
-        <Row className={classess['base-layout']} justify="space-between">
+        <Row className={classes['base-layout']} justify="space-between">
           <Col>动态标题</Col>
           <Col>
             <Switch

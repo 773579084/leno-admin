@@ -16,14 +16,14 @@
         color: white;
       }
 
-      .header-left,.header-right {
-        @include dis-center;
-      }
-
       .ant-avatar {
         margin-right: 16px;
         cursor: pointer;
       }
     }
   }
+}
+
+.header-left,.header-right {
+  @include dis-center;
 }

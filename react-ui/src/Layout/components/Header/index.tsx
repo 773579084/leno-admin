@@ -15,6 +15,7 @@ import { PropsType } from '@/type'
 import AvatarCom from './components/AvatarCom'
 import ScreenFull from '@/components/ScreenFull'
 import BreadcrumbCom from './components/Breadcrumb'
+import NoticeCom from './components/NoticeCom'
 import '@/assets/style/variables.scss'
 import useStore from '@/store'
 
@@ -26,14 +27,16 @@ const HeaderCom: React.FC<PropsType> = ({ collapsed, setCollapsed }) => {
   return (
     <div className={`${classes['site-layout-background']}`}>
       <Header style={{ padding: 0 }} className={layoutSet.headerTheme}>
-        <div className="header-left">
+        <div className={classes['header-left']}>
           {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
             className: 'trigger',
             onClick: () => setCollapsed(!collapsed),
           })}
           <BreadcrumbCom />
         </div>
-        <div className="header-right">
+
+        <div className={classes['header-right']}>
+          <ScreenFull />
           <Tooltip title="源码地址">
             <GithubOutlined
               style={{ fontSize: 18, cursor: 'pointer' }}
@@ -44,7 +47,7 @@ const HeaderCom: React.FC<PropsType> = ({ collapsed, setCollapsed }) => {
             <QuestionCircleOutlined style={{ fontSize: 18, cursor: 'pointer' }} />
           </Tooltip>
 
-          <ScreenFull />
+          <NoticeCom />
           <AvatarCom />
         </div>
       </Header>
