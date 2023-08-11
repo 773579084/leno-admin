@@ -6,7 +6,7 @@ const TokenKey = 'leno_admin_token'
 
 /* Token */
 export function getToken() {
-  return Cookies.get(TokenKey)
+  return Cookies.get(TokenKey) as string
 }
 
 export function setToken(token: string) {

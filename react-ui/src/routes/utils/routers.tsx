@@ -18,12 +18,14 @@ const whitePaths = ['/login', '/register', '/404', '/500']
 export const AuthRouter: any = (props: { children: RouteType }) => {
   const { pathname } = useLocation()
   const {
-    useUserStore: { setUserInfo, userInfo },
+    useUserStore: { setUserInfo, userInfo, token, setToken },
     useRoutersStore: { setRouters },
   } = useStore()
 
   // 第一步 判断有无 token
   if (getToken()) {
+    if (!token) setToken(getToken())
+
     // 第二步 判断是否前往login页面，等于跳转 '/', 不等于则继续判断
     if (pathname === '/login') {
       return <Navigate to="/" replace />

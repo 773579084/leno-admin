@@ -11,14 +11,23 @@ import TabsCom from './components/Tabs'
 import { AliveScope } from 'react-activation'
 import '@/assets/style/variables.scss'
 import { observer } from 'mobx-react-lite'
+import signaIR from '@/utils/signaIR'
 
 const LayoutCom = () => {
   const {
     useGlobalStore: { siderStatus, changeSiderStatus },
     useLayoutStore: { layoutSet },
+    useUserStore: { token },
   } = useStore()
   // control Sider
   const [collapsed, setCollapsed] = useState(siderStatus)
+
+  useEffect(() => {
+    console.log(17, token)
+    if (token) {
+      signaIR.init(process.env.VUE_APP_SOCKET_API)
+    }
+  }, [token])
 
   // listen window size change
   const listeningWindow = () => {

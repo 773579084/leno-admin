@@ -118,6 +118,7 @@
     "webpackbar": "^5.0.2"
   },
   "dependencies": {
+    "@microsoft/signalr": "^7.0.10",
     "@wangeditor/editor": "^5.1.23",
     "@wangeditor/editor-for-react": "^1.0.6",
     "antd": "^4.24.5",

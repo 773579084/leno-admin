@@ -12,7 +12,6 @@ import {
   Modal,
   Radio,
   message,
-  notification,
 } from 'antd'
 import {
   SyncOutlined,
@@ -212,16 +211,6 @@ const SysNotice: React.FC = () => {
     })
   }
 
-  // 通知公告
-  type NotificationType = 'success' | 'info' | 'warning' | 'error'
-  const openNotificationWithIcon = (type: NotificationType) => {
-    notification[type]({
-      message: 'Notification Title',
-      description:
-        'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
-    })
-  }
-
   // table
   let columns = [
     {
@@ -281,9 +270,7 @@ const SysNotice: React.FC = () => {
         <div>
           <Button
             hidden={hasPermi('system:notice:notice')}
-            onClick={() => {
-              openNotificationWithIcon('info')
-            }}
+            onClick={() => {}}
             size="small"
             icon={<BellOutlined />}
             type="link"

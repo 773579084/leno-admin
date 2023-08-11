@@ -33,7 +33,7 @@ import { SketchPicker } from 'react-color'
 const avatarCom = () => {
   const navigate = useNavigate()
   const {
-    useUserStore: { removeUserInfo, userInfo },
+    useUserStore: { removeUserInfo, userInfo, removeLocalToken },
     useLayoutStore: { changeTabsListMobx, layoutSet, setLayoutSet },
   } = useStore()
 
@@ -55,6 +55,7 @@ const avatarCom = () => {
     await logoutAPI()
     setConfirmLoading(true)
     removeToken()
+    removeLocalToken('')
     removeUserInfo()
     changeTabsListMobx([{ path: HOME_URL, title: '首页' }])
     navigate('/login')

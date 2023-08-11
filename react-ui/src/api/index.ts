@@ -35,6 +35,7 @@ instance.interceptors.response.use(
     // userStore
     const {
       useGlobalStore: { logout, changeLogout },
+      useUserStore: { removeLocalToken },
     } = useStore()
     NProgress.done()
     const { data } = error.response
@@ -63,6 +64,7 @@ instance.interceptors.response.use(
             onOk() {
               changeLogout(true)
               removeToken()
+              removeLocalToken('')
               window.location.hash = '/login'
             },
           })
