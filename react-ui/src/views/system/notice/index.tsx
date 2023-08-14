@@ -33,11 +33,15 @@ import TextEditor from '@/components/TextEditor'
 import { IDomEditor } from '@wangeditor/editor'
 import { commonDelImgAPI } from '@/api/modules/common'
 import { hasPermi } from '@/utils/auth'
+import useStore from '@/store'
 
 const SysNotice: React.FC = () => {
   const [queryForm] = Form.useForm()
   const [addEditForm] = Form.useForm()
   const { confirm } = Modal
+  const {
+    useSocketStore: { socket },
+  } = useStore()
 
   // 分页
   const [queryParams, setQueryParams] = useState<InoticeType>({ pageNum: 1, pageSize: 10 })
@@ -178,11 +182,9 @@ const SysNotice: React.FC = () => {
   const handleFormFinish = async (values: InoticeType) => {
     try {
       if (isAdd) {
-        const { data } = await addAPI({ ...values, imgs: imgs })
-        message.success(data.message)
+        await addAPI({ ...values, imgs: imgs })
       } else {
-        const { data } = await putAPI({ ...values, imgs: imgs, noticeId: currentId })
-        message.success(data.message)
+        await putAPI({ ...values, imgs: imgs, noticeId: currentId })
       }
       addEditForm.resetFields()
       getList()
@@ -209,6 +211,21 @@ const SysNotice: React.FC = () => {
         } catch (error) {}
       },
     })
+  }
+
+  // 发送通知
+  const sendNotice = (res: InoticeType) => {
+    const noticeData = dictNoticeType.find((item) => {
+      return item.dictValue === res.noticeType
+    })
+    try {
+      console.log(221, res, dictNoticeType)
+
+      socket.emit('postNotice', res)
+      message.success(`发送${noticeData?.dictLabel}成功`)
+    } catch (error) {
+      message.success(`发送${noticeData?.dictLabel}失败，请联系管理员`)
+    }
   }
 
   // table
@@ -270,7 +287,7 @@ const SysNotice: React.FC = () => {
         <div>
           <Button
             hidden={hasPermi('system:notice:notice')}
-            onClick={() => {}}
+            onClick={() => sendNotice(record)}
             size="small"
             icon={<BellOutlined />}
             type="link"

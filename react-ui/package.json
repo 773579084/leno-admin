@@ -118,7 +118,6 @@
     "webpackbar": "^5.0.2"
   },
   "dependencies": {
-    "@microsoft/signalr": "^7.0.10",
     "@wangeditor/editor": "^5.1.23",
     "@wangeditor/editor-for-react": "^1.0.6",
     "antd": "^4.24.5",
@@ -138,6 +137,7 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.3.0",
     "react-syntax-highlighter": "^15.4.5",
-    "screenfull": "^6.0.2"
+    "screenfull": "^6.0.2",
+    "socket.io-client": "^4.7.2"
   }
 }

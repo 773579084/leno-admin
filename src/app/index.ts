@@ -1,18 +1,21 @@
-import Koa, { DefaultContext, DefaultState } from 'koa'
+import Koa from 'koa'
 import cors from '@koa/cors'
 import KoaBody from 'koa-body'
 import errHandlerFn from './errHandler'
 import path from 'path'
 import koaStatic from 'koa-static'
 import userAgent from 'koa-useragent'
+import { createServer } from 'http'
+import { Server } from 'socket.io' // 引入 socket.io 模块
 
 // 引入路由
 import router from '@/business/router'
 import { auth } from '@/business/middleware/common/auth'
 // 初始化 Koa 应用实例
-const app: Koa<DefaultState, DefaultContext> = new Koa()
+const app = new Koa()
 import '@/mysql/db'
 import initDB from '@/mysql/db'
+import { wsNotice } from '@/business/utils/socket'
 
 // 初始化 数据库配置项
 initDB()
@@ -50,4 +53,16 @@ app.use(router.routes()).use(router.allowedMethods())
 // 统一错误处理
 app.on('error', errHandlerFn)
 
-export default app
+// 创建 Socket.IO 实例并绑定到 HTTP 服务器
+const httpServer = createServer(app.callback())
+const io = new Server(httpServer, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST']
+  }
+})
+
+// 在koa2应用中定义各种Socket.IO事件监听和处理
+io.of('/wsNotice').on('connection', (socket) => wsNotice(socket))
+
+export default httpServer

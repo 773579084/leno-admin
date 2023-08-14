@@ -1,18 +1,19 @@
 import { makeAutoObservable } from 'mobx'
+import { Socket } from 'socket.io-client'
 
 export default class useUserInfoStore {
-  noticeList = []
+  socket = {} as Socket
 
   constructor() {
     // 响应式处理
     makeAutoObservable(this)
   }
 
-  setNoticeList = (data: any) => {
-    this.noticeList = data
+  setSocket = (data: Socket) => {
+    this.socket = data
   }
 
-  removeNoticeList = () => {
-    this.noticeList = []
+  removeSocket = () => {
+    this.socket = {} as Socket
   }
 }

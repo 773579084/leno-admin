@@ -1,4 +1,4 @@
-import { useState, useEffect, memo } from 'react'
+import { useState, useEffect, memo, useCallback } from 'react'
 import { Layout } from 'antd'
 const { Sider } = Layout
 import classes from './index.module.scss'
@@ -11,23 +11,21 @@ import TabsCom from './components/Tabs'
 import { AliveScope } from 'react-activation'
 import '@/assets/style/variables.scss'
 import { observer } from 'mobx-react-lite'
-import signaIR from '@/utils/signaIR'
+import createSocket from '@/api/modules/socket'
 
 const LayoutCom = () => {
   const {
     useGlobalStore: { siderStatus, changeSiderStatus },
     useLayoutStore: { layoutSet },
-    useUserStore: { token },
+    useSocketStore: { setSocket },
   } = useStore()
   // control Sider
   const [collapsed, setCollapsed] = useState(siderStatus)
 
   useEffect(() => {
-    console.log(17, token)
-    if (token) {
-      signaIR.init(process.env.VUE_APP_SOCKET_API)
-    }
-  }, [token])
+    const socket = createSocket('wsNotice')
+    setSocket(socket)
+  }, [])
 
   // listen window size change
   const listeningWindow = () => {

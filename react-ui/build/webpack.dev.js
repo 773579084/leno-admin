@@ -30,7 +30,7 @@ module.exports = merge(baseConfig, {
         pathRewrite: {
           '^/dev-api': '' // 将/dev-api前缀替换为空字符串
         }
-      }
+      },
     },
     static: { //托管静态资源文件
       directory: path.join(__dirname, "../public"),
