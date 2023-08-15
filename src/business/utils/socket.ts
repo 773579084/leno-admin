@@ -1,16 +1,27 @@
+import SysNotice from '@/mysql/model/system/notice.model'
 import { Socket } from 'socket.io'
 import { DefaultEventsMap } from 'socket.io/dist/typed-events'
+import { formatHumpLineTransfer } from '.'
+import { queryConditionsData } from '../service'
 
-export const wsNotice = (
+export const wsNotice = async (
   socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
 ) => {
-  console.log('New client connected')
-
-  socket.on('postNotice', (data) => {
+  socket.on('postNotice', async (data) => {
     console.log(10, data)
-    // 在这里处理接收到的消息
+    // 发送立即通知
     socket.emit('getNotice', data)
+    // 更新通知公告
+    socket.emit('getAllNotice', await getAllNoticeFn())
   })
 
-  socket.emit('getAllNotice', new Date())
+  socket.emit('getAllNotice', await getAllNoticeFn())
+
+  socket.on('disconnect', (reason) => {
+    console.log('socket已断开')
+  })
+}
+
+async function getAllNoticeFn() {
+  return formatHumpLineTransfer(await queryConditionsData(SysNotice, { status: '0' }))
 }

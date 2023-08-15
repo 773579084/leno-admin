@@ -215,16 +215,18 @@ const SysNotice: React.FC = () => {
 
   // 发送通知
   const sendNotice = (res: InoticeType) => {
-    const noticeData = dictNoticeType.find((item) => {
-      return item.dictValue === res.noticeType
-    })
-    try {
-      console.log(221, res, dictNoticeType)
-
-      socket.emit('postNotice', res)
-      message.success(`发送${noticeData?.dictLabel}成功`)
-    } catch (error) {
-      message.success(`发送${noticeData?.dictLabel}失败，请联系管理员`)
+    if (res.status === '0') {
+      const noticeData = dictNoticeType.find((item) => {
+        return item.dictValue === res.noticeType
+      })
+      try {
+        socket.emit('postNotice', res)
+        message.success(`发送${noticeData?.dictLabel}成功`)
+      } catch (error) {
+        message.success(`发送${noticeData?.dictLabel}失败，请联系管理员`)
+      }
+    } else {
+      message.success(`请更改公告状态再通知`)
     }
   }
 

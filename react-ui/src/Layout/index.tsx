@@ -1,4 +1,4 @@
-import { useState, useEffect, memo, useCallback } from 'react'
+import { useState, useEffect, memo } from 'react'
 import { Layout } from 'antd'
 const { Sider } = Layout
 import classes from './index.module.scss'
@@ -23,6 +23,7 @@ const LayoutCom = () => {
   const [collapsed, setCollapsed] = useState(siderStatus)
 
   useEffect(() => {
+    // 初始化连接socket
     const socket = createSocket('wsNotice')
     setSocket(socket)
   }, [])

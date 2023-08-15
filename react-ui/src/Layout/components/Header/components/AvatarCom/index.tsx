@@ -35,6 +35,7 @@ const avatarCom = () => {
   const {
     useUserStore: { removeUserInfo, userInfo, removeLocalToken },
     useLayoutStore: { changeTabsListMobx, layoutSet, setLayoutSet },
+    useSocketStore: { socket },
   } = useStore()
 
   const [isOpen, setIsOpen] = useState(false)
@@ -57,6 +58,7 @@ const avatarCom = () => {
     removeToken()
     removeLocalToken('')
     removeUserInfo()
+    socket.disconnect()
     changeTabsListMobx([{ path: HOME_URL, title: '首页' }])
     navigate('/login')
     message.success('退出登录成功')

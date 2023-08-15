@@ -2,10 +2,16 @@ import { Badge, Popover, Tabs } from 'antd'
 import { useState } from 'react'
 import { NotificationOutlined } from '@ant-design/icons'
 import classes from './index.module.scss'
+import useStore from '@/store'
+import { observer } from 'mobx-react-lite'
+import { toJS } from 'mobx'
 
 const NoticeCom = () => {
   const [show, setShow] = useState(false)
   const [open, setOpen] = useState(false)
+  const {
+    useSocketStore: { notices },
+  } = useStore()
 
   const handleOpenChange = (newOpen: boolean) => {
     setOpen(newOpen)
@@ -26,8 +32,19 @@ const NoticeCom = () => {
             key: '1',
             children: (
               <>
-                <div className={classes['notice-content']}>111</div>
-                <div className={classes['notice-content']}>222</div>
+                {toJS(notices).map((item) => {
+                  if (item.noticeType === '1') {
+                    return (
+                      <div key={item.noticeId}>
+                        <h4>{item.noticeTitle}</h4>
+                        <div
+                          className={classes['notice-content']}
+                          dangerouslySetInnerHTML={{ __html: item.noticeContent as string }}
+                        />
+                      </div>
+                    )
+                  }
+                })}
               </>
             ),
           },
@@ -36,8 +53,19 @@ const NoticeCom = () => {
             key: '2',
             children: (
               <>
-                <div className={classes['notice-content']}>111</div>
-                <div className={classes['notice-content']}>222</div>
+                {toJS(notices).map((item) => {
+                  if (item.noticeType === '2') {
+                    return (
+                      <div key={item.noticeId}>
+                        <h4>{item.noticeTitle}</h4>
+                        <div
+                          className={classes['notice-content']}
+                          dangerouslySetInnerHTML={{ __html: item.noticeContent as string }}
+                        />
+                      </div>
+                    )
+                  }
+                })}
               </>
             ),
           },
@@ -55,4 +83,4 @@ const NoticeCom = () => {
   )
 }
 
-export default NoticeCom
+export default observer(NoticeCom)
