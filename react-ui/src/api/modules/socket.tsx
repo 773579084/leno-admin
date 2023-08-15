@@ -4,10 +4,11 @@ import { notification } from 'antd'
 import { io } from 'socket.io-client'
 
 const createSocket = (pathName: string) => {
-  const socket = io(`${process.env.BASE_ENV}/${pathName}`, { forceNew: true })
   const {
     useSocketStore: { setNotices },
+    useUserStore: { token },
   } = useStore()
+  const socket = io(`${process.env.BASE_ENV}/${pathName}`, { forceNew: true, query: { token } })
 
   socket.on('connect', () => {
     console.log('socket是否连接成功' + socket.connected) // true
@@ -25,6 +26,8 @@ const createSocket = (pathName: string) => {
   })
   // 获取单条公告和通知
   socket.on('getNotice', (data: InoticeType) => {
+    console.log(29, data)
+
     notification.info({
       message: data.noticeTitle,
       description: <div dangerouslySetInnerHTML={{ __html: data.noticeContent as string }} />,

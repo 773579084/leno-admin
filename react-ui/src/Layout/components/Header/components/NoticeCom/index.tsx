@@ -17,15 +17,10 @@ const NoticeCom = () => {
     setOpen(newOpen)
   }
 
-  const onChange = (key: string) => {
-    console.log(key)
-  }
-
   const noticeDiv = (
     <div className={classes['notice-div']}>
       <Tabs
         defaultActiveKey="1"
-        onChange={onChange}
         items={[
           {
             label: `通知`,
