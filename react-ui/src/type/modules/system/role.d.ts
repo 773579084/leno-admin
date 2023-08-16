@@ -1,8 +1,8 @@
 // 前端 类型文件
 // 所有数据通用
 export interface IroleType {
-  pageNum?: number
-  pageSize?: number
+  pageNum: number
+  pageSize: number
   roleId?: number
   roleName?: string
   roleKey?: string

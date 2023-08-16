@@ -1,8 +1,8 @@
 // 前端 类型文件
 // 所有数据通用
 export interface IonlineType {
-  pageNum?: number
-  pageSize?: number
+  pageNum: number
+  pageSize: number
   browser?: string
   userName?: string
   ipaddr?: string

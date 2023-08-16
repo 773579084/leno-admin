@@ -1,8 +1,13 @@
 // 前端 类型文件
 // 所有数据通用
-export interface InoticeType {
-  pageNum?: number
-  pageSize?: number
+export interface InoticeType extends InoticeDetailType {
+  pageNum: number
+  pageSize: number
+}
+
+export interface InoticeDetailType {
+  pageNum: number
+  pageSize: number
   noticeId?: number
   noticeTitle?: string
   noticeType?: string

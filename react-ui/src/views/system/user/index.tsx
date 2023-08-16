@@ -345,7 +345,7 @@ const User = () => {
   }
 
   // 删除user
-  const delUserFn = (ids: string) => {
+  const delFn = (ids: string) => {
     confirm({
       icon: <ExclamationCircleOutlined />,
       content: `是否确认删除用户编号为"${ids}"的数据项？`,
@@ -355,7 +355,11 @@ const User = () => {
           const { data } = await delUserAPI(ids)
           message.success(data.message)
           setSelectKeys([])
-          getList()
+          const pageNum = Math.ceil((userList.count - ids.split(',').length) / queryParams.pageSize)
+          setQueryParams({
+            pageNum: pageNum || 1,
+            pageSize: queryParams.pageSize,
+          })
         } catch (error) {}
       },
     })
@@ -463,7 +467,7 @@ const User = () => {
             size="small"
             icon={<DeleteOutlined />}
             type="link"
-            onClick={() => delUserFn(`${record.userId}`)}
+            onClick={() => delFn(`${record.userId}`)}
           >
             删除
           </Button>
@@ -658,7 +662,7 @@ const User = () => {
                 <Col>
                   <ColorBtn
                     hidden={hasPermi('system:user:import')}
-                    onClick={() => delUserFn(rowKeys)}
+                    onClick={() => delFn(rowKeys)}
                     disabled={multiple}
                     color="danger"
                     icon={<DeleteOutlined />}

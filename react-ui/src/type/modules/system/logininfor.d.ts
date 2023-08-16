@@ -1,8 +1,8 @@
 // 前端 类型文件
 // 所有数据通用
 export interface IlogininforType {
-  pageNum?: number
-  pageSize?: number
+  pageNum: number
+  pageSize: number
   infoId?: number
   userName?: string
   ipaddr?: string

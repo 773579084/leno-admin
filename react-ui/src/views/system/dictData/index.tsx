@@ -197,7 +197,11 @@ const DictData: React.FC = () => {
         try {
           const { data } = await delTypeAPI(ids)
           message.success(data.message)
-          getList()
+          const pageNum = Math.ceil((dataList.count - ids.split(',').length) / queryParams.pageSize)
+          setQueryParams({
+            pageNum: pageNum || 1,
+            pageSize: queryParams.pageSize,
+          })
         } catch (error) {}
       },
     })

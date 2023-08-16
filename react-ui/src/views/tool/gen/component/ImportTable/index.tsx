@@ -32,11 +32,7 @@ const ImportTable: React.FC<ImportTableType> = (props) => {
     if (isImportOpen) {
       getList()
     }
-  }, [isImportOpen])
-
-  useEffect(() => {
-    getList()
-  }, [queryParams])
+  }, [isImportOpen, queryParams])
 
   // 请求list
   const getList = async () => {

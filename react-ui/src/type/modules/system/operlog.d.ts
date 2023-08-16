@@ -1,8 +1,11 @@
 // 前端 类型文件
 // 所有数据通用
-export interface IoperlogType {
-  pageNum?: number
-  pageSize?: number
+export interface IoperlogType extends IoperlogDetailType {
+  pageNum: number
+  pageSize: number
+}
+
+export interface IoperlogDetailType {
   operId?: number
   title?: string
   businessType?: string

@@ -8,7 +8,7 @@ export default () => {
       APP_PORT: 9090,
       APP_HTTP: 'http',
       // mysql
-      MYSQL_HOST: 'mysql',
+      MYSQL_HOST: 'localhost',
       MYSQL_PORT: 3306,
       MYSQL_USER: 'root',
       MYSQL_PWD: 'admin123',
@@ -18,7 +18,7 @@ export default () => {
       JWT_REFRESH_SECRET: 'refreshToken',
       // redis
       REDIS_PORT: 6379,
-      REDIS_HOST: 'redis',
+      REDIS_HOST: 'localhost',
       // REDIS_PASSWORD: 'admin123',
       REDIS_DB: 0,
       // 图片路径

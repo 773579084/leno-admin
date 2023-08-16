@@ -4,6 +4,7 @@ import {
   IsuccessTypeAPI,
   IgetDetailTypeAPI,
   IgetListAPI,
+  IjobDetailType,
 } from '@/type/modules/monitor/job'
 
 // 查询列表
@@ -17,7 +18,7 @@ export function delAPI(ids: string) {
 }
 
 // 新增
-export const addAPI = (data: IjobType) => {
+export const addAPI = (data: IjobDetailType) => {
   return http<IsuccessTypeAPI>('POST', '/monitor/job', data)
 }
 
@@ -27,16 +28,16 @@ export const getDetailAPI = (id: number) => {
 }
 
 // 修改
-export const putAPI = (data: IjobType) => {
+export const putAPI = (data: IjobDetailType) => {
   return http<IsuccessTypeAPI>('PUT', '/monitor/job', data)
 }
 
 // 立即执行一次
-export const runOneAPI = (data: IjobType) => {
+export const runOneAPI = (data: IjobDetailType) => {
   return http<IsuccessTypeAPI>('PUT', '/monitor/job/run', data)
 }
 
 // 修改状态
-export const putStatusAPI = (data: IjobType) => {
+export const putStatusAPI = (data: IjobDetailType) => {
   return http<IsuccessTypeAPI>('PUT', '/monitor/job/status', data)
 }

@@ -1,8 +1,11 @@
 // 前端 类型文件
 // 所有数据通用
-export interface IjobType {
-  pageNum?: number
-  pageSize?: number
+export interface IjobType extends IjobDetailType {
+  pageNum: number
+  pageSize: number
+}
+
+export interface IjobDetailType {
   concurrent?: string
   createdAt?: string
   createBy?: string

@@ -1,6 +1,10 @@
 // 前端 类型文件
 // 所有数据通用
-export interface IconfigType {
+export interface IconfigType extends IconfigDetailType {
+  pageNum: number
+  pageSize: number
+}
+export interface IconfigDetailType {
   pageNum?: number
   pageSize?: number
   configId?: number

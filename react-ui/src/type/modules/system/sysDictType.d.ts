@@ -12,8 +12,8 @@ export interface dictTableType {
 
 // 查询字典类型列表
 export interface ILimitAPI {
-  pageNum?: number
-  pageSize?: number
+  pageNum: number
+  pageSize: number
   dictName?: string
   status?: string
   beginTime?: string

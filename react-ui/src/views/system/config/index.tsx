@@ -27,7 +27,7 @@ import type { ColumnsType } from 'antd/es/table'
 import { getListAPI, delAPI, getDetailAPI, addAPI, putAPI } from '@/api/modules/system/config'
 import { getDictsApi } from '@/api/modules/system/dictData'
 import { download } from '@/api'
-import { IconfigType } from '@/type/modules/system/config'
+import { IconfigDetailType, IconfigType } from '@/type/modules/system/config'
 const { RangePicker } = DatePicker
 import ColorBtn from '@/components/ColorBtn'
 import { IdictType } from '@/type/modules/system/sysDictData'
@@ -44,7 +44,7 @@ const SysConfig: React.FC = () => {
   // 分页
   const [queryParams, setQueryParams] = useState<IconfigType>({ pageNum: 1, pageSize: 10 })
   // 列表数据
-  const [dataList, setDataList] = useState({ count: 0, rows: [] as IconfigType[] })
+  const [dataList, setDataList] = useState({ count: 0, rows: [] as IconfigDetailType[] })
   // table loading
   const [loading, setLoading] = useState(true)
   // 新增编辑 model显隐
@@ -118,7 +118,7 @@ const SysConfig: React.FC = () => {
   // row-select
   const rowSelection = {
     selectedRowKeys: selectKeys,
-    onChange: (selectedRowKeys: React.Key[], selectedRows: IconfigType[]) => {
+    onChange: (selectedRowKeys: React.Key[], selectedRows: IconfigDetailType[]) => {
       if (!selectedRowKeys.length || selectedRowKeys.length > 1) {
         setSingle(true)
       } else {
@@ -173,7 +173,11 @@ const SysConfig: React.FC = () => {
         try {
           const { data } = await delAPI(ids)
           message.success(data.message)
-          getList()
+          const pageNum = Math.ceil((dataList.count - ids.split(',').length) / queryParams.pageSize)
+          setQueryParams({
+            pageNum: pageNum || 1,
+            pageSize: queryParams.pageSize,
+          })
         } catch (error) {}
       },
     })
@@ -278,7 +282,7 @@ const SysConfig: React.FC = () => {
         </div>
       ),
     },
-  ] as ColumnsType<IconfigType>
+  ] as ColumnsType<IconfigDetailType>
 
   // table 数据源
   const tableData = dataList.rows

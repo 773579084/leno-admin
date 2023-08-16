@@ -43,7 +43,6 @@ const SysPost: React.FC = () => {
   // 分页
   const [queryParams, setQueryParams] = useState<IpostType>({ pageNum: 1, pageSize: 10 })
   // 列表数据
-
   const [dataList, setDataList] = useState({ count: 0, rows: [] as IpostType[] })
   // table loading
   const [loading, setLoading] = useState(true)
@@ -169,7 +168,11 @@ const SysPost: React.FC = () => {
         try {
           const { data } = await delAPI(ids)
           message.success(data.message)
-          getList()
+          const pageNum = Math.ceil((dataList.count - ids.split(',').length) / queryParams.pageSize)
+          setQueryParams({
+            pageNum: pageNum || 1,
+            pageSize: queryParams.pageSize,
+          })
         } catch (error) {}
       },
     })

@@ -28,8 +28,6 @@ const LoginForm = (props: any) => {
       }
       setToken(res.data.result?.token as string)
       message.success('登录成功')
-      console.log(41)
-
       navigate('/home')
     } catch (error) {}
   }

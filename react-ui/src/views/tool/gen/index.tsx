@@ -135,8 +135,9 @@ const Gen: React.FC = () => {
           const { data } = await delAPI(ids)
           message.success(data.message)
           setSelectKeys([])
+          const pageNum = Math.ceil((dataList.count - ids.split(',').length) / queryParams.pageSize)
           setQueryParams({
-            pageNum: Math.ceil((dataList.count - ids.split(',').length) / queryParams.pageSize),
+            pageNum: pageNum || 1,
             pageSize: queryParams.pageSize,
           })
         } catch (error) {}

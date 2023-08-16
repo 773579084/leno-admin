@@ -42,7 +42,7 @@ import {
 } from '@/api/modules/monitor/job'
 import { getDictsApi } from '@/api/modules/system/dictData'
 import { download } from '@/api'
-import { IcronComeType, IjobType } from '@/type/modules/monitor/job'
+import { IcronComeType, IjobDetailType, IjobType } from '@/type/modules/monitor/job'
 import ColorBtn from '@/components/ColorBtn'
 import { hasPermi } from '@/utils/auth'
 import { IdictType } from '@/type/modules/system/sysDictData'
@@ -112,7 +112,7 @@ const MonitorJob = () => {
   // 当前编辑的id
   const [currentId, setCurrentId] = useState<number>()
   // 存储当前的详细信息
-  const [currentDetail, setCurrentDetail] = useState<IjobType>({})
+  const [currentDetail, setCurrentDetail] = useState<IjobDetailType>({})
   // Cron model显隐
   const [isCronOpen, setIsCronOpen] = useState(false)
 
@@ -190,7 +190,7 @@ const MonitorJob = () => {
   }
 
   // 表单提交
-  const handleFormFinish = async (values: IjobType) => {
+  const handleFormFinish = async (values: IjobDetailType) => {
     try {
       if (isAdd) {
         const { data } = await addAPI(values)
@@ -230,7 +230,11 @@ const MonitorJob = () => {
         try {
           const { data } = await delAPI(ids)
           message.success(data.message)
-          getList()
+          const pageNum = Math.ceil((dataList.count - ids.split(',').length) / queryParams.pageSize)
+          setQueryParams({
+            pageNum: pageNum || 1,
+            pageSize: queryParams.pageSize,
+          })
         } catch (error) {}
       },
     })

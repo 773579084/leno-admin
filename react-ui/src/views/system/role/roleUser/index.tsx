@@ -180,7 +180,14 @@ const LenoUser: React.FC = () => {
         try {
           const { data } = await delAPI(query)
           message.success(data.message)
-          getList()
+          const pageNum = Math.ceil(
+            (dataList.count - query.userId.split(',').length) / queryParams.pageSize,
+          )
+          setQueryParams({
+            pageNum: pageNum || 1,
+            pageSize: queryParams.pageSize,
+            roleId: roleId,
+          })
         } catch (error) {}
       },
     })

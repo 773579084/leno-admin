@@ -25,7 +25,7 @@ import type { ColumnsType } from 'antd/es/table'
 import { getListAPI, delAPI, getDetailAPI, cleanAPI } from '@/api/modules/system/operlog'
 import { getDictsApi } from '@/api/modules/system/dictData'
 import { download } from '@/api'
-import { IoperlogType } from '@/type/modules/system/operlog'
+import { IoperlogDetailType, IoperlogType } from '@/type/modules/system/operlog'
 const { RangePicker } = DatePicker
 import ColorBtn from '@/components/ColorBtn'
 import { IdictType } from '@/type/modules/system/sysDictData'
@@ -55,7 +55,7 @@ const SysOperLog: React.FC = () => {
   // 控制搜索隐藏显示
   const [searchShow, setSearchShow] = useState(true)
   // 详情数据
-  const [detailData, setDetailData] = useState<IoperlogType>({})
+  const [detailData, setDetailData] = useState<IoperlogDetailType>({})
 
   const [dictBusinessType, setDictBusinessType] = useState<IdictType[]>([])
   const [dictStatus, setDictStatus] = useState<IdictType[]>([])
@@ -151,7 +151,11 @@ const SysOperLog: React.FC = () => {
         try {
           const { data } = await delAPI(ids)
           message.success(data.message)
-          getList()
+          const pageNum = Math.ceil((dataList.count - ids.split(',').length) / queryParams.pageSize)
+          setQueryParams({
+            pageNum: pageNum || 1,
+            pageSize: queryParams.pageSize,
+          })
         } catch (error) {}
       },
     })
