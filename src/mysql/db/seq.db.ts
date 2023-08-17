@@ -1,10 +1,10 @@
 import { Sequelize } from 'sequelize'
 import env from '@/config/default'
-
-const { MYSQL_HOST, MYSQL_USER, MYSQL_PWD, MYSQL_DB } = env()
+const { MYSQL_HOST, MYSQL_USER, MYSQL_PWD, MYSQL_DB, MYSQL_PORT } = env()
 
 const seq = new Sequelize(MYSQL_DB as string, MYSQL_USER as string, MYSQL_PWD as string, {
   host: MYSQL_HOST,
+  port: MYSQL_PORT,
   dialect: 'mysql',
   // 设置北京时间
   timezone: '+08:00',

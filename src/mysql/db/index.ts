@@ -1,5 +1,4 @@
 import seq from './seq.db'
-
 import ToolGen from '../model/tool/gen.model'
 import ToolGenColumn from '../model/tool/gen_column.model'
 import SysDept from '../model/system/dept.model'
@@ -21,7 +20,6 @@ const initRelation = () => {
 // 同步数据库，sequelize.sync()
 const initDB = () => {
   return new Promise(async (resolve, reject) => {
-    // 开发环境
     try {
       seq.authenticate()
       console.log('数据库连接成功')
