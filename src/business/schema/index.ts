@@ -5,7 +5,6 @@ import { Context } from 'koa'
 import path from 'path'
 import errors from '@/app/err.type'
 import Joi from 'joi'
-import { IdsJudge } from './config.schema'
 import { imgType } from '@/types'
 import { removeSpecifyFile } from '../utils'
 const { uploadParamsErr, checkIdsErr, unAvatarSizeErr, unSupportedFileErr } = errors
@@ -26,13 +25,13 @@ export const addEditSchema = (judge: Joi.ObjectSchema<any>) => {
 }
 
 // 判断id是否正确
-export const judgeIdSchema = (judge: Joi.ObjectSchema<any> = IdsJudge) => {
+export const judgeIdSchema = () => {
   return async (ctx: Context, next: () => Promise<void>) => {
     try {
       const list = ctx.request.path.split('/')
       const ids = list[list.length - 1]
       const idsList = ids.split(',')
-      await judge.validateAsync({ ids: idsList })
+      console.log(36, list)
 
       ctx.state.ids = idsList
     } catch (error) {

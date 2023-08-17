@@ -12,7 +12,6 @@ import {
   Switch,
   Pagination,
   Tree,
-  Popover,
   message,
   Modal,
   Checkbox,
@@ -20,7 +19,6 @@ import {
   UploadFile,
   Dropdown,
   MenuProps,
-  Menu,
 } from 'antd'
 import {
   SyncOutlined,
@@ -64,6 +62,7 @@ import { IdictType } from '@/type/modules/system/sysDictData'
 import { hasPermi } from '@/utils/auth'
 import { useNavigate } from 'react-router-dom'
 import { MenuInfo } from 'rc-menu/lib/interface'
+import { getConfigKeyAPI } from '@/api/modules/system/config'
 
 const { Dragger } = Upload
 
@@ -99,7 +98,7 @@ const User = () => {
   const [propsValues, setPropsValues] = useState<userType>({
     status: '0',
     sex: '2',
-    password: '123456',
+    password: '',
   })
   // 非单个禁用
   const [single, setSingle] = useState(true)
@@ -131,6 +130,14 @@ const User = () => {
   useEffect(() => {
     generateData()
     getDicts()
+    getConfigKeyAPI('sys.user.initPassword')
+      .then(({ data: { result } }) => {
+        setPropsValues({
+          ...propsValues,
+          password: result,
+        })
+      })
+      .catch()
   }, [])
 
   // 监听部门数据源结构，改变则重新生成搜索用的扁平数据结构

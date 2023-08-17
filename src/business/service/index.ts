@@ -35,7 +35,7 @@ export const getListSer = async <T extends { pageNum?: number; pageSize?: number
     where: {
       ...params
     },
-    order:[['created_at','DESC']],
+    order: [['created_at', 'DESC']],
     ...conditions?.otherWhere
   })
 
@@ -43,7 +43,7 @@ export const getListSer = async <T extends { pageNum?: number; pageSize?: number
     count: res.count,
     rows: res.rows || {}
   }
-    
+
   return list
 }
 
@@ -91,7 +91,7 @@ export const delSer = async (
 
 /**
  * 获取 详情
- * @param model 更改的数据库model
+ * @param model 数据库model
  * @param where 过滤条件
  * @param conditions 其他配置项：比如：跨表等
  * @returns Object

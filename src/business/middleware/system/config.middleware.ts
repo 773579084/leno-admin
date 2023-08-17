@@ -1,5 +1,12 @@
 import { Context } from 'koa'
-import { getListSer, addSer, putSer, getDetailSer, delSer } from '@/business/service'
+import {
+  getListSer,
+  addSer,
+  putSer,
+  getDetailSer,
+  delSer,
+  queryConditionsData
+} from '@/business/service'
 import { userType } from '@/types'
 import { IconfigQueryType, IconfigQuerySerType, Iconfig, IconfigSer } from '@/types/system/config'
 import errors from '@/app/err.type'
@@ -29,6 +36,19 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
     const res = await getListSer<IconfigQuerySerType>(SysConfig, newParams)
 
     ctx.state.formatData = res
+    await next()
+  } catch (error) {
+    console.error('查询列表失败', error)
+    return ctx.app.emit('error', getListErr, ctx)
+  }
+}
+
+// 根据参数键名查询参数值
+export const getConfigKeyMid = async (ctx: Context, next: () => Promise<void>) => {
+  try {
+    const { key } = ctx.request['body']
+    const res = (await queryConditionsData(SysConfig, { config_key: key })) as IconfigSer
+    ctx.state.formatData = res[0].config_value
     await next()
   } catch (error) {
     console.error('查询列表失败', error)

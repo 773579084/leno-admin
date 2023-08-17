@@ -4,11 +4,17 @@ import {
   IsuccessTypeAPI,
   IgetDetailTypeAPI,
   IgetListAPI,
+  IqueryConfigTypeAPI,
 } from '@/type/modules/system/config'
 
 // 查询列表
 export const getListAPI = (data: IconfigType) => {
   return http<IgetListAPI>('GET', '/system/config/list', data)
+}
+
+// 根据参数键名查询参数值
+export const getConfigKeyAPI = (configKey: string) => {
+  return http<IqueryConfigTypeAPI>('POST', '/system/config/configKey', { key: configKey })
 }
 
 // 删除

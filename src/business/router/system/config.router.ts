@@ -8,7 +8,8 @@ import {
   getDetailMid,
   putMid,
   delMid,
-  exportMid
+  exportMid,
+  getConfigKeyMid
 } from '@/business/middleware/system/config.middleware'
 import { addEditSchema, judgeIdSchema } from '@/business/schema'
 import { exportExcelMid } from '@/business/middleware/common/common.middleware'
@@ -20,6 +21,9 @@ import { hasPermi } from '@/business/middleware/common/auth'
 const router = new Router({ prefix: '/system' })
 // 查询列表
 router.get('/config/list', hasPermi('system:config:query'), getListMid, formatHandle, IndexCon())
+
+// 根据参数键名查询参数值
+router.post('/config/configKey', getConfigKeyMid, IndexCon())
 
 // 新增
 router.post('/config', hasPermi('system:config:add'), addEditSchema(addJudg), getAddMid, IndexCon())

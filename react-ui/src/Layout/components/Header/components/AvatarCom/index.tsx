@@ -29,6 +29,8 @@ import {
 } from '@ant-design/icons'
 import classes from './index.module.scss'
 import { SketchPicker } from 'react-color'
+import { toJS } from 'mobx'
+import { getConfigKeyAPI } from '@/api/modules/system/config'
 
 const avatarCom = () => {
   const navigate = useNavigate()
@@ -43,13 +45,27 @@ const avatarCom = () => {
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
-    if (localStorage.getItem('layout-set')) {
-      const layoutSet = JSON.parse(localStorage.getItem('layout-set') as string)
-      setLayoutSet(layoutSet)
-      ConfigProvider.config({
-        theme: { primaryColor: layoutSet.theme },
+    async function setConfig() {
+      const res = await getConfigKeyAPI('sys.index.skinName')
+      const res2 = await getConfigKeyAPI('sys.index.headerTheme')
+      setLayoutSet({
+        theme: res.data.result,
+        headerTheme: res2.data.result,
       })
+      // 先将参数的主题色赋值，如果有默认颜色则再赋值默认颜色
+      ConfigProvider.config({
+        theme: { primaryColor: res.data.result },
+      })
+      if (localStorage.getItem('layout-set')) {
+        const layoutSet = JSON.parse(localStorage.getItem('layout-set') as string)
+        setLayoutSet(layoutSet)
+        ConfigProvider.config({
+          theme: { primaryColor: layoutSet.theme },
+        })
+      }
     }
+    // 设置主题参数值
+    setConfig()
   }, [])
 
   const handleOk = async () => {
@@ -209,7 +225,6 @@ const avatarCom = () => {
 
         <Row className={classes['base-layout']} justify="space-between">
           <Col>主题颜色</Col>
-
           <Col className={classes['theme-color']}>
             <Popover
               content={
@@ -217,6 +232,8 @@ const avatarCom = () => {
                   presetColors={['#1890ff', '#25b864', '#ff6f00', '#13c2c2', '#6959cd', '#212121']}
                   color={layoutSet.theme}
                   onChange={({ hex }) => {
+                    console.log(219, hex)
+
                     onColorChange(hex)
                   }}
                 />

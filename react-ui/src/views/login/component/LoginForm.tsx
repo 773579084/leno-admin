@@ -1,21 +1,29 @@
 import { useNavigate } from 'react-router-dom'
-/* ant */
 import { LockOutlined, UserOutlined, SafetyCertificateOutlined } from '@ant-design/icons'
 import { Button, Form, message, Input, Row, Col, Image } from 'antd'
 import { loginAPI } from '@/api/modules/user'
 import { ILogin } from '@/type'
-// mobx
 import classes from '../index.module.scss'
-// cookie
 import { setToken } from '@/utils/auth'
 import { parseSVG } from '@/utils'
+import { getConfigKeyAPI } from '@/api/modules/system/config'
+import { useEffect, useState } from 'react'
 
 const LoginForm = (props: any) => {
   const navigate = useNavigate()
   const [form] = Form.useForm()
+  const [isReg, setIsReg] = useState('true')
 
   // props
   const { loginData, changeIsLogin, svgCode, getCaptchaImage } = props
+
+  useEffect(() => {
+    getConfigKeyAPI('sys.account.registerUser')
+      .then(({ data: { result } }) => {
+        setIsReg(result)
+      })
+      .catch()
+  }, [])
 
   //#region  login
   const onFinish = async (data: ILogin) => {
@@ -131,7 +139,7 @@ const LoginForm = (props: any) => {
           登录
         </Button>
         <div style={{ flex: 1 }}>
-          <a onClick={() => changeIsLogin()} style={{ float: 'right' }}>
+          <a hidden={isReg !== 'true'} onClick={() => changeIsLogin()} style={{ float: 'right' }}>
             去注册
           </a>
         </div>

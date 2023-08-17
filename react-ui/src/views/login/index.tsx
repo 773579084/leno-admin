@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react'
 import classes from './index.module.scss'
-
-/* 组件 */
 import LoginForm from './component/LoginForm'
 import RegisterForm from './component/RegisterForm'
 import SvgIcon from '@/components/SvgIcon'

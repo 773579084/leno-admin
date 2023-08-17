@@ -385,11 +385,6 @@ const SysConfig: React.FC = () => {
                     导出
                   </ColorBtn>
                 </Col>
-                <Col>
-                  <ColorBtn color="danger" icon={<SyncOutlined />}>
-                    刷新缓存
-                  </ColorBtn>
-                </Col>
               </Row>
             </Col>
             <Col span={8}>

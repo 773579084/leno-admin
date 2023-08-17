@@ -45,3 +45,10 @@ export interface IsuccessTypeAPI {
   message: string
   result?: null
 }
+
+// 根据参数键名查询参数值
+export interface IqueryConfigTypeAPI {
+  code: number
+  message: string
+  result: string
+}
