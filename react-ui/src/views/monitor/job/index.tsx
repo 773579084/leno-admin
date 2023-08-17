@@ -90,7 +90,7 @@ const MonitorJob = () => {
   const [queryParams, setQueryParams] = useState<IjobType>({ pageNum: 1, pageSize: 10 })
   // 列表数据
 
-  const [dataList, setDataList] = useState({ count: 0, rows: [] as IjobType[] })
+  const [dataList, setDataList] = useState({ count: 0, rows: [] as IjobDetailType[] })
   // table loading
   const [loading, setLoading] = useState(true)
   // 新增编辑 model显隐
@@ -165,7 +165,7 @@ const MonitorJob = () => {
   // row-select
   const rowSelection = {
     selectedRowKeys: selectKeys,
-    onChange: (selectedRowKeys: React.Key[], selectedRows: IjobType[]) => {
+    onChange: (selectedRowKeys: React.Key[], selectedRows: IjobDetailType[]) => {
       if (!selectedRowKeys.length || selectedRowKeys.length > 1) {
         setSingle(true)
       } else {
@@ -366,7 +366,7 @@ const MonitorJob = () => {
         </div>
       ),
     },
-  ] as ColumnsType<IjobType>
+  ] as ColumnsType<IjobDetailType>
 
   // table 数据源
   const tableData = dataList.rows

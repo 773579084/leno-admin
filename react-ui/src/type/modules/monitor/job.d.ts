@@ -28,7 +28,7 @@ export interface IgetListAPI {
   message: string
   result: {
     count: number
-    rows: IjobType[]
+    rows: IjobDetailType[]
   }
 }
 
@@ -36,7 +36,7 @@ export interface IgetListAPI {
 export interface IgetDetailTypeAPI {
   code: number
   message: string
-  result: IjobType
+  result: IjobDetailType
 }
 
 // 新增，修改，删除 成功返回

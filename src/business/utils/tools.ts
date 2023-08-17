@@ -776,6 +776,7 @@ ${typeCreate(data.columns, 'ListSer')}}`
   codes[`api.ts`] = `import { http } from '@/api'
 import {
   I${data.businessName}Type,
+  I${data.businessName}DetailType
   IsuccessTypeAPI,
   IgetDetailTypeAPI,
   IgetListAPI
@@ -792,7 +793,7 @@ export function delAPI(ids: string) {
 }
 
 // 新增
-export const addAPI = (data: I${data.businessName}Type) => {
+export const addAPI = (data: I${data.businessName}DetailType) => {
   return http<IsuccessTypeAPI>('POST', '/${data.moduleName}/${data.businessName}', data)
 }
 
@@ -802,7 +803,7 @@ export const getDetailAPI = (id: number) => {
 }
 
 // 修改
-export const putAPI = (data: I${data.businessName}Type) => {
+export const putAPI = (data: I${data.businessName}DetailType) => {
   return http<IsuccessTypeAPI>('PUT', '/${data.moduleName}/${data.businessName}', data)
 }`
 
@@ -847,7 +848,7 @@ import {
 } from '@/api/modules/${data.moduleName}/${data.businessName}'
 import { getDictsApi } from '@/api/modules/system/dictData'
 ${data.tplCategory === 'tree' ? `` : `import { download } from '@/api'`}
-import { I${data.businessName}Type  ${
+import { I${data.businessName}Type ,I${data.businessName}DetailType ${
     data.tplCategory === 'tree' ? ',ITreeType' : ''
   }} from '@/type/modules/${data.moduleName}/${data.businessName}'
 ${
@@ -881,7 +882,7 @@ import { commonDelImgAPI } from '@/api/modules/common'\n`
   ${
     data.tplCategory === 'tree'
       ? `const [dataList, setDataList] = useState([])`
-      : `const [dataList, setDataList] = useState({ count: 0, rows: [] as I${data.businessName}Type[] })`
+      : `const [dataList, setDataList] = useState({ count: 0, rows: [] as I${data.businessName}DetailType[] })`
   }
   // table loading
   const [loading, setLoading] = useState(true)
@@ -1003,7 +1004,7 @@ import { commonDelImgAPI } from '@/api/modules/common'\n`
       : `// row-select
   const rowSelection = {
     selectedRowKeys: selectKeys,
-    onChange: (selectedRowKeys: React.Key[], selectedRows: I${data.businessName}Type[]) => {
+    onChange: (selectedRowKeys: React.Key[], selectedRows: I${data.businessName}DetailType[]) => {
       if (!selectedRowKeys.length || selectedRowKeys.length > 1) {
         setSingle(true)
       } else {
@@ -1030,12 +1031,12 @@ import { commonDelImgAPI } from '@/api/modules/common'\n`
       }setCurrentId(id)
       setIsModalOpen(true)
       setIsAdd(false)
-      addEditForm.setFieldsValue(data.result as unknown as I${data.businessName}Type)
+      addEditForm.setFieldsValue(data.result as unknown as I${data.businessName}DetailType)
     } catch (error) {}
   }
 
   // 表单提交
-  const handleFormFinish = async (values: I${data.businessName}Type) => {
+  const handleFormFinish = async (values: I${data.businessName}DetailType) => {
     try {
       if (isAdd) {
         await addAPI({ ...values ${
@@ -1084,9 +1085,13 @@ import { commonDelImgAPI } from '@/api/modules/common'\n`
       centered: true,
       async onOk() {
         try {
-          await delAPI(ids)
-          message.success('删除成功')
-          getList()
+          const { data } = await delAPI(ids)
+          message.success(data.message)
+          const pageNum = Math.ceil((dataList.count - ids.split(',').length) / queryParams.pageSize)
+          setQueryParams({
+            pageNum: pageNum || 1,
+            pageSize: queryParams.pageSize,
+          })
         } catch (error) {}
       },
     })
@@ -1135,7 +1140,7 @@ import { commonDelImgAPI } from '@/api/modules/common'\n`
       key: 'operation',
       align: 'center',
       fixed: 'right',
-      render: (_: any, record: I${data.businessName}Type) => (
+      render: (_: any, record: I${data.businessName}DetailType) => (
         <div>
           <Button
             hidden={hasPermi('${data.moduleName}:${data.businessName}:edit')}
@@ -1158,7 +1163,7 @@ import { commonDelImgAPI } from '@/api/modules/common'\n`
         </div>
       ),
     },
-  ] as ColumnsType<I${data.businessName}Type>
+  ] as ColumnsType<I${data.businessName}DetailType>
 
   // table 数据源
   const tableData = dataList.rows
@@ -1347,10 +1352,12 @@ export default ${stringFirst(data.className)}`
   // 第八步 前端 生成typescript类型标注
   codes['react.d.ts'] = `
 // 前端 类型文件
-// 所有数据通用
-export interface I${data.businessName}Type {
-  pageNum?: number
-  pageSize?: number
+export interface I${data.businessName}Type extends I${data.businessName}DetailType {
+  pageNum: number
+  pageSize: number
+ }
+
+export interface I${data.businessName}DetailType {
   ${typeCreate(data.columns, 'Query')}}
 
 // 数据列表
@@ -1359,7 +1366,7 @@ export interface IgetListAPI {
   message: string
   result: {
     count: number
-    rows: I${data.businessName}Type[]
+    rows: I${data.businessName}DetailType[]
   }
 }
 
@@ -1367,7 +1374,7 @@ export interface IgetListAPI {
 export interface IgetDetailTypeAPI {
   code: number
   message: string
-  result: I${data.businessName}Type
+  result: I${data.businessName}DetailType
 }
 
 ${
