@@ -1,5 +1,5 @@
 import { Badge, Popover, Tabs } from 'antd'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { NotificationOutlined } from '@ant-design/icons'
 import classes from './index.module.scss'
 import useStore from '@/store'
@@ -16,6 +16,10 @@ const NoticeCom = () => {
   const handleOpenChange = (newOpen: boolean) => {
     setOpen(newOpen)
   }
+
+  useEffect(() => {
+    toJS(notices).length > 0 ? setShow(true) : setShow(false)
+  }, [notices])
 
   const noticeDiv = (
     <div className={classes['notice-div']}>

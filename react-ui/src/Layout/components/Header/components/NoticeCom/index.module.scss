@@ -7,3 +7,10 @@
 .notice-content {
   color:#c1bfbf ;
 }
+
+:global {
+
+  .ant-badge-dot {
+    right: 4px;
+  }
+}
