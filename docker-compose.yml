@@ -9,16 +9,17 @@ services:
     image: registry.cn-shenzhen.aliyuncs.com/zwc-docker/leno_admin:mysql-8.0
     ports:
       - 3306:3306
-    command: --default-authentication-plugin=mysql_native_password
     restart: always
     networks:
       - app-leno-admin-web
     environment:
       - TZ=Asia/Guangzhou
       - MYSQL_ROOT_PASSWORD=Aa363689;
+      - MYSQL_DATABASE=leno_admin
     volumes:
       - /home/leno_admin/mysql/data:/var/lib/mysql
       - /home/leno_admin/mysql/logs:/logs
+    command: --default-authentication-plugin=mysql_native_password
 
   redis:
     image: registry.cn-shenzhen.aliyuncs.com/zwc-docker/leno_admin:redis-1.0
@@ -45,7 +46,7 @@ services:
   frontend:
     image: registry.cn-shenzhen.aliyuncs.com/zwc-docker/leno_admin:frontend-1.0
     ports:
-      - 8000:8000
+      - 80:80
     networks:
       - app-leno-admin-web
     depends_on:

@@ -22,7 +22,7 @@ export default () => {
       // REDIS_PASSWORD: 'admin123',
       REDIS_DB: 0,
       // 图片路径
-      IMG_URL: 'http://localhost:9090/static/'
+      IMG_URL: 'http://localhost:9090/uploads/'
     }
   } else if (process.env.NODE_ENV === 'docker-desktop') {
     return {
@@ -46,7 +46,7 @@ export default () => {
       REDIS_PASSWORD: 'admin123',
       REDIS_DB: 0,
       // 图片路径
-      IMG_URL: 'http://localhost:9090/static/'
+      IMG_URL: 'http://localhost:9090/uploads/'
     }
   } else if (process.env.NODE_ENV === 'production') {
     return {
@@ -69,7 +69,7 @@ export default () => {
       REDIS_PASSWORD: 'admin123',
       REDIS_DB: 0,
       // 图片路径
-      IMG_URL: 'http://localhost:9090/static'
+      IMG_URL: 'http://zhaowenchao.top/uploads/'
     }
   }
 }

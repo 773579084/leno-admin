@@ -1,0 +1,23 @@
+$color:#babcbe;
+$boderColor:#dfe6ec;
+
+.home {
+
+  .image {
+    height: 400px;
+    width: 100%;
+    background: url('@/assets/images/pay.jpg') no-repeat;
+    background-size: 100% 100%;
+  }
+
+  :global {
+
+    .ant-card-bordered {
+      box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+    }
+
+    .ant-card-head {
+      border-bottom: 1px solid $boderColor;
+    }
+  }
+}

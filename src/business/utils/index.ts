@@ -12,7 +12,7 @@ import { getIpAddress } from '@/business/utils/server'
  * @return {boolean}
  */
 export const removeSpecifyFile = (filename: string): boolean => {
-  const filePath = path.join(__dirname, '../../../static')
+  const filePath = path.join(__dirname, '../../../uploads')
   if (fs.existsSync(filePath)) {
     fs.unlinkSync(filePath + '/' + filename)
   } else {
