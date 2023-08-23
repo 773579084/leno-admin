@@ -1,5 +1,5 @@
 <p align="center">
-	<img alt="logo" src="/remdme-show-imgs/logo.png">
+	<img alt="logo" src="https://gitee.com/zhao-wenchao110/leno_-admin/raw/master/remdme-show-imgs/logo.png">
 </p>
 <h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">Leno Admin v1.0.0</h1>
 <h4 align="center">基于Koa2+React前后端分离的koa2快速开发框架</h4>
@@ -44,20 +44,20 @@ Leno Admin是一套全部开源的快速开发平台，毫无保留给个人及�
 
 <table>
     <tr>
-        <td><img style='' src="/remdme-show-imgs/login.png"/></td>
-        <td><img src="/remdme-show-imgs/user.png"/></td>
+        <td><img src="https://gitee.com/zhao-wenchao110/leno_-admin/raw/master/remdme-show-imgs/login.png"/></td>
+        <td><img src="https://gitee.com/zhao-wenchao110/leno_-admin/raw/master/remdme-show-imgs/user.png"/></td>
     </tr>
     <tr>
-        <td><img src="/remdme-show-imgs/edit-avatar.png"/></td>
-        <td><img src="/remdme-show-imgs/menu.png"/></td>
+        <td><img src="https://gitee.com/zhao-wenchao110/leno_-admin/raw/master/remdme-show-imgs/edit-avatar.png"/></td>
+        <td><img src="https://gitee.com/zhao-wenchao110/leno_-admin/raw/master/remdme-show-imgs/menu.png"/></td>
     </tr>
     <tr>
-        <td><img src="/remdme-show-imgs/dict.png"/></td>
-        <td><img src="/remdme-show-imgs/profile.png"/></td>
+        <td><img src="https://gitee.com/zhao-wenchao110/leno_-admin/raw/master/remdme-show-imgs/dict.png"/></td>
+        <td><img src="https://gitee.com/zhao-wenchao110/leno_-admin/raw/master/remdme-show-imgs/profile.png"/></td>
     </tr>
 	<tr>
-        <td><img src="/remdme-show-imgs/reids.png"/></td>
-        <td><img src="/remdme-show-imgs/gen.png"/></td>
+        <td><img src="https://gitee.com/zhao-wenchao110/leno_-admin/raw/master/remdme-show-imgs/reids.png"/></td>
+        <td><img src="https://gitee.com/zhao-wenchao110/leno_-admin/raw/master/remdme-show-imgs/gen.png"/></td>
     </tr>	 
 </table>
 
