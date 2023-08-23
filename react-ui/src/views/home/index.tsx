@@ -43,7 +43,6 @@ const Home = () => {
         <Col span={12}>
           <Row>
             <Col>
-              ``
               <h1>技术选项</h1>
             </Col>
           </Row>

@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : localhost
+ Source Server         : 阿里云mysql
  Source Server Type    : MySQL
- Source Server Version : 80019
- Source Host           : localhost:3306
+ Source Server Version : 80027
+ Source Host           : 120.79.243.62:3306
  Source Schema         : leno_admin
 
  Target Server Type    : MySQL
- Target Server Version : 80019
+ Target Server Version : 80027
  File Encoding         : 65001
 
- Date: 17/08/2023 17:21:34
+ Date: 23/08/2023 09:20:24
 */
 
 SET NAMES utf8mb4;
@@ -328,11 +328,16 @@ CREATE TABLE `sys_logininfor`  (
   `created_at` datetime NULL DEFAULT NULL COMMENT '创建时间',
   `updated_at` datetime NULL DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`info_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 233 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '系统访问记录' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 236 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '系统访问记录' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_logininfor
 -- ----------------------------
+INSERT INTO `sys_logininfor` VALUES (234, 'admin', '127.0.0.1', '内网IP', 'Chrome 110', 'Windows 10', '0', '登录成功', '2023-08-17 17:28:31', '2023-08-17 17:28:31', '2023-08-17 17:28:31');
+INSERT INTO `sys_logininfor` VALUES (235, 'admin', '127.0.0.1', '内网IP', 'Chrome 110', 'Windows 10', '0', '登录成功', '2023-08-18 14:47:37', '2023-08-18 14:47:37', '2023-08-18 14:47:37');
+INSERT INTO `sys_logininfor` VALUES (236, 'admin', '61.144.103.62', '广东 广州市', 'Chrome 110', 'Windows 10', '0', '登录成功', '2023-08-22 09:34:06', '2023-08-22 09:34:06', '2023-08-22 09:34:06');
+INSERT INTO `sys_logininfor` VALUES (237, 'admin', '61.144.103.62', '广东 广州市', 'Chrome 110', 'Windows 10', '0', '登录成功', '2023-08-22 10:47:38', '2023-08-22 10:47:38', '2023-08-22 10:47:38');
+INSERT INTO `sys_logininfor` VALUES (238, 'admin', '61.144.103.62', '广东 广州市', 'Chrome 110', 'Windows 10', '0', '登录成功', '2023-08-23 09:22:28', '2023-08-23 09:22:28', '2023-08-23 09:22:28');
 
 -- ----------------------------
 -- Table structure for sys_menu
@@ -513,7 +518,7 @@ CREATE TABLE `sys_notice`  (
 -- Records of sys_notice
 -- ----------------------------
 INSERT INTO `sys_notice` VALUES (17, '测试', '1', '<p>今天我测试通知</p>', '0', '[]', 'admin', '2023-08-04 08:51:45', 'admin', '2023-08-14 17:24:25', NULL);
-INSERT INTO `sys_notice` VALUES (19, '测试图片', '1', '<p>这是测试2通知<img src=\"http://localhost:9090/static/00a458e47e36a2a0bab76a500.jpg\" alt=\"\" data-href=\"\" style=\"width: 222.30px;height: 155.65px;\"/></p>', '0', '[\"00a458e47e36a2a0bab76a500.jpg\"]', 'admin', '2023-08-15 09:40:21', 'admin', '2023-08-15 15:39:53', NULL);
+INSERT INTO `sys_notice` VALUES (19, '测试图片', '1', '<p>这是测试2通知<img src=\"http://zhaowenchao.top/uploads/a849a5932e6a0941fc34b1a00.jpg\" alt=\"\" data-href=\"\" style=\"width: 199.30px;height: 139.55px;\"/></p>', '0', '[\"a849a5932e6a0941fc34b1a00.jpg\"]', 'admin', '2023-08-15 09:40:21', 'admin', '2023-08-22 09:34:34', NULL);
 
 -- ----------------------------
 -- Table structure for sys_oper_log
@@ -539,12 +544,15 @@ CREATE TABLE `sys_oper_log`  (
   `created_at` datetime NULL DEFAULT NULL COMMENT '创建时间',
   `updated_at` datetime NULL DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`oper_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 648 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '操作日志记录' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 650 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '操作日志记录' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_oper_log
 -- ----------------------------
 INSERT INTO `sys_oper_log` VALUES (649, '操作日志', '9', '', 'DELETE', '', 'admin', '深圳总公司', '/system/logMan/operlog/clean', '127.0.0.1', '内网IP', '{}', '{\"code\":200,\"message\":\"操作成功\"}', '0', '', '2023-08-17 17:20:27', '2023-08-17 17:20:27', '2023-08-17 17:20:27');
+INSERT INTO `sys_oper_log` VALUES (650, '通用模块', '1', '', 'POST', '', 'admin', '深圳总公司', '/common/image', '61.144.103.62', '广东 广州市', '{}', '{\"code\":200,\"message\":\"图片上传成功！\"}', '0', '', '2023-08-22 09:34:29', '2023-08-22 09:34:29', '2023-08-22 09:34:29');
+INSERT INTO `sys_oper_log` VALUES (651, '通用模块', '1', '', 'POST', '', 'admin', '深圳总公司', '/common/delImage', '61.144.103.62', '广东 广州市', '[]', '{\"code\":200,\"message\":\"操作成功\"}', '0', '', '2023-08-22 09:34:34', '2023-08-22 09:34:34', '2023-08-22 09:34:34');
+INSERT INTO `sys_oper_log` VALUES (652, '通知公告', '2', '', 'PUT', '', 'admin', '深圳总公司', '/system/notice', '61.144.103.62', '广东 广州市', '上传数据超长，未存储到数据库', '{\"code\":200,\"message\":\"操作成功\"}', '0', '', '2023-08-22 09:34:34', '2023-08-22 09:34:34', '2023-08-22 09:34:34');
 
 -- ----------------------------
 -- Table structure for sys_post
