@@ -43,11 +43,11 @@ Leno Admin是一套全部开源的快速开发平台，毫无保留给个人及�
 
 <table>
     <tr>
-        <td><img src="/remdme-show-imgs/login.png"/></td>
-        <td><img src="/remdme-show-imgs/login.png"/></td>
+        <td><img style='' src="/remdme-show-imgs/login.png"/></td>
+        <td><img src="/remdme-show-imgs/user.png"/></td>
     </tr>
     <tr>
-        <td><img src="/remdme-show-imgs/user.png"/></td>
+        <td><img src="/remdme-show-imgs/edit-avatar.png"/></td>
         <td><img src="/remdme-show-imgs/menu.png"/></td>
     </tr>
     <tr>
@@ -55,7 +55,7 @@ Leno Admin是一套全部开源的快速开发平台，毫无保留给个人及�
         <td><img src="/remdme-show-imgs/profile.png"/></td>
     </tr>
 	<tr>
-        <td><img src="/remdme-show-imgs/edit-avatar.png"/></td>
+        <td><img src="/remdme-show-imgs/reids.png"/></td>
         <td><img src="/remdme-show-imgs/gen.png"/></td>
     </tr>	 
 </table>
