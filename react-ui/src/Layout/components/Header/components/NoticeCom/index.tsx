@@ -5,6 +5,7 @@ import classes from './index.module.scss'
 import useStore from '@/store'
 import { observer } from 'mobx-react-lite'
 import { toJS } from 'mobx'
+import { Empty } from 'antd'
 
 const NoticeCom = () => {
   const [show, setShow] = useState(false)
@@ -31,19 +32,23 @@ const NoticeCom = () => {
             key: '1',
             children: (
               <>
-                {toJS(notices).map((item) => {
-                  if (item.noticeType === '1') {
-                    return (
-                      <div key={item.noticeId}>
-                        <h4>{item.noticeTitle}</h4>
-                        <div
-                          className={classes['notice-content']}
-                          dangerouslySetInnerHTML={{ __html: item.noticeContent as string }}
-                        />
-                      </div>
-                    )
-                  }
-                })}
+                {notices.find((notice) => notice.noticeType === '1') ? (
+                  toJS(notices).map((item) => {
+                    if (item.noticeType === '1') {
+                      return (
+                        <div key={item.noticeId}>
+                          <h4>{item.noticeTitle}</h4>
+                          <div
+                            className={classes['notice-content']}
+                            dangerouslySetInnerHTML={{ __html: item.noticeContent as string }}
+                          />
+                        </div>
+                      )
+                    }
+                  })
+                ) : (
+                  <Empty description="暂无通知" />
+                )}
               </>
             ),
           },
@@ -52,19 +57,23 @@ const NoticeCom = () => {
             key: '2',
             children: (
               <>
-                {toJS(notices).map((item) => {
-                  if (item.noticeType === '2') {
-                    return (
-                      <div key={item.noticeId}>
-                        <h4>{item.noticeTitle}</h4>
-                        <div
-                          className={classes['notice-content']}
-                          dangerouslySetInnerHTML={{ __html: item.noticeContent as string }}
-                        />
-                      </div>
-                    )
-                  }
-                })}
+                {notices.find((notice) => notice.noticeType === '2') ? (
+                  toJS(notices).map((item) => {
+                    if (item.noticeType === '2') {
+                      return (
+                        <div key={item.noticeId}>
+                          <h4>{item.noticeTitle}</h4>
+                          <div
+                            className={classes['notice-content']}
+                            dangerouslySetInnerHTML={{ __html: item.noticeContent as string }}
+                          />
+                        </div>
+                      )
+                    }
+                  })
+                ) : (
+                  <Empty description="暂无公告" />
+                )}
               </>
             ),
           },
