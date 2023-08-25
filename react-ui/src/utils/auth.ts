@@ -29,5 +29,11 @@ export function hasPermi(perm: string | string[]) {
 
   const permList = toJS(permissions)
   if (permList[0] === '*:*:*') return false
-  return !permList.some((item) => item === perm)
+
+  // 判断perm为字符串，还是数组情况
+  if (Object.prototype.toString.call(perm) === '[object Array]') {
+    return !(perm as string[]).every((item) => permList.includes(item))
+  } else {
+    return !permList.some((item) => item === perm)
+  }
 }
