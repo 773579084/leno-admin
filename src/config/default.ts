@@ -1,5 +1,4 @@
 export default () => {
-  // 重要：需要 cross-env 注入变量启动，才能够全局使用，直接用node启动文件无法获取变量
   if (process.env.NODE_ENV === 'development') {
     // windows和mac都是通过host.docker.internal连接宿主机
     return {
@@ -19,7 +18,7 @@ export default () => {
       // redis
       REDIS_PORT: 6379,
       REDIS_HOST: 'localhost',
-      // REDIS_PASSWORD: 'admin123',
+      REDIS_PASSWORD: 'admin123',
       REDIS_DB: 0,
       // 图片路径
       IMG_URL: 'http://localhost:9090/uploads/'

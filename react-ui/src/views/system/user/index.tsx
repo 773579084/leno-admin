@@ -794,7 +794,6 @@ const User = () => {
               </p>
               <p className="ant-upload-text">将文件拖到此处，或点击上传</p>
             </Dragger>
-
             <Row justify="center" align="middle" style={{ marginTop: 20 }}>
               <Checkbox
                 checked={isUpdateSupport === '1' ? true : false}

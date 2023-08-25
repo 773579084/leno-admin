@@ -2,7 +2,7 @@
 	<img alt="logo" src="https://gitee.com/zhao-wenchao110/leno_-admin/raw/master/remdme-show-imgs/logo.png">
 </p>
 <h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">Leno Admin v1.0.0</h1>
-<h4 align="center">基于Koa2+React前后端分离的koa2快速开发框架</h4>
+<h4 align="center">基于Koa2、React、Sequelize的前后端分离的后台管理系统</h4>
 
 ## 平台简介
 

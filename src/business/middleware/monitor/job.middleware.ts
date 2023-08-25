@@ -8,7 +8,7 @@ import { excelJsExport } from '@/business/utils/excel'
 import { excelBaseStyle } from '@/business/public/excelMap'
 import MonitorJob from '@/mysql/model/monitor/job.model'
 import { Op } from 'sequelize'
-import { addEditJob, cancelJob, runOneJob, scheduleAll } from '@/business/utils/job'
+import { addEditJob, cancelJob, runOneJob } from '@/business/utils/job'
 import { cronRunTime } from '@/business/utils/cronRunTime'
 const { uploadParamsErr, getListErr, sqlErr, delErr, exportExcelErr } = errors
 

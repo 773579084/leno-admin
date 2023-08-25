@@ -31,7 +31,6 @@ export const judgeIdSchema = () => {
       const list = ctx.request.path.split('/')
       const ids = list[list.length - 1]
       const idsList = ids.split(',')
-      console.log(36, list)
 
       ctx.state.ids = idsList
     } catch (error) {

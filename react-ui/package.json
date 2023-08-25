@@ -7,7 +7,6 @@
     "dev": "cross-env NODE_ENV=development webpack-dev-server -c build/webpack.dev.js",
     "test": "cross-env NODE_ENV=test webpack-dev-server -c build/webpack.dev.js",
     "build": "cross-env NODE_ENV=production webpack -c build/webpack.prod.js",
-    "analy": "cross-env NODE_ENV=test webpack -c build/webpack.analy.js",
     "lint": "npm run lint-eslint && npm run lint-stylelint",
     "lint-eslint": "eslint -c .eslintrc.js --ext .ts,.tsx,.js src",
     "lint-stylelint": "stylelint --config .stylelintrc.js src/**/*.{less,css,scss}",
