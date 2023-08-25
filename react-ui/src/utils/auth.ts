@@ -22,7 +22,7 @@ export function removeToken() {
  * @param perm
  * @returns boolean
  */
-export function hasPermi(perm: string) {
+export function hasPermi(perm: string | string[]) {
   const {
     useUserStore: { permissions },
   } = useStore()

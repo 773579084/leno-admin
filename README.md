@@ -38,7 +38,7 @@ Leno Admin是一套全部开源的快速开发平台，毫无保留给个人及�
 
 演示地址：http://zhaowenchao.top 
 
-文档地址：
+文档地址：http://zhao-wenchao110.gitee.io/lenoadmin-docs
 
 ## 演示图
 

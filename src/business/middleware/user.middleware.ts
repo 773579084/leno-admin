@@ -202,7 +202,7 @@ export const loginMid = async (ctx: Context, next: () => Promise<void>) => {
 
     // 2-3 获取用户的个人信息（权限部门等）
     const data = await getUserInfoAll(userId)
-    data.userInfo.avatar = IMG_URL + data.userInfo.avatar
+    data.userInfo.avatar = data.userInfo.avatar
 
     // 3 将登录基本信息存储到 redis的login_token，并且设置过期时间
     addSession(hash, { ...machine, loginTime: new Date(), ...data })
@@ -334,7 +334,7 @@ export const queryUserInfoMid = async (ctx: Context, next: () => Promise<void>) 
   ctx.state.formatData = {
     userInfo: {
       ...userData.userInfo,
-      avatar: userData.userInfo.avatar
+      avatar: IMG_URL + userData.userInfo.avatar
     },
     roles: userData.roles,
     permissions: userData.permissions

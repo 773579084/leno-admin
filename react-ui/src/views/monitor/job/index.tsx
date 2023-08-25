@@ -242,6 +242,7 @@ const MonitorJob = () => {
 
   // 跳转 调度日志
   const jumpJobLog = (id = 0) => {
+    console.log(245, id)
     navigate(`/monitor/jobLog/${id}`)
   }
 

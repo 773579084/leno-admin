@@ -70,15 +70,20 @@ export default class useRoutersStore {
       } else {
         // 判断 路由需要缓存的进行路由缓存包裹
         if (router.meta?.noCache) {
-          router.element = (
-            <KeepAlive
-              name={beforePath + router.path}
-              cacheKey={router.path}
-              saveScrollPosition="screen"
-            >
-              {this.lazyLoadFn(router.element as string)}
-            </KeepAlive>
-          )
+          // 暂时没有解决动态路由的方法，故而动态路由不缓存
+          if (router.path?.indexOf(':') === -1) {
+            router.element = (
+              <KeepAlive
+                name={beforePath + router.path}
+                cacheKey={router.path}
+                saveScrollPosition="screen"
+              >
+                {this.lazyLoadFn(router.element as string)}
+              </KeepAlive>
+            )
+          } else {
+            router.element = this.lazyLoadFn(router.element as string)
+          }
         } else {
           router.element = this.lazyLoadFn(router.element as string)
         }

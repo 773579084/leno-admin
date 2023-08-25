@@ -29,7 +29,6 @@ import {
 } from '@ant-design/icons'
 import classes from './index.module.scss'
 import { SketchPicker } from 'react-color'
-import { toJS } from 'mobx'
 import { getConfigKeyAPI } from '@/api/modules/system/config'
 
 const avatarCom = () => {

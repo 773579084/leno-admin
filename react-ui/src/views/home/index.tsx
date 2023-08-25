@@ -80,7 +80,10 @@ const Home = () => {
         <Col span={8}>
           <Card title="联系信息">
             <p>
-              <SendOutlined /> 官网：<a></a>
+              <SendOutlined /> 官网：
+              <a href="http://zhao-wenchao110.gitee.io/lenoadmin-docs" target="_blank">
+                http://zhao-wenchao110.gitee.io/lenoadmin-docs
+              </a>
             </p>
             <p>
               <UserOutlined /> QQ群：913365274
