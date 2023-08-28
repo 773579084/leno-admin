@@ -35,6 +35,7 @@ import ImportTable from './component/ImportTable'
 import OmsSyntaxHighlight from './component/OmsSyntaxHighlight'
 import { download } from '@/api'
 import { hasPermi } from '@/utils/auth'
+import { pageDelJump } from '@/utils'
 
 const Gen: React.FC = () => {
   const [queryForm] = Form.useForm()
@@ -135,11 +136,8 @@ const Gen: React.FC = () => {
           const { data } = await delAPI(ids)
           message.success(data.message)
           setSelectKeys([])
-          const pageNum = Math.ceil((dataList.count - ids.split(',').length) / queryParams.pageSize)
-          setQueryParams({
-            pageNum: pageNum || 1,
-            pageSize: queryParams.pageSize,
-          })
+
+          pageDelJump(dataList.count, ids, queryParams, setQueryParams)
         } catch (error) {}
       },
     })

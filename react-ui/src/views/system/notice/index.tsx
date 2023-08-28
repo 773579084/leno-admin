@@ -34,6 +34,7 @@ import { IDomEditor } from '@wangeditor/editor'
 import { commonDelImgAPI } from '@/api/modules/common'
 import { hasPermi } from '@/utils/auth'
 import useStore from '@/store'
+import { pageDelJump } from '@/utils'
 
 const SysNotice: React.FC = () => {
   const [queryForm] = Form.useForm()
@@ -207,11 +208,7 @@ const SysNotice: React.FC = () => {
         try {
           const { data } = await delAPI(ids)
           message.success(data.message)
-          const pageNum = Math.ceil((dataList.count - ids.split(',').length) / queryParams.pageSize)
-          setQueryParams({
-            pageNum: pageNum || 1,
-            pageSize: queryParams.pageSize,
-          })
+          pageDelJump(dataList.count, ids, queryParams, setQueryParams)
         } catch (error) {}
       },
     })

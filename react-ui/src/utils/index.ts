@@ -24,3 +24,29 @@ export const parseSVG = (svgString: string) => {
 
   return xmlDoc.documentElement.outerHTML
 }
+
+/**
+ * 删除tab内信息，页面跳转逻辑
+ * @param count
+ * @param queryParams
+ * @param setQueryParams
+ */
+export const pageDelJump = (
+  count: number,
+  ids: string,
+  queryParams: { pageNum: number; pageSize: number },
+  setQueryParams: Function,
+) => {
+  const pageNum = Math.ceil((count - ids.split(',').length) / queryParams.pageSize)
+  if (pageNum < queryParams.pageNum) {
+    setQueryParams({
+      pageNum: pageNum || 1,
+      pageSize: queryParams.pageSize,
+    })
+  } else {
+    setQueryParams({
+      pageNum: queryParams.pageNum,
+      pageSize: queryParams.pageSize,
+    })
+  }
+}

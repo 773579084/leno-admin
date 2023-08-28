@@ -51,6 +51,7 @@ import { useNavigate } from 'react-router-dom'
 import classes from './index.module.scss'
 import Cron from '@/components/Cron'
 import { MenuInfo } from 'rc-menu/lib/interface'
+import { pageDelJump } from '@/utils'
 
 // 执行策略
 const misfirePolicyDict = [
@@ -230,11 +231,7 @@ const MonitorJob = () => {
         try {
           const { data } = await delAPI(ids)
           message.success(data.message)
-          const pageNum = Math.ceil((dataList.count - ids.split(',').length) / queryParams.pageSize)
-          setQueryParams({
-            pageNum: pageNum || 1,
-            pageSize: queryParams.pageSize,
-          })
+          pageDelJump(dataList.count, ids, queryParams, setQueryParams)
         } catch (error) {}
       },
     })

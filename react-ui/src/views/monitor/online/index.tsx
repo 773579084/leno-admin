@@ -12,6 +12,7 @@ import { IonlineType } from '@/type/modules/monitor/online'
 import ColorBtn from '@/components/ColorBtn'
 import dayjs from 'dayjs'
 import { hasPermi } from '@/utils/auth'
+import { pageDelJump } from '@/utils'
 
 const Online: React.FC = () => {
   const [queryForm] = Form.useForm()
@@ -97,11 +98,8 @@ const Online: React.FC = () => {
         try {
           const { data } = await delAPI(ids)
           message.success(data.message)
-          const pageNum = Math.ceil((dataList.count - ids.split(',').length) / queryParams.pageSize)
-          setQueryParams({
-            pageNum: pageNum || 1,
-            pageSize: queryParams.pageSize,
-          })
+
+          pageDelJump(dataList.count, ids, queryParams, setQueryParams)
         } catch (error) {}
       },
     })

@@ -59,6 +59,7 @@ import { IdeptResultType } from '@/type/modules/system/sysUser'
 import { useNavigate } from 'react-router-dom'
 import { hasPermi } from '@/utils/auth'
 import { MenuInfo } from 'rc-menu/lib/interface'
+import { pageDelJump } from '@/utils'
 
 const SysRole: React.FC = () => {
   const [queryForm] = Form.useForm()
@@ -266,11 +267,8 @@ const SysRole: React.FC = () => {
         try {
           const { data } = await delAPI(ids)
           data.code === 200 ? message.success(data.message) : message.error(data.message)
-          const pageNum = Math.ceil((dataList.count - ids.split(',').length) / queryParams.pageSize)
-          setQueryParams({
-            pageNum: pageNum || 1,
-            pageSize: queryParams.pageSize,
-          })
+
+          pageDelJump(dataList.count, ids, queryParams, setQueryParams)
         } catch (error) {}
       },
     })

@@ -33,6 +33,7 @@ import ColorBtn from '@/components/ColorBtn'
 import { IdictType } from '@/type/modules/system/sysDictData'
 import DictTag from '@/components/DictTag'
 import { hasPermi } from '@/utils/auth'
+import { pageDelJump } from '@/utils'
 
 const SysPost: React.FC = () => {
   const { TextArea } = Input
@@ -168,11 +169,7 @@ const SysPost: React.FC = () => {
         try {
           const { data } = await delAPI(ids)
           message.success(data.message)
-          const pageNum = Math.ceil((dataList.count - ids.split(',').length) / queryParams.pageSize)
-          setQueryParams({
-            pageNum: pageNum || 1,
-            pageSize: queryParams.pageSize,
-          })
+          pageDelJump(dataList.count, ids, queryParams, setQueryParams)
         } catch (error) {}
       },
     })

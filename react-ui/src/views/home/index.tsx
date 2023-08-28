@@ -50,7 +50,7 @@ const Home = () => {
             <Col span={6}>
               <h4>后端技术</h4>
               <ul>
-                <li>Koa2</li>
+                <li>Koa</li>
                 <li>sequelize</li>
                 <li>socket.io</li>
                 <li>typescript</li>

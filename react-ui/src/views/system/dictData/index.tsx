@@ -45,6 +45,7 @@ import DictTag from '@/components/DictTag'
 import useStore from '@/store'
 import { toJS } from 'mobx'
 import { IdictDataType, tbasType } from '@/type'
+import { pageDelJump } from '@/utils'
 
 const DictData: React.FC = () => {
   const { TextArea } = Input
@@ -197,11 +198,8 @@ const DictData: React.FC = () => {
         try {
           const { data } = await delTypeAPI(ids)
           message.success(data.message)
-          const pageNum = Math.ceil((dataList.count - ids.split(',').length) / queryParams.pageSize)
-          setQueryParams({
-            pageNum: pageNum || 1,
-            pageSize: queryParams.pageSize,
-          })
+
+          pageDelJump(dataList.count, ids, queryParams, setQueryParams)
         } catch (error) {}
       },
     })
