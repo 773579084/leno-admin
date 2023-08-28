@@ -53,7 +53,7 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
 
     // 服务器名称
     data.sys.computerName = os.hostname()
-    // 服务器IP    
+    // 服务器IP
     data.sys.computerIp = getIpAddress()
     // 操作系统
     data.sys.osName = os.type()

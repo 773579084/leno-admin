@@ -45,7 +45,12 @@ const HeaderCom: React.FC<PropsType> = ({ collapsed, setCollapsed }) => {
             />
           </Tooltip>
           <Tooltip title="文档地址">
-            <QuestionCircleOutlined style={{ fontSize: 18, cursor: 'pointer' }} />
+            <QuestionCircleOutlined
+              onClick={() =>
+                window.open('http://zhao-wenchao110.gitee.io/lenoadmin-docs', '_blank')
+              }
+              style={{ fontSize: 18, cursor: 'pointer' }}
+            />
           </Tooltip>
 
           <AvatarCom />
