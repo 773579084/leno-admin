@@ -100,9 +100,10 @@ const Home = () => {
           </Card>
         </Col>
         <Col span={8}>
-          <Card title="捐赠支持">
-            <div className={classes['image']} />
-            <p style={{ marginTop: 15 }}>你可以请作者喝杯咖啡表示鼓励</p>
+          <Card title="其他模块">
+            {/* <Card title="捐赠支持"> */}
+            {/* <div className={classes['image']} /> */}
+            {/* <p style={{ marginTop: 15 }}>你可以请作者喝杯咖啡表示鼓励</p> */}
           </Card>
         </Col>
       </Row>
