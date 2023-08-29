@@ -17,7 +17,7 @@ const Home = () => {
           <p>
             <b>当前版本:</b> <span> v1.0.0</span>
           </p>
-          <p>
+          <div>
             <Row gutter={[8, 16]}>
               <Col>
                 <Button
@@ -37,8 +37,10 @@ const Home = () => {
                 </Button>
               </Col>
             </Row>
+          </div>
+          <p style={{ marginTop: 15 }}>
+            如果觉得不错，欢迎给一个⭐Star⭐,你的支持就是我继续免费更新下去的动力，谢谢~
           </p>
-          <p>如果觉得不错，欢迎给一个⭐Star⭐,你的支持就是我继续免费更新下去的动力，谢谢~</p>
         </Col>
         <Col span={12}>
           <Row>
@@ -79,15 +81,15 @@ const Home = () => {
       <Row gutter={[30, 16]} className={classes['home']}>
         <Col span={8}>
           <Card title="联系信息">
-            <p>
+            <div>
               <SendOutlined /> 官网：
               <a href="http://zhao-wenchao110.gitee.io/lenoadmin-docs" target="_blank">
                 http://zhao-wenchao110.gitee.io/lenoadmin-docs
               </a>
-            </p>
-            <p>
+            </div>
+            <div>
               <UserOutlined /> QQ群：913365274
-            </p>
+            </div>
           </Card>
         </Col>
         <Col span={8}>
@@ -101,7 +103,6 @@ const Home = () => {
         </Col>
         <Col span={8}>
           <Card title="其他模块">
-            {/* <Card title="捐赠支持"> */}
             {/* <div className={classes['image']} /> */}
             {/* <p style={{ marginTop: 15 }}>你可以请作者喝杯咖啡表示鼓励</p> */}
           </Card>
