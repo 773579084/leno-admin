@@ -46,20 +46,8 @@ export const userExcelHeader = [
     dataIndex: 'status'
   },
   {
-    title: '最后登录IP',
-    dataIndex: 'login_ip'
-  },
-  {
-    title: '最后登录时间',
-    dataIndex: 'login_date'
-  },
-  {
     title: '部门名称',
     dataIndex: 'dept.dept_name'
-  },
-  {
-    title: '部门负责人',
-    dataIndex: 'dept.leader'
   }
 ]
 
@@ -93,10 +81,6 @@ export const userTemExcelHeader = [
   {
     title: '部门名称',
     dataIndex: 'dept.dept_name'
-  },
-  {
-    title: '部门负责人',
-    dataIndex: 'dept.leader'
   }
 ]
 

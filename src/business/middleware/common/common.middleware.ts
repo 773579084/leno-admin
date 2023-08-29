@@ -159,15 +159,23 @@ export const judegImportMid = (table: ModelStatic<any>, updates: string[]) => {
       updateSupport: string
     }
 
+    const data = ctx.state.excelData.map((item: any) => {
+      return {
+        ...item,
+        create_by: ctx.state.user.userName,
+        update_by: ctx.state.user.userName
+      }
+    })
+
     try {
       if (updateSupport === '1') {
         // 新增 且 修改
-        await table.bulkCreate(ctx.state.excelData, {
+        await table.bulkCreate(data, {
           updateOnDuplicate: updates
         })
       } else {
         // 不更改 只新增
-        await table.bulkCreate(ctx.state.excelData)
+        await table.bulkCreate(data)
       }
     } catch (error) {
       console.error('user excel新增与修改错误', ctx.request['body'])

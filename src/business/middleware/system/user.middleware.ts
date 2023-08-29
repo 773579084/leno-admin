@@ -389,10 +389,10 @@ export const importExcelUserCon = async (ctx: Context, next: () => Promise<void>
             }
           })) as unknown as { dept_id: number }[]
           excelData[i]['dept_id'] = deptArr[0].dept_id
+          excelData[i]['email'] = excelData[i]['email']['text']
         }
       }
     }
-
     ctx.state.excelData = excelData
     await next()
   } catch (error) {
