@@ -32,7 +32,14 @@ const Home = () => {
                 </Button>
               </Col>
               <Col>
-                <Button type="primary" ghost icon={<GithubOutlined />}>
+                <Button
+                  type="primary"
+                  ghost
+                  icon={<GithubOutlined />}
+                  onClick={() => {
+                    window.open('https://github.com/773579084/Leno_Admin')
+                  }}
+                >
                   GitHub
                 </Button>
               </Col>
