@@ -172,5 +172,9 @@ export default {
   logErr: {
     code: '500',
     message: '日志写入失败'
+  },
+  stopEditErr: {
+    code: '500',
+    message: '演示模式，不允许操作'
   }
 }

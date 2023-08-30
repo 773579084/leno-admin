@@ -32,6 +32,10 @@ instance.interceptors.response.use(
     return response
   },
   function (error) {
+    // 二进制数据则不走公用错误提示
+    if (error.request.responseType === 'blob' || error.request.responseType === 'arraybuffer') {
+      return Promise.reject(error)
+    }
     // userStore
     const {
       useGlobalStore: { logout, changeLogout },
@@ -81,7 +85,8 @@ instance.interceptors.response.use(
         message.error('未知错误，请联系管理人员')
         break
     }
-    return
+    NProgress.done()
+    return Promise.reject(error)
   },
 )
 
@@ -139,7 +144,13 @@ export async function download(
       URL.revokeObjectURL(blob)
     }
     uploadExcel(`${fileName}_${new Date().valueOf()}.${fileFormat}`)
-  } catch (r) {
+  } catch (r: any) {
+    NProgress.done()
+    const resText = await r.response.data.text()
+    const rspObj = JSON.parse(resText)
+    if (rspObj.code === '500') {
+      return message.error(rspObj.code + ': ' + rspObj.message)
+    }
     console.error(r)
     message.error('下载文件出现错误，请联系管理员！')
   }

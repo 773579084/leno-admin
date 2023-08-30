@@ -11,6 +11,7 @@ import { Server } from 'socket.io' // 引入 socket.io 模块
 // 引入路由
 import router from '@/business/router'
 import { auth } from '@/business/middleware/common/auth'
+import stopEdit from '@/business/middleware/common/stop_edit'
 // 初始化 Koa 应用实例
 const app = new Koa()
 import '@/mysql/db'
@@ -43,6 +44,9 @@ app.use(koaStatic(path.join(__dirname, '../../')))
 
 // 统一权限判断
 app.use(auth)
+
+// 禁止操作修改删除类接口（此功能仅用于上线网页预览使用）
+app.use(stopEdit)
 
 // 获取请求用户的 设备信息
 app.use(userAgent)
