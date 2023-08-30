@@ -12,13 +12,13 @@ const instance = axios.create({
 
 // 请求拦截器
 instance.interceptors.request.use(
-  function (config: any) {
+  function (response: any) {
     // token配置请求头
-    if (!config.headers?.authorization && getToken()) {
-      config.headers.Authorization = 'Bearer ' + getToken()
+    if (!response.headers?.authorization && getToken()) {
+      response.headers.Authorization = 'Bearer ' + getToken()
     }
     NProgress.start()
-    return config
+    return response
   },
   function (error) {
     return Promise.reject(error)

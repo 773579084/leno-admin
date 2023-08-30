@@ -9,7 +9,12 @@ export default async (ctx: Context, next: () => Promise<void>) => {
   if (env().STOP_EDIT) {
     const { url, method } = ctx.request
     const urlList = url.split('/')
-    if (!authWhites.includes(url) && method !== 'GET' && !urlList.includes('tool')) {
+    if (
+      !authWhites.includes(url) &&
+      method !== 'GET' &&
+      !urlList.includes('tool') &&
+      url !== '/user/logout'
+    ) {
       return ctx.app.emit('error', stopEditErr, ctx)
     }
   }
