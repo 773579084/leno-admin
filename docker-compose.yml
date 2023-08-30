@@ -32,7 +32,7 @@ services:
       - REDIS_PASSWORD=admin123
 
   backend:
-    image: registry.cn-shenzhen.aliyuncs.com/zwc-docker/leno_admin:backend-1.0
+    image: registry.cn-shenzhen.aliyuncs.com/zwc-docker/leno_admin:backend-1.0.2
     ports:
       - 9000:9000
     depends_on:
@@ -44,7 +44,7 @@ services:
       - /home/leno_admin/backend/logs:/home/backend/logs
 
   frontend:
-    image: registry.cn-shenzhen.aliyuncs.com/zwc-docker/leno_admin:frontend-1.0
+    image: registry.cn-shenzhen.aliyuncs.com/zwc-docker/leno_admin:frontend-1.0.1
     ports:
       - 80:80
     networks:

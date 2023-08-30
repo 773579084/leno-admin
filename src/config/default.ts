@@ -23,7 +23,7 @@ export default () => {
       // 图片路径
       IMG_URL: 'http://localhost:9090/uploads/',
       // 是否开启禁止操作修改删除类接口（此功能仅用于上线网页预览使用）
-      STOP_EDIT: true
+      STOP_EDIT: false
     }
   } else if (process.env.NODE_ENV === 'docker-desktop') {
     return {
