@@ -85,6 +85,10 @@ const Login = () => {
             />
           )}
         </div>
+
+        <div className={classes['copyright']}>
+          Copyright © 2023-current zhaowenchao.top All Rights Reserved
+        </div>
       </div>
     </div>
   )

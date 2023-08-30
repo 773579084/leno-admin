@@ -113,11 +113,10 @@ $theme-color:#b2aeae;
     }
   }
 
-  /* 去掉谷歌 记住账号 默认背景色 */
-  input:-webkit-autofill , textarea:-webkit-autofill, select:-webkit-autofill {
-    -webkit-text-fill-color: $theme-color!important;
-    background-color:transparent;
-    background-image: none;
-    transition: background-color 50000s ease-in-out 0s; //背景色透明  生效时长  过渡效果  启用时延迟的时间
+  // 底部版权信息
+  .copyright {
+    position: fixed;
+    bottom: 4vh;
+    color: #686666;
   }
 }
