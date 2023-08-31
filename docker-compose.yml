@@ -44,7 +44,7 @@ services:
       - /home/leno_admin/backend/logs:/home/backend/logs
 
   frontend:
-    image: registry.cn-shenzhen.aliyuncs.com/zwc-docker/leno_admin:frontend-1.0.1
+    image: registry.cn-shenzhen.aliyuncs.com/zwc-docker/leno_admin:frontend-1.0.2
     ports:
       - 80:80
     networks:
