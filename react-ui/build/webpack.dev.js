@@ -3,7 +3,7 @@ const path = require('path')
 const { merge } = require('webpack-merge')
 const baseConfig = require('./webpack.base.js')
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
-const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
+const FriendlyErrorsPlugin = require('@soda/friendly-errors-webpack-plugin');
 const { networkInterfaces } = require('os');
 
 // 基本的配置项
