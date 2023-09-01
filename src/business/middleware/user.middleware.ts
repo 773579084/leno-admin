@@ -63,7 +63,6 @@ export const isUserStatusMid = async (ctx: Context, next: () => Promise<void>) =
 // 判断 验证码
 export const iscaptchaImageMid = async (ctx: Context, next: () => Promise<void>) => {
   const { uuid, code } = ctx.request['body'] as ILoginType
-
   try {
     const value = (await queryKeyValue(uuid)) as unknown as string
 
