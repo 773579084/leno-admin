@@ -1,20 +1,22 @@
 <p align="center">
 	<img alt="logo" src="https://gitee.com/zhao-wenchao110/leno_-admin/raw/master/remdme-show-imgs/logo.png">
 </p>
-<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">Leno Admin v1.0.0</h1>
+<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">🎉🎉Leno Admin🎉🎉</h1>
 <h4 align="center">基于Koa2、React、Sequelize的前后端分离的后台管理系统</h4>
 
-## 平台简介
+## 📋 平台简介
 
-Leno Admin是一套全部开源的快速开发平台，毫无保留给个人及企业免费使用。
+🥗 Leno Admin是一套全部开源的快速开发平台，毫无保留给个人及企业免费使用。
 
-* 前端采用React Hooks、antd。
-* 后端采用Koa2、mysql(sequelize)、Redis 、 Jwt。
-* 权限认证使用Jwt。
-* 支持加载动态权限菜单，多方式轻松权限控制。
-* 高效率开发，使用代码生成器可以一键生成前后端代码。
+* 🥪 前端采用React Hooks、antd。
+* 🎄 后端采用Koa2、mysql(sequelize)、Redis 、 Jwt。
+* 🍵 权限认证使用Jwt。
+* 🍥 支持加载动态权限菜单，多方式轻松权限控制。
+* 🍧 高效率开发，使用代码生成器可以一键生成前后端代码。
 
-## 内置功能
+😘 项目中借鉴了 [ruoyi](http://ruoyi.vip/) 框架，此项目目的与想法是丰富`ruoyi`生态，在此由衷感谢`ruoyi`的开源贡献~
+
+## 📦 内置功能
 
 1.  用户管理：用户是系统操作者，该功能主要完成系统用户配置。
 2.  部门管理：配置系统组织机构（公司、部门、小组），树结构展现支持数据权限。
@@ -32,15 +34,15 @@ Leno Admin是一套全部开源的快速开发平台，毫无保留给个人及�
 15. 服务监控：监视当前系统CPU、内存、磁盘、堆栈等相关信息。
 16. 缓存监控：对系统的缓存信息查询，命令统计等。
 
-## 在线体验
+## 📚 在线体验
 
-- admin/123456  
+- 账号/密码：admin/123456  
 
 演示地址：http://zhaowenchao.top 
 
 文档地址：http://zhao-wenchao110.gitee.io/lenoadmin-docs
 
-## 演示图
+## 🐶 演示图
 
 <table>
     <tr>
@@ -62,6 +64,6 @@ Leno Admin是一套全部开源的快速开发平台，毫无保留给个人及�
 </table>
 
 
-## Leno Admin前后端分离交流群
+## 💬 Leno Admin前后端分离交流群
 
 QQ群：913365274。
