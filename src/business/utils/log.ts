@@ -286,14 +286,15 @@ export const queryUserMachine = async (ctx: Context): Promise<ImachineType> => {
  */
 export const queryIpAdress = async (ip: string) => {
   try {
-    const { data } = await axios.get(`http://ip-api.com/json/${ip}?lang=zh-CN`)
-    console.log(292, data)
+    let address = '未知ip'
 
-    let address = ''
+    if (!isIPAddress(ip)) {
+      return address
+    }
+
+    const { data } = await axios.get(`http://ip-api.com/json/${ip}?lang=zh-CN`)
     if (data.status === 'success') {
       address = `${data.regionName} ${data.city}`
-    } else {
-      address = '内网IP'
     }
     return address
   } catch (error) {
@@ -307,7 +308,22 @@ export const queryIpAdress = async (ip: string) => {
  */
 export const getUserIp = (ctx: Context) => {
   const ip = (ctx.request.headers['x-real-ip'] || ctx.request.ip) as string
-  console.log(314, ip)
-
   return ip.split(':').slice(-1)[0]
+}
+
+/**
+ * 判断是否为ip格式
+ * @param ip
+ * @returns
+ */
+function isIPAddress(ip: string): boolean {
+  // 正则表达式匹配 IPv4 地址
+  const ipv4Pattern =
+    /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
+
+  // 正则表达式匹配 IPv6 地址
+  const ipv6Pattern =
+    /^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$|^(?:[0-9a-fA-F]{1,4}:){6}:[0-9a-fA-F]{1,4}$|^(?:[0-9a-fA-F]{1,4}:){5}(?::[0-9a-fA-F]{1,4}){1,2}$|^(?:[0-9a-fA-F]{1,4}:){4}(?::[0-9a-fA-F]{1,4}){1,3}$|^(?:[0-9a-fA-F]{1,4}:){3}(?::[0-9a-fA-F]{1,4}){1,4}$|^(?:[0-9a-fA-F]{1,4}:){2}(?::[0-9a-fA-F]{1,4}){1,5}$|^[0-9a-fA-F]{1,4}:(?::[0-9a-fA-F]{1,4}){1,6}$|^:(?::[0-9a-fA-F]{1,4}){1,7}$|^::$/
+
+  return ipv4Pattern.test(ip) || ipv6Pattern.test(ip)
 }
