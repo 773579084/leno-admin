@@ -7,7 +7,7 @@ import useStore from '@/store'
 
 const instance = axios.create({
   baseURL: process.env.BASE_API,
-  timeout: 10000,
+  timeout: 20000,
 })
 
 // 请求拦截器

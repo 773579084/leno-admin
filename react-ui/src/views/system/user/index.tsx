@@ -63,7 +63,6 @@ import { hasPermi } from '@/utils/auth'
 import { useNavigate } from 'react-router-dom'
 import { MenuInfo } from 'rc-menu/lib/interface'
 import { getConfigKeyAPI } from '@/api/modules/system/config'
-
 const { Dragger } = Upload
 
 const dataList: { key: React.Key; title: string }[] = []
@@ -163,6 +162,7 @@ const User = () => {
   // 查询列表
   const getList = async () => {
     try {
+      // const { data } = await getUserListAPI(queryParams)
       const { data } = await getUserListAPI(queryParams)
 
       setUserList({ ...data.result })

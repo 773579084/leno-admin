@@ -1,17 +1,15 @@
+import { useEffect } from 'react'
 import { Layout } from 'antd'
 const { Content } = Layout
-import { Outlet } from 'react-router-dom'
-import classes from './index.module.scss'
+import { Outlet, useLocation } from 'react-router-dom'
+import { useAliveController } from 'react-activation'
 import ContentLoading from '@/components/ContentLoading'
-import { useLocation } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import useStore from '@/store'
-import { useEffect } from 'react'
 import { toJS } from 'mobx'
-import { useAliveController } from 'react-activation'
+import classes from './index.module.scss'
 
 const ContentCom = () => {
-  const { pathname } = useLocation()
   const {
     useLayoutStore: {
       layoutSet,
@@ -19,6 +17,7 @@ const ContentCom = () => {
     },
   } = useStore()
   const { drop, getCachingNodes } = useAliveController()
+  const { pathname } = useLocation()
 
   useEffect(() => {
     // 拿缓存的路由 与 tabs对比，过滤出缓存了但不在tabs中的路由进行去除缓存
@@ -32,9 +31,10 @@ const ContentCom = () => {
       id="content"
       className={classes['site-layout-background']}
       style={layoutSet.fixedHeader ? { overflow: 'auto' } : {}}
-      key={pathname}
     >
-      <Outlet />
+      <div key={pathname} className={classes['router-animation']}>
+        <Outlet />
+      </div>
 
       {/* 内容展示区的laoding */}
       <ContentLoading />

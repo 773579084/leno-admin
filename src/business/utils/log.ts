@@ -287,6 +287,7 @@ export const queryUserMachine = async (ctx: Context): Promise<ImachineType> => {
 export const queryIpAdress = async (ip: string) => {
   try {
     const { data } = await axios.get(`http://ip-api.com/json/${ip}?lang=zh-CN`)
+    console.log(292, data)
 
     let address = ''
     if (data.status === 'success') {
@@ -306,5 +307,7 @@ export const queryIpAdress = async (ip: string) => {
  */
 export const getUserIp = (ctx: Context) => {
   const ip = (ctx.request.headers['x-real-ip'] || ctx.request.ip) as string
+  console.log(314, ip)
+
   return ip.split(':').slice(-1)[0]
 }
