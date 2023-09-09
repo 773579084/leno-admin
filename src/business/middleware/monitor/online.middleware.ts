@@ -17,8 +17,6 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
     const { pageNum, pageSize, userName, ipaddr } = ctx.query as unknown as IonlineType
 
     const tokens = await getAllUserInfo()
-    const length = tokens.length
-
     let onlineTokens = []
     let values = []
 
@@ -71,7 +69,11 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
       }
     })
 
-    ctx.state.formatData = { count: length, rows: newV }
+    // 分页
+    ctx.state.formatData = {
+      count: newV.length,
+      rows: newV.slice((pageNum - 1) * pageSize, pageNum * pageSize - 1)
+    }
     await next()
   } catch (error) {
     console.error('查询列表失败', error)
