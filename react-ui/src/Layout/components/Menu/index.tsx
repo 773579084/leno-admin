@@ -20,6 +20,8 @@ const MenuCom: React.FC<PropsType> = ({ collapsed }) => {
 
   const [openKeys, setOpenKeys] = useState<string[]>([])
   const [selectedKeys, setSelectedKeys] = useState<string[]>(defaultObjMobx.selectedKeysMobx)
+  // 解决侧边栏收缩时，切换路由，子菜单弹出的问题
+  const defaultProps = collapsed ? {} : { openKeys: openKeys }
 
   useEffect(() => {
     if (!collapsed)
@@ -160,9 +162,10 @@ const MenuCom: React.FC<PropsType> = ({ collapsed }) => {
       mode="inline"
       onSelect={navigateFn}
       selectedKeys={selectedKeys}
-      openKeys={openKeys}
+      // openKeys={openKeys}
       onOpenChange={onOpenChange}
       items={items}
+      {...defaultProps}
     />
   )
 }

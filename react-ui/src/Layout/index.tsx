@@ -71,7 +71,7 @@ const LayoutCom = () => {
   }, [collapsed])
 
   const SiderCom = (
-    <Sider theme="light" trigger={null} collapsed={expansion}>
+    <Sider theme="light" trigger={null} collapsible={true} collapsed={expansion}>
       <div hidden={!layoutSet.sidebarLogo} className={`${classes.logo} ${layoutSet.headerTheme}`}>
         <div className={classes['logo-image']}></div>
         {!collapsed && <div className={classes['logo-font']}>Leno Admin</div>}
