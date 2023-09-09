@@ -45,7 +45,11 @@ export const auth = async (ctx: Context, next: () => Promise<void>) => {
       const data = await getUserInfoAll(user.userId)
 
       // 重新存储用户的个人信息
-      await addSession(user.session, { ...userData, loginTime: new Date(), ...data })
+      await addSession(user.session, {
+        ...userData,
+        loginTime: new Date().toLocaleString(env().LOG_TIME),
+        ...data
+      })
 
       // 删除已更新用户的id
       removeSetKeys('update_userInfo', [String(user.userId)])

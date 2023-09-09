@@ -204,7 +204,7 @@ export const loginMid = async (ctx: Context, next: () => Promise<void>) => {
     data.userInfo.avatar = data.userInfo.avatar
 
     // 3 将登录基本信息存储到 redis的login_token，并且设置过期时间
-    addSession(hash, { ...machine, loginTime: new Date(), ...data })
+    addSession(hash, { ...machine, loginTime: new Date().toLocaleString(env().LOG_TIME), ...data })
     await next()
   } catch (error) {
     console.error('用户登录失败', error)

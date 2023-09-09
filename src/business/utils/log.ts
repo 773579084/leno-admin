@@ -42,7 +42,7 @@ export const writeLog = async (
         os: machine.os,
         status: type,
         msg: type === '0' ? '登录成功' : data.message,
-        login_time: new Date()
+        login_time: new Date().toLocaleString(env().LOG_TIME)
       }
 
       await addSer(SysLogininfor, loginLog)
@@ -75,7 +75,7 @@ export const writeLog = async (
           json_result: JSON.stringify(data),
           status: type,
           error_msg: type === '1' ? data.message : '',
-          oper_time: new Date()
+          oper_time: new Date().toLocaleString(env().LOG_TIME)
         }
 
         await addSer(SysOperLog, operLog)
