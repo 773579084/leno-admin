@@ -48,7 +48,7 @@ const LayoutCom = () => {
           setSider996(true)
           setOpen(false)
           setExpansion(false)
-        } else if (screenWidth < 1100) {
+        } else {
           setSider996(false)
           setCollapsed(true)
           setExpansion(true)
@@ -59,7 +59,6 @@ const LayoutCom = () => {
 
   // sider 状态保持
   useEffect(() => {
-    console.log(56, collapsed)
     let screenWidth = document.body.clientWidth
     if (screenWidth < 996) {
       collapsed ? setOpen(false) : setOpen(true)
