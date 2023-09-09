@@ -69,7 +69,7 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
       }
     })
 
-    // 分页 ccc
+    // 分页
     ctx.state.formatData = {
       count: newV.length,
       rows: newV.slice((pageNum - 1) * pageSize, pageNum * pageSize - 1)

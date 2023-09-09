@@ -42,7 +42,7 @@ export const getUserListSer = async (queryParams: userQuerySerType) => {
 export const delUserSer = async (userId) => {
   const res = await LenoUser.update(
     {
-      del_flag: '2'
+      del_flag: '1'
     },
     { where: { user_id: userId } }
   )
@@ -157,6 +157,7 @@ export const exportUserListSer = async () => {
   const res = await LenoUser.findAndCountAll({
     raw: true, // 设置为 true，即可返回源数据
     attributes: { exclude: ['password'] },
+    where: { del_flag: '0' },
     include: [
       {
         model: SysDept,
