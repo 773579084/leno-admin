@@ -1,5 +1,5 @@
 import { useState, useEffect, memo } from 'react'
-import { Layout } from 'antd'
+import { Layout, Drawer } from 'antd'
 const { Sider } = Layout
 import classes from './index.module.scss'
 import useStore from '@/store'
@@ -21,11 +21,22 @@ const LayoutCom = () => {
   } = useStore()
   // control Sider
   const [collapsed, setCollapsed] = useState(siderStatus)
+  // Drawer
+  const [open, setOpen] = useState(false)
+  // 控制menu菜单的展示状态
+  const [sider996, setSider996] = useState(false)
+  // 菜单是否展开
+  const [expansion, setExpansion] = useState(false)
 
   useEffect(() => {
     // 初始化连接socket
     const socket = createSocket('wsNotice')
     setSocket(socket)
+
+    listeningWindow()
+    // 刷新页面时，判断侧边栏的状态
+    let screenWidth = document.body.clientWidth
+    if (screenWidth < 996) setSider996(true)
   }, [])
 
   // listen window size change
@@ -33,21 +44,43 @@ const LayoutCom = () => {
     window.onresize = () => {
       return (() => {
         let screenWidth = document.body.clientWidth
-        if (!collapsed && screenWidth < 1200) setCollapsed(true)
-        if (!collapsed && screenWidth > 1200) setCollapsed(false)
+        if (screenWidth < 996) {
+          setSider996(true)
+          setOpen(false)
+          setExpansion(false)
+        } else if (screenWidth < 1100) {
+          setSider996(false)
+          setCollapsed(true)
+          setExpansion(true)
+        }
       })()
     }
   }
 
-  // init mounted
-  useEffect(() => {
-    listeningWindow()
-  }, [])
-
   // sider 状态保持
   useEffect(() => {
+    console.log(56, collapsed)
+    let screenWidth = document.body.clientWidth
+    if (screenWidth < 996) {
+      collapsed ? setOpen(false) : setOpen(true)
+    } else {
+      collapsed ? setExpansion(collapsed) : setExpansion(collapsed)
+    }
+
     if (collapsed !== siderStatus) changeSiderStatus(collapsed)
   }, [collapsed])
+
+  const SiderCom = (
+    <Sider theme="light" trigger={null} collapsed={expansion}>
+      <div hidden={!layoutSet.sidebarLogo} className={`${classes.logo} ${layoutSet.headerTheme}`}>
+        <div className={classes['logo-image']}></div>
+        {!collapsed && <div className={classes['logo-font']}>Leno Admin</div>}
+      </div>
+      <div className={classes['sider-menu']}>
+        <MenuCom collapsed={collapsed} />
+      </div>
+    </Sider>
+  )
 
   return (
     /**
@@ -55,15 +88,22 @@ const LayoutCom = () => {
      * 此处需要将 silder 与 header&&content 分开布置，可以解决闪烁问题
      */
     <div className={classes['layout-container']}>
-      <Sider theme="light" trigger={null} collapsible collapsed={collapsed}>
-        <div hidden={!layoutSet.sidebarLogo} className={`${classes.logo} ${layoutSet.headerTheme}`}>
-          <div className={classes['logo-image']}></div>
-          {!collapsed && <div className={classes['logo-font']}>Leno Admin</div>}
-        </div>
-        <div className={classes['sider-menu']}>
-          <MenuCom collapsed={collapsed} />
-        </div>
-      </Sider>
+      {sider996 ? (
+        <Drawer
+          closable={false}
+          open={open}
+          placement="left"
+          onClose={() => {
+            setCollapsed(true)
+          }}
+          width="200px"
+          className={classes['sider-drawer']}
+        >
+          {SiderCom}
+        </Drawer>
+      ) : (
+        SiderCom
+      )}
 
       <Layout
         className={classes['site-layout']}

@@ -50,7 +50,7 @@ instance.interceptors.response.use(
      * 403 => 无访问权限
      * 500 => 服务器拒绝请求
      */
-    switch (data.code) {
+    switch (data && data.code) {
       case '400':
         message.error(data.code + ': ' + data.message)
         break
