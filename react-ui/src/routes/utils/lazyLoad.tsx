@@ -1,5 +1,4 @@
-import React, { Suspense, useState } from 'react'
-import { Spin } from 'antd'
+import React, { Suspense } from 'react'
 
 /**
  * @description 路由懒加载
@@ -8,19 +7,7 @@ import { Spin } from 'antd'
  */
 const lazyLoad = (Comp: React.LazyExoticComponent<any>): React.ReactNode => {
   return (
-    <Suspense
-      fallback={
-        <Spin
-          size="large"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: '100%',
-          }}
-        />
-      }
-    >
+    <Suspense fallback={null}>
       <Comp />
     </Suspense>
   )

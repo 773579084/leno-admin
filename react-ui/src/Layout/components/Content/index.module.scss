@@ -1,22 +1,18 @@
 .site-layout-background {
   background: #fff;
-
+  animation: fade .6s linear;
 
   :global{
     .ka-wrapper,.ka-content {
       height: 100%;
     }
   }
-
-  .router-animation {
-    animation: fade .5s linear;
-  }
 }
 
 @keyframes fade {
   0% {
     opacity: 0;
-    transform: translateX(-60px);
+    transform: translateX(-30px);
   }
   50% {
     opacity: 0;

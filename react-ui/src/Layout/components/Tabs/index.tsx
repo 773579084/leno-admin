@@ -139,7 +139,7 @@ const TabsCom = () => {
   return (
     <div hidden={!layoutSet.tagsView} className={classes['layout-tabs']}>
       <div className={classes['layout-tabs-page']}>
-        <Tabs activeKey={pathname} onChange={navigateFn} items={items()}></Tabs>
+        <Tabs type="card" activeKey={pathname} onChange={navigateFn} items={items()}></Tabs>
       </div>
       <DelTabs delTabFn={delTabFn} />
     </div>

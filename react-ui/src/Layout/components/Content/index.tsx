@@ -31,10 +31,9 @@ const ContentCom = () => {
       id="content"
       className={classes['site-layout-background']}
       style={layoutSet.fixedHeader ? { overflow: 'auto' } : {}}
+      key={pathname}
     >
-      <div key={pathname} className={classes['router-animation']}>
-        <Outlet />
-      </div>
+      <Outlet />
 
       {/* 内容展示区的laoding */}
       <ContentLoading />
