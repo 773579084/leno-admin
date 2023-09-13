@@ -1,7 +1,7 @@
 /**
  * 通用Ser方法
  */
-import { ModelStatic, Optional, FindOptions, Includeable } from 'sequelize'
+import { ModelStatic, Optional, FindOptions, Includeable } from 'sequelize';
 
 /**
  * 获取列表
@@ -14,38 +14,35 @@ export const getListSer = async <T extends { pageNum?: number; pageSize?: number
   model: ModelStatic<any>,
   queryParams: T,
   conditions?: {
-    otherWhere?: FindOptions
-    include?: Includeable[] | Includeable
-  }
+    otherWhere?: FindOptions;
+    include?: Includeable[] | Includeable;
+  },
 ) => {
-  const obj = {}
-  const { pageNum = 1, pageSize = 10, ...params } = queryParams
+  const obj = {};
+  const { pageNum = 1, pageSize = 10, ...params } = queryParams;
 
-  queryParams.pageNum &&
+  if (queryParams.pageNum)
     Object.assign(obj, {
       offset: (Number(pageNum) - 1) * Number(pageSize),
-      limit: Number(pageSize)
-    })
-
-  conditions?.include && Object.assign(obj, { include: conditions.include })
+      limit: Number(pageSize),
+    });
+  if (conditions?.include) Object.assign(obj, { include: conditions.include });
 
   const res = await model.findAndCountAll({
     distinct: true, // 去重查询结果集（防止子表的条数被重复计算）
     ...obj,
-    where: {
-      ...params
-    },
+    where: { ...params },
     order: [['created_at', 'DESC']],
-    ...conditions?.otherWhere
-  })
+    ...conditions?.otherWhere,
+  });
 
   const list = {
     count: res.count,
-    rows: res.rows || {}
-  }
+    rows: res.rows || {},
+  };
 
-  return list
-}
+  return list;
+};
 
 /**
  * 单个 新增
@@ -54,10 +51,10 @@ export const getListSer = async <T extends { pageNum?: number; pageSize?: number
  * @returns
  */
 export const addSer = async <T extends Optional<any, any>>(model: ModelStatic<any>, data: T) => {
-  const res = await model.create(data)
+  const res = await model.create(data);
 
-  return res.dataValues
-}
+  return res.dataValues;
+};
 
 /**
  * 批量 新增
@@ -65,14 +62,11 @@ export const addSer = async <T extends Optional<any, any>>(model: ModelStatic<an
  * @param data [{}] 数组对象格式
  * @returns
  */
-export const addAllSer = async <T extends Optional<any, string>[]>(
-  model: ModelStatic<any>,
-  data: T
-) => {
-  const res = await model.bulkCreate(data)
+export const addAllSer = async <T extends Optional<any, string>[]>(model: ModelStatic<any>, data: T) => {
+  const res = await model.bulkCreate(data);
 
-  return res
-}
+  return res;
+};
 
 /**
  * 删除
@@ -83,11 +77,11 @@ export const addAllSer = async <T extends Optional<any, string>[]>(
 export const delSer = async (
   model: ModelStatic<any>,
   where: {
-    [id: string]: any
-  }
+    [id: string]: any;
+  },
 ) => {
-  await model.destroy({ where })
-}
+  await model.destroy({ where });
+};
 
 /**
  * 获取 详情
@@ -100,16 +94,16 @@ export const getDetailSer = async <T>(
   model: ModelStatic<any>,
   where: { [id: string]: number },
   conditions?: {
-    otherWhere?: FindOptions
-    include?: Includeable[] | Includeable
-  }
+    otherWhere?: FindOptions;
+    include?: Includeable[] | Includeable;
+  },
 ): Promise<T> => {
   const res = await model.findOne({
     where,
-    ...conditions
-  })
-  return res.dataValues
-}
+    ...conditions,
+  });
+  return res.dataValues;
+};
 
 /**
  * 修改
@@ -118,15 +112,11 @@ export const getDetailSer = async <T>(
  * @param data 数据
  * @returns
  */
-export const putSer = async <T extends Object>(
-  model: ModelStatic<any>,
-  where: { [id: string]: number | number[] | string | string[] },
-  data: T
-) => {
-  const res = await model.update(data, { where })
+export const putSer = async <T>(model: ModelStatic<any>, where: { [id: string]: number | number[] | string | string[] }, data: T) => {
+  const res = await model.update(data, { where });
 
-  return res
-}
+  return res;
+};
 
 /**
  * 导出列表(excel)
@@ -134,28 +124,23 @@ export const putSer = async <T extends Object>(
  * @returns
  */
 export const exportExcelSer = async (model: ModelStatic<any>) => {
-  const res = await model.findAndCountAll({
-    raw: true // 设置为 true，即可返回源数据
-  })
+  // 设置为 true，即可返回源数据
+  const res = await model.findAndCountAll({ raw: true });
 
-  return res.rows
-}
+  return res.rows;
+};
 
 /**
  * 查询相关条件所有数据
  * @param model
  * @param where
  */
-export const queryConditionsData = async (
-  model: ModelStatic<any>,
-  where: { [key: string]: any },
-  otherWhere?: Object
-) => {
+export const queryConditionsData = async (model: ModelStatic<any>, where: { [key: string]: any }, otherWhere?: any) => {
   const res = await model.findAll({
     raw: true, // 设置为 true，即可返回源数据
     ...otherWhere,
-    where
-  })
+    where,
+  });
 
-  return res
-}
+  return res;
+};

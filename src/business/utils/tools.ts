@@ -1,11 +1,11 @@
-import sequelize from '@/mysql/db/seq.db'
-import ToolGen from '@/mysql/model/tool/gen.model'
-import ToolGenColumn from '@/mysql/model/tool/gen_column.model'
-import { ColumnType, GenType, sqlTableCoulmnsType } from '@/types/tools/gen'
-import { QueryTypes } from 'sequelize'
-import { addAllSer } from '../service'
-import { queryGenIdSer } from '../service/tool/gen.service'
-import { underlineToCamel, underline } from './index'
+import { QueryTypes } from 'sequelize';
+import sequelize from '@/mysql/db/seq.db';
+import ToolGen from '@/mysql/model/tool/gen.model';
+import ToolGenColumn from '@/mysql/model/tool/gen_column.model';
+import { ColumnType, GenType, sqlTableCoulmnsType } from '@/types/tools/gen';
+import { addAllSer } from '../service';
+import { queryGenIdSer } from '../service/tool/gen.service';
+import { underlineToCamel, underline } from './index';
 
 // sql字段类型与typescript字段类型对比
 const sqlTsContrast = {
@@ -19,36 +19,37 @@ const sqlTsContrast = {
   datetime: 'string',
   bool: 'boolean',
   boolean: 'boolean',
-  time: 'string'
-}
+  time: 'string',
+};
 
 // tool 获取数据表的所有字段及其详细配置信息
 // 将sql表的数据及字段名写入到gen和gen_column
 export const conversionTables = async (tables: string[]) => {
   // 1、数据库表 数据转换
-  const tableDetails = (await sequelize.query(
-    `select TABLE_NAME, TABLE_COMMENT from information_schema.TABLES where table_schema = '${sequelize.config.database}'`
-  )) as { TABLE_NAME: string; TABLE_COMMENT: string }[][]
+  const tableDetails = (await sequelize.query(`select TABLE_NAME, TABLE_COMMENT from information_schema.TABLES where table_schema = '${sequelize.config.database}'`)) as {
+    TABLE_NAME: string;
+    TABLE_COMMENT: string;
+  }[][];
 
   // 1-2、将表数据 处理
-  const addTables = []
+  const addTables = [];
   tableDetails[0].forEach((table) => {
     // 1-2-1 找出新增表
     if (tables.includes(table.TABLE_NAME)) {
-      const obj = {}
-      obj['table_name'] = table.TABLE_NAME
-      obj['table_comment'] = table.TABLE_COMMENT
-      obj['class_name'] = underlineToCamel(table.TABLE_NAME)
-      obj['function_author'] = 'wen'
-      addTables.push(obj)
+      const obj = { table_name: '', table_comment: '', class_name: '', function_author: '' };
+      obj.table_name = table.TABLE_NAME;
+      obj.table_comment = table.TABLE_COMMENT;
+      obj.class_name = underlineToCamel(table.TABLE_NAME);
+      obj.function_author = 'wen';
+      addTables.push(obj);
     }
-  })
+  });
 
   // 1-3、写入到 代码生成表
-  await addAllSer(ToolGen, addTables)
+  await addAllSer(ToolGen, addTables);
 
   // 2、字段 数据转换
-  const columnsObj = {}
+  const columnsObj = {};
   for (const tableName of tables) {
     const query = `
      SELECT
@@ -64,34 +65,56 @@ export const conversionTables = async (tables: string[]) => {
      WHERE
        table_schema = '${sequelize.config.database}'
        AND table_name = '${tableName}'
-   `
-    const columns = await sequelize.query(query, { type: QueryTypes.SELECT })
-    columnsObj[tableName] = columns
+   `;
+    // eslint-disable-next-line no-await-in-loop
+    const columns = await sequelize.query(query, { type: QueryTypes.SELECT });
+    columnsObj[tableName] = columns;
   }
 
   // 2-2、将表字段数据 处理
-  const columns = []
-  for (let key in columnsObj) {
+  const columns = [];
+  for (const key in columnsObj) {
     // 2-2-1、查询字段的表id为多少
-    const tableId = await queryGenIdSer(key)
+    if (Object.hasOwn(columnsObj, key)) {
+      // eslint-disable-next-line no-await-in-loop
+      const tableId = await queryGenIdSer(key);
 
-    columnsObj[key].forEach((item: sqlTableCoulmnsType) => {
-      columns.push({
-        table_id: tableId,
-        column_name: item.name,
-        column_comment: item.comment,
-        column_type: item.type.toUpperCase(),
-        column_default_value: item.defaultValue,
-        ts_type: sqlTsContrast[item.type],
-        ts_field: underline(item.name),
-        is_pk: item.primaryKey === 'PRI' ? '0' : '1',
-        is_increment: item.autoIncrement === 'auto_increment' ? '0' : '1'
-      })
-    })
+      columnsObj[key].forEach((item: sqlTableCoulmnsType) => {
+        columns.push({
+          table_id: tableId,
+          column_name: item.name,
+          column_comment: item.comment,
+          column_type: item.type.toUpperCase(),
+          column_default_value: item.defaultValue,
+          ts_type: sqlTsContrast[item.type],
+          ts_field: underline(item.name),
+          is_pk: item.primaryKey === 'PRI' ? '0' : '1',
+          is_increment: item.autoIncrement === 'auto_increment' ? '0' : '1',
+        });
+      });
+    }
   }
   // 2-3、写入到 代码生成表
-  await addAllSer(ToolGenColumn, columns)
-}
+  await addAllSer(ToolGenColumn, columns);
+};
+
+/**
+ * 获取列表条件
+ * @param data
+ */
+const listSearch = (data: ColumnType[]) => {
+  let search = '';
+  data.forEach((item) => {
+    if (item.isQuery === '0' && item.queryType !== 'between') {
+      search += `if(params.${item.tsField}) newParams.${item.columnName} = { [Op.${item.queryType}]: params.${item.tsField} ${item.queryType === 'like' ? '+ "%"' : ''} }\n    `;
+    }
+    if (item.queryType === 'between') {
+      // eslint-disable-next-line max-len
+      search += ` if (params.${item.tsField}) params.${item.tsField} = JSON.parse(params.${item.tsField} as unknown as string)\n    if(params.${item.tsField}) newParams.${item.columnName} = {[Op.between]: [params.${item.tsField}.beginTime, params.${item.tsField}.endTime]}\n    `;
+    }
+  });
+  return search;
+};
 
 /**
  * model 模型字段生成
@@ -99,7 +122,7 @@ export const conversionTables = async (tables: string[]) => {
  * @returns obj
  */
 const generateModel = (data: ColumnType[]) => {
-  let modelObj = ''
+  let modelObj = '';
 
   const sqlSequelize = {
     TINYINT: 'INTEGER',
@@ -108,35 +131,31 @@ const generateModel = (data: ColumnType[]) => {
     INT: 'INTEGER',
     DATETIME: 'DATE',
     TIMESTAMP: 'DATETIME',
-    VARCHAR: `STRING`
-  }
+    VARCHAR: 'STRING',
+  };
 
-  data.forEach((item, index) => {
+  data.forEach((item) => {
     // 第一个为主id
     if (item.isPk === '0') {
       modelObj += `${item.columnName}: {
-        type: DataTypes.${
-          sqlSequelize[item.columnType] ? sqlSequelize[item.columnType] : item.columnType
-        },
+        type: DataTypes.${sqlSequelize[item.columnType] ? sqlSequelize[item.columnType] : item.columnType},
         allowNull: false,
         unique: true,
         autoIncrement: ${item.isIncrement === '0' ? 'true' : 'false'},
         primaryKey: true,
         comment: "${item.columnComment}"
-      },\n`
+      },\n`;
     } else {
       modelObj += `    ${item.columnName}: {
-        type: DataTypes.${
-          sqlSequelize[item.columnType] ? sqlSequelize[item.columnType] : item.columnType
-        },
+        type: DataTypes.${sqlSequelize[item.columnType] ? sqlSequelize[item.columnType] : item.columnType},
         defaultValue:${item.columnDefaultValue},
         comment: "${item.columnComment}"
-      },\n`
+      },\n`;
     }
-  })
+  });
 
-  return modelObj
-}
+  return modelObj;
+};
 
 /**
  * dict excel字典映射字段生成
@@ -144,15 +163,15 @@ const generateModel = (data: ColumnType[]) => {
  * @returns obj
  */
 const excelDictConversion = (data: ColumnType[]) => {
-  const dictObj = {}
+  const dictObj = {};
   data.forEach((item) => {
     if (item.dictType) {
-      dictObj[item.columnName] = item.dictType
+      dictObj[item.columnName] = item.dictType;
     }
-  })
+  });
 
-  return JSON.stringify(dictObj)
-}
+  return JSON.stringify(dictObj);
+};
 
 /**
  * excel字典header映射字段生成
@@ -160,39 +179,21 @@ const excelDictConversion = (data: ColumnType[]) => {
  * @returns []
  */
 const excelHeaderCreate = (data: ColumnType[]) => {
-  const headers = []
+  const headers = [];
   data.forEach((item) => {
     if (item.isList === '0') {
       const obj = {
         title: item.columnComment,
-        dataIndex: item.columnName
+        dataIndex: item.columnName,
+      };
+      if (item.isPk === '0') {
+        Object.assign(obj, { width: 80 });
       }
-      item.isPk === '0' ? Object.assign(obj, { width: 80 }) : null
-      headers.push(obj)
+      headers.push(obj);
     }
-  })
-  return JSON.stringify(headers)
-}
-
-/**
- * 列表搜索条件生成
- * @param data 表字段数据
- * @returns string
- */
-const listSearch = (data: ColumnType[]) => {
-  let search = ''
-  data.forEach((item) => {
-    if (item.isQuery === '0' && item.queryType !== 'between') {
-      search += `params.${item.tsField} ? (newParams.${item.columnName} = { [Op.${
-        item.queryType
-      }]: params.${item.tsField} ${item.queryType === 'like' ? '+ "%"' : ''} }) : null\n    `
-    }
-    if (item.queryType === 'between') {
-      search += ` if (params.${item.tsField}) params.${item.tsField} = JSON.parse(params.${item.tsField} as unknown as string)\n    params.${item.tsField} ? newParams.${item.columnName} = {[Op.between]: [params.${item.tsField}.beginTime, params.${item.tsField}.endTime]} : null\n    `
-    }
-  })
-  return search
-}
+  });
+  return JSON.stringify(headers);
+};
 
 /**
  * schema 新增 编辑
@@ -201,23 +202,19 @@ const listSearch = (data: ColumnType[]) => {
  * @returns string
  */
 const addEditSchema = (data: ColumnType[], isAdd: boolean) => {
-  let schema = ''
+  let schema = '';
 
   data.forEach((item) => {
     if (isAdd && item.isInsert === '0') {
-      schema += `${item.tsField}: Joi.${item.tsType}()${
-        item.isRequired === '0' ? `.required(),` : `.allow(''),`
-      }\n  `
+      schema += `${item.tsField}: Joi.${item.tsType}()${item.isRequired === '0' ? '.required(),' : ".allow(''),"}\n  `;
     }
     if (!isAdd && item.isEdit === '0') {
-      schema += `${item.tsField}: Joi.${item.tsField === 'remark' ? 'any' : item.tsType}()${
-        item.isRequired === '0' ? '.required(),' : `.allow(''),`
-      }\n  `
+      schema += `${item.tsField}: Joi.${item.tsField === 'remark' ? 'any' : item.tsType}()${item.isRequired === '0' ? '.required(),' : ".allow(''),"}\n  `;
     }
-  })
+  });
 
-  return schema
-}
+  return schema;
+};
 
 /**
  * typescript 接口类型生成
@@ -226,7 +223,7 @@ const addEditSchema = (data: ColumnType[], isAdd: boolean) => {
  * @returns string
  */
 const typeCreate = (data: ColumnType[], type: string) => {
-  let typeString = ''
+  let typeString = '';
 
   data.forEach((item) => {
     // 当等于 Query 时默认渲染表所有的type类型
@@ -236,36 +233,34 @@ const typeCreate = (data: ColumnType[], type: string) => {
           typeString += `  ${item.tsField}?: {
       beginTime: ${item.tsType}
       endTime: ${item.tsType}
-    }\n   `
-          break
+    }\n   `;
+          break;
 
         default:
-          typeString += `  ${item.tsField}?: ${item.tsType}\n`
-          break
+          typeString += `  ${item.tsField}?: ${item.tsType}\n`;
+          break;
       }
     }
     if (type === 'QuerySer' && item.isQuery === '0') {
-      typeString += `  ${item.columnName}?: { [OpTypes.${item.queryType}]: string }\n   `
+      typeString += `  ${item.columnName}?: { [OpTypes.${item.queryType}]: string }\n   `;
     }
     if ((type === 'List' && item.isInsert === '0') || (type === 'List' && item.isEdit === '0')) {
-      typeString += `  ${item.tsField}?: ${item.tsType}\n    `
+      typeString += `  ${item.tsField}?: ${item.tsType}\n    `;
     }
     if (type === 'ListSer') {
-      typeString += `  ${item.columnName}?: ${item.tsType}\n`
+      typeString += `  ${item.columnName}?: ${item.tsType}\n`;
     }
-  })
+  });
 
-  return typeString
-}
+  return typeString;
+};
 
 /**
  * 字符串首字母daxie
  * @param string
  * @returns string
  */
-const stringFirst = (string: string) => {
-  return string.charAt(0).toUpperCase() + string.slice(1)
-}
+const stringFirst = (string: string) => string.charAt(0).toUpperCase() + string.slice(1);
 
 /**
  * 生成请求字典的axios
@@ -273,17 +268,17 @@ const stringFirst = (string: string) => {
  * @returns string
  */
 const getDicts = (data: ColumnType[]) => {
-  let getDicts = ''
-  const completeDicts = []
+  let dicts = '';
+  const completeDicts = [];
   data.forEach((item) => {
     if (item.dictType && !completeDicts.includes(item.dictType)) {
-      getDicts += `const ${item.dictType} = await getDictsApi('${item.dictType}')
-      setDict${underlineToCamel(item.columnName)}(${item.dictType}.data.result)\n    `
-      completeDicts.push(item.dictType)
+      dicts += `const ${item.dictType} = await getDictsApi('${item.dictType}')
+      setDict${underlineToCamel(item.columnName)}(${item.dictType}.data.result)\n    `;
+      completeDicts.push(item.dictType);
     }
-  })
-  return getDicts
-}
+  });
+  return dicts;
+};
 
 /**
  * 生成请求字典的 state
@@ -291,18 +286,16 @@ const getDicts = (data: ColumnType[]) => {
  * @returns string
  */
 const getDictsState = (data: ColumnType[]) => {
-  let dictState = ''
-  const completeDicts = []
+  let dictState = '';
+  const completeDicts = [];
   data.forEach((item) => {
     if (item.dictType && !completeDicts.includes(item.dictType)) {
-      dictState += `const [dict${underlineToCamel(item.columnName)}, setDict${underlineToCamel(
-        item.columnName
-      )}] = useState<IdictType[]>([])\n    `
-      completeDicts.push(item.dictType)
+      dictState += `const [dict${underlineToCamel(item.columnName)}, setDict${underlineToCamel(item.columnName)}] = useState<IdictType[]>([])\n    `;
+      completeDicts.push(item.dictType);
     }
-  })
-  return dictState
-}
+  });
+  return dictState;
+};
 
 /**
  * 生成请求字典的 state
@@ -310,7 +303,7 @@ const getDictsState = (data: ColumnType[]) => {
  * @returns string
  */
 const createSearch = (data: ColumnType[]) => {
-  let searchStr = ''
+  let searchStr = '';
   data.forEach((item) => {
     if (item.htmlType === 'datetime') {
       searchStr += `let { ${item.tsField}, ...form } = queryForm.getFieldsValue()
@@ -322,11 +315,11 @@ const createSearch = (data: ColumnType[]) => {
             endTime: dayjs(${item.tsField}[1]).format('YYYY-MM-DD HH:mm:ss'),
           }
         }
-      }`
+      }`;
     }
-  })
-  return searchStr ? searchStr : 'let form = queryForm.getFieldsValue()'
-}
+  });
+  return searchStr || 'let form = queryForm.getFieldsValue()';
+};
 
 /**
  * 生成 前端 table 数据结构
@@ -334,7 +327,7 @@ const createSearch = (data: ColumnType[]) => {
  * @returns string
  */
 const createTableData = (data: ColumnType[]) => {
-  let tableData = ''
+  let tableData = '';
   data.forEach((item) => {
     if (item.isList === '0') {
       if (item.htmlType !== 'imageUpload') {
@@ -343,20 +336,13 @@ const createTableData = (data: ColumnType[]) => {
           dataIndex: '${item.tsField}',
           key: '${item.tsField}',
           align: 'center',
-          ${
-            item.dictType
-              ? 'render: (value) => <DictTag options={dict' +
-                underlineToCamel(item.columnName) +
-                '} value={value} />,'
-              : ''
-          }},\n    `
-      } else {
+          ${item.dictType ? `render: (value) => <DictTag options={dict${underlineToCamel(item.columnName)}} value={value} />,` : ''}},\n    `;
       }
     }
-  })
+  });
 
-  return tableData
-}
+  return tableData;
+};
 
 /**
  * 生成 前端 search html结构
@@ -364,7 +350,7 @@ const createTableData = (data: ColumnType[]) => {
  * @returns string
  */
 const createHtmlSearch = (data: ColumnType[]) => {
-  let htmlSearch = ''
+  let htmlSearch = '';
 
   data.forEach((item) => {
     if (item.isQuery === '0') {
@@ -381,14 +367,14 @@ const createHtmlSearch = (data: ColumnType[]) => {
                 label: item.dictLabel,
               }))}
             />
-          </Form.Item>\n        `
+          </Form.Item>\n        `;
           }
-          break
+          break;
         case 'datetime':
           htmlSearch += `<Form.Item label="${item.columnComment}"  name="${item.tsField}">
            <RangePicker style={{ width: 240 }} />
-         </Form.Item>\n        `
-          break
+         </Form.Item>\n        `;
+          break;
 
         default:
           htmlSearch += `<Form.Item label="${item.columnComment}" name="${item.tsField}">
@@ -398,14 +384,14 @@ const createHtmlSearch = (data: ColumnType[]) => {
             allowClear
             onPressEnter={searchQueryFn}
           />
-         </Form.Item>\n        `
-          break
+         </Form.Item>\n        `;
+          break;
       }
     }
-  })
+  });
 
-  return htmlSearch
-}
+  return htmlSearch;
+};
 
 /**
  * 生成 前端 新增编辑 html结构
@@ -413,7 +399,7 @@ const createHtmlSearch = (data: ColumnType[]) => {
  * @returns string
  */
 const createHtmlAddEdit = (data: ColumnType[]) => {
-  let addEdit = ''
+  let addEdit = '';
   data.forEach((item) => {
     if (item.isInsert === '0' || item.isEdit === '0') {
       switch (item.htmlType) {
@@ -422,14 +408,10 @@ const createHtmlAddEdit = (data: ColumnType[]) => {
            label="${item.columnComment}"
            name="${item.tsField}"
            hidden={${item.isEdit === '1'}}
-           ${
-             item.isRequired === '0'
-               ? `rules={[{ required: true, message: '请输入${item.columnComment}!' }]}`
-               : ''
-           }>
+           ${item.isRequired === '0' ? `rules={[{ required: true, message: '请输入${item.columnComment}!' }]}` : ''}>
           <Input placeholder= "请输入${item.columnComment}"/>
-        </Form.Item>\n        `
-          break
+        </Form.Item>\n        `;
+          break;
         case 'textarea':
           addEdit += `<Form.Item
            label="${item.columnComment}"
@@ -437,8 +419,8 @@ const createHtmlAddEdit = (data: ColumnType[]) => {
            rules={[{ max: 200, message: '请输入内容(200字以内)!' }]}
           >
           <TextArea showCount placeholder="请输入内容(200字以内)"/>
-         </Form.Item>\n        `
-          break
+         </Form.Item>\n        `;
+          break;
         case 'radio':
           if (item.dictType) {
             addEdit += `<Form.Item label="${item.columnComment}" name="${item.tsField}">
@@ -448,9 +430,9 @@ const createHtmlAddEdit = (data: ColumnType[]) => {
                 label: item.dictLabel,
               }))}
             />
-           </Form.Item>\n        `
+           </Form.Item>\n        `;
           }
-          break
+          break;
         case 'select':
           if (item.dictType) {
             addEdit += `<Form.Item label="${item.columnComment}" name="${item.tsField}">
@@ -462,9 +444,9 @@ const createHtmlAddEdit = (data: ColumnType[]) => {
                label: item.dictLabel,
              }))}
             />
-           </Form.Item>\n        `
+           </Form.Item>\n        `;
           }
-          break
+          break;
         case 'checkbox':
           if (item.dictType) {
             addEdit += `<Form.Item label="${item.columnComment}" name="${item.tsField}">
@@ -474,46 +456,45 @@ const createHtmlAddEdit = (data: ColumnType[]) => {
                 label: item.dictLabel,
               }))}
             />
-           </Form.Item>\n        `
+           </Form.Item>\n        `;
           }
-          break
+          break;
         case 'datetime':
           addEdit += `<Form.Item label="${item.columnComment}"    name="${item.tsField}">
               <RangePicker style={{ width: 240 }} />
-            </Form.Item>\n        `
-          break
+            </Form.Item>\n        `;
+          break;
         case 'imageUpload':
-          addEdit += `<ImageUpload ref={fileRef} />\n        `
-          break
+          addEdit += '<ImageUpload ref={fileRef} />\n        ';
+          break;
         case 'fileUpload':
-          addEdit += `<FileUpload ref={fileRef} />\n        `
-          break
+          addEdit += '<FileUpload ref={fileRef} />\n        ';
+          break;
         case 'editor':
           addEdit += `<Form.Item label="${item.columnComment}"    name="${item.tsField}">
             <TextEditor ref={editorRef} editorHtml={editorHtml}  imgs={imgs}/>
-          </Form.Item>\n        `
-          break
+          </Form.Item>\n        `;
+          break;
 
         default:
-          break
+          break;
       }
     }
-  })
+  });
 
-  return addEdit
-}
+  return addEdit;
+};
 
 /**
  * 代码生成
  * @param data 表数据及表字段数据
- * @param isZip 是否打包为压缩包 传任意为true的值压缩
  * @returns
  */
-export const generateCode = (data: GenType, isZip?: boolean) => {
-  const codes = {}
-  const mainIdKey = data.columns.find((item) => item.isPk === '0').tsField
+export const generateCode = (data: GenType) => {
+  const codes = {};
+  const mainIdKey = data.columns.find((item) => item.isPk === '0').tsField;
   // 第一步 生成model模型
-  codes[`model.ts`] = `
+  codes['model.ts'] = `
 import { DataTypes } from 'sequelize'
 import seq from '@/mysql/db/seq.db'
 
@@ -530,12 +511,11 @@ const ${data.className} = seq.define(
   }
 )
 
-export default ${data.className}`
+export default ${data.className}`;
 
   // 第二步 生成路由
-  codes[`router.ts`] = `import Router from 'koa-router'
+  codes['router.ts'] = `import Router from 'koa-router'
 // 格式转换
-import { formatHandle } from '@/business/middleware/common/common.middleware'
 import IndexCon from '@/business/controller'
 import {
   getListMid,
@@ -548,19 +528,17 @@ import {
 import { addEditSchema, judgeIdSchema } from '@/business/schema'
 ${
   data.tplCategory !== 'tree'
-    ? `import { exportExcelMid } from '@/business/middleware/common/common.middleware'
+    ? `import { exportExcelMid , formatHandle } from '@/business/middleware/common/common.middleware'
 import ${data.className} from '@/mysql/model/${data.moduleName}/${data.businessName}.model'
 import { exportExcelSer } from '@/business/service'`
-    : ''
+    : `import { formatHandle } from '@/business/middleware/common/common.middleware'`
 }
 import { addJudg, putJudg } from '@/business/schema/${data.moduleName}/${data.businessName}.schema'
 import { hasPermi } from '@/business/middleware/common/auth'
 
 const router = new Router({ prefix: '/${data.moduleName}' })
 // 查询列表
-router.get('/${data.businessName}/list', hasPermi('${data.moduleName}:${
-    data.businessName
-  }:query'), getListMid, formatHandle, IndexCon())
+router.get('/${data.businessName}/list', hasPermi('${data.moduleName}:${data.businessName}:query'), getListMid, formatHandle, IndexCon())
 
 // 新增
 router.post(
@@ -572,14 +550,10 @@ router.post(
 )
 
 // 删除
-router.delete('/${data.businessName}/:id', hasPermi('${data.moduleName}:${
-    data.businessName
-  }:remove'), judgeIdSchema(), delMid, IndexCon())
+router.delete('/${data.businessName}/:id', hasPermi('${data.moduleName}:${data.businessName}:remove'), judgeIdSchema(), delMid, IndexCon())
 
 // 获取详细数据
-router.get('/${data.businessName}/detail/:id', hasPermi('${data.moduleName}:${
-    data.businessName
-  }:query'), judgeIdSchema(), getDetailMid, formatHandle, IndexCon())
+router.get('/${data.businessName}/detail/:id', hasPermi('${data.moduleName}:${data.businessName}:query'), judgeIdSchema(), getDetailMid, formatHandle, IndexCon())
 
 // 修改
 router.put(
@@ -601,15 +575,13 @@ router.post(
   IndexCon()
 )\n`
     : ''
-}module.exports = router`
+}export default router`;
 
   // 第三步 生成 middleware 业务层
-  codes[`middleware.ts`] = `import { Context } from 'koa'
+  codes['middleware.ts'] = `import { Context } from 'koa'
 import { getListSer, addSer, putSer, getDetailSer, delSer } from '@/business/service'
 import { userType} from '@/types'
-import {  I${data.businessName}QueryType, I${data.businessName}QuerySerType, I${
-    data.businessName
-  }, I${data.businessName}Ser } from '@/types/${data.moduleName}/${data.businessName}'
+import {  I${data.businessName}QueryType, I${data.businessName}QuerySerType, I${data.businessName}, I${data.businessName}Ser } from '@/types/${data.moduleName}/${data.businessName}'
 import errors from '@/app/err.type'
 import { formatHumpLineTransfer } from '@/business/utils'
 ${
@@ -619,9 +591,7 @@ import {  excelBaseStyle } from '@/business/public/excelMap'\n`
     : ''
 }import ${data.className} from '@/mysql/model/${data.moduleName}/${data.businessName}.model'
 import { Op } from 'sequelize'
-const { uploadParamsErr, getListErr, sqlErr, delErr, ${
-    data.tplCategory === 'tree' ? `` : `exportExcelErr`
-  }} = errors
+const { uploadParamsErr, getListErr, sqlErr, delErr, ${data.tplCategory === 'tree' ? '' : 'exportExcelErr'}} = errors
 
 // 获取列表
 export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
@@ -665,11 +635,9 @@ ${
     if (imgs) {
       JSON.parse(imgs).forEach((item: string) => removeSpecifyFile(item))
     }`
-    : ``
+    : ''
 }
-    await delSer(${data.className}, { ${
-    data.columns.find((item) => item.isPk === '0').columnName
-  }: ctx.state.ids })
+    await delSer(${data.className}, { ${data.columns.find((item) => item.isPk === '0').columnName}: ctx.state.ids })
   } catch (error) {
     console.error('删除失败', error)
     return ctx.app.emit('error', delErr, ctx)
@@ -681,9 +649,7 @@ ${
 // 获取详细数据
 export const getDetailMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
-    const res = await getDetailSer<I${data.businessName}Ser>(${data.className}, { ${
-    data.columns.find((item) => item.isPk === '0').columnName
-  }: ctx.state.ids }: ctx.state.ids })
+    const res = await getDetailSer<I${data.businessName}Ser>(${data.className}, { ${data.columns.find((item) => item.isPk === '0').columnName}: ctx.state.ids }: ctx.state.ids })
 
     ctx.state.formatData = res
   } catch (error) {
@@ -700,13 +666,9 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
     const { userName } = ctx.state.user as userType
     const res = ctx.request['body'] as I${data.businessName}
     const lineData =  formatHumpLineTransfer(res, 'line') as I${data.businessName}Ser
-    const { ${
-      data.columns.find((item) => item.isPk === '0').columnName
-    }: ctx.state.ids }, ...data } = lineData
+    const { ${data.columns.find((item) => item.isPk === '0').columnName}: ctx.state.ids }, ...data } = lineData
 
-    await putSer<I${data.businessName}Ser>(${data.className}, { ${
-    data.columns.find((item) => item.isPk === '0').columnName
-  }: ctx.state.ids }}, { ...data, update_by: userName })
+    await putSer<I${data.businessName}Ser>(${data.className}, { ${data.columns.find((item) => item.isPk === '0').columnName}: ctx.state.ids }}, { ...data, update_by: userName })
 
     await next()
   } catch (error) {
@@ -717,7 +679,7 @@ export const putMid = async (ctx: Context, next: () => Promise<void>) => {
 
 ${
   data.tplCategory === 'tree'
-    ? ``
+    ? ''
     : `// 导出
 export const exportMid = async (ctx: Context, next: () => Promise<void>) => {
   try {
@@ -739,10 +701,10 @@ export const exportMid = async (ctx: Context, next: () => Promise<void>) => {
     return ctx.app.emit('error', exportExcelErr, ctx)
   }
 }`
-}`
+}`;
 
   // 第四步 生成 schema 新增编辑字段检测
-  codes[`schema.ts`] = `import Joi from 'joi'
+  codes['schema.ts'] = `import Joi from 'joi'
 
 // 验证新增信息 nick 必传字符串
 export const addJudg = Joi.object({
@@ -751,10 +713,10 @@ ${addEditSchema(data.columns, true)}})
 // 验证编辑信息 nick 必传字符串
 export const putJudg = Joi.object({
   ${mainIdKey}:Joi.number().required(),
-${addEditSchema(data.columns, false)}})`
+${addEditSchema(data.columns, false)}})`;
 
   // 第五步 生成 typescript 接口类型文件
-  codes[`node.d.ts`] = `
+  codes['node.d.ts'] = `/* global OpTypes */\n
   // 后端 类型文件
 export interface I${data.businessName}QueryType {
   pageNum: number
@@ -770,10 +732,10 @@ export interface I${data.businessName} {
 ${typeCreate(data.columns, 'List')}}
 
 export interface I${data.businessName}Ser {
-${typeCreate(data.columns, 'ListSer')}}`
+${typeCreate(data.columns, 'ListSer')}}`;
 
   // 第六步 前端 生成api接口
-  codes[`api.ts`] = `import { http } from '@/api'
+  codes['api.ts'] = `import { http } from '@/api'
 import {
   I${data.businessName}Type,
   I${data.businessName}DetailType
@@ -805,21 +767,17 @@ export const getDetailAPI = (id: number) => {
 // 修改
 export const putAPI = (data: I${data.businessName}DetailType) => {
   return http<IsuccessTypeAPI>('PUT', '/${data.moduleName}/${data.businessName}', data)
-}`
+}`;
 
   // 第七步 前端 生成dom结构
-  const total = '`共 ${total} 条`'
-  const ids = '`是否确认删除编号为"${ids}"的数据项？`'
-  codes[
-    data.tplCategory === 'tree' ? 'index-tree.tsx' : 'index.tsx'
-  ] = `import React, { useState, useEffect, useRef } from 'react'
+  const total = '`共 ${total} 条`';
+  const ids = '`是否确认删除编号为"${ids}"的数据项？`';
+  codes[data.tplCategory === 'tree' ? 'index-tree.tsx' : 'index.tsx'] = `import React, { useState, useEffect, useRef } from 'react'
 import {
   Button,
   Form,
   Input,
-  Select,${data.columns.find((item) => item.htmlType === 'datetime') ? '\nDatePicker,' : ''}${
-    data.columns.find((item) => item.htmlType === 'checkbox') ? '\nCheckbox,' : ''
-  }
+  Select,${data.columns.find((item) => item.htmlType === 'datetime') ? '\nDatePicker,' : ''}${data.columns.find((item) => item.htmlType === 'checkbox') ? '\nCheckbox,' : ''}
   Col,
   Row,
   Tooltip,
@@ -836,7 +794,7 @@ import {
   EditOutlined,
   DeleteOutlined,
   ExclamationCircleOutlined,
-  ${data.tplCategory === 'tree' ? `SwapOutlined,` : 'VerticalAlignBottomOutlined,'}
+  ${data.tplCategory === 'tree' ? 'SwapOutlined,' : 'VerticalAlignBottomOutlined,'}
 } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 import {
@@ -847,44 +805,28 @@ import {
   putAPI,
 } from '@/api/modules/${data.moduleName}/${data.businessName}'
 import { getDictsApi } from '@/api/modules/system/dictData'
-${data.tplCategory === 'tree' ? `` : `import { download } from '@/api'`}
-${data.tplCategory === 'tree' ? `` : `import { pageDelJump } from '@/utils'`}
-import { I${data.businessName}Type ,I${data.businessName}DetailType ${
-    data.tplCategory === 'tree' ? ',ITreeType' : ''
-  }} from '@/type/modules/${data.moduleName}/${data.businessName}'
-${
-  data.columns.find((item) => item.htmlType === 'datetime')
-    ? 'const { RangePicker } = DatePicker\n'
-    : ''
-}import ColorBtn from '@/components/ColorBtn'
+${data.tplCategory === 'tree' ? '' : "import { download } from '@/api'"}
+${data.tplCategory === 'tree' ? '' : "import { pageDelJump } from '@/utils'"}
+import { I${data.businessName}Type ,I${data.businessName}DetailType ${data.tplCategory === 'tree' ? ',ITreeType' : ''}} from '@/type/modules/${data.moduleName}/${data.businessName}'
+${data.columns.find((item) => item.htmlType === 'datetime') ? 'const { RangePicker } = DatePicker\n' : ''}import ColorBtn from '@/components/ColorBtn'
 import { hasPermi } from '@/utils/auth'
 import { IdictType } from '@/type/modules/system/sysDictData'
 ${data.columns.find((item) => item.dictType) ? "import DictTag from '@/components/DictTag'" : ''}
-${data.tplCategory === 'tree' ? `import { generalTreeFn } from '@/utils/smallUtils'\n` : ''}${
-    data.columns.find((item) => item.htmlType === 'datetime') ? `import dayjs from 'dayjs'\n` : ``
-  }${
+${data.tplCategory === 'tree' ? "import { generalTreeFn } from '@/utils/smallUtils'\n" : ''}${data.columns.find((item) => item.htmlType === 'datetime') ? "import dayjs from 'dayjs'\n" : ''}${
     data.columns.find((item) => item.htmlType === 'editor')
       ? `import TextEditor from '@/components/TextEditor'
 import { IDomEditor } from '@wangeditor/editor'
 import { commonDelImgAPI } from '@/api/modules/common'\n`
       : ''
   }const ${stringFirst(data.className)} = () => {
-  ${
-    data.columns.find((item) => item.htmlType === 'textarea') ? 'const { TextArea } = Input\n' : ''
-  }const [queryForm] = Form.useForm()
+  ${data.columns.find((item) => item.htmlType === 'textarea') ? 'const { TextArea } = Input\n' : ''}const [queryForm] = Form.useForm()
   const [addEditForm] = Form.useForm()
   const { confirm } = Modal
 
   // 分页
-  const [queryParams, setQueryParams] = useState<I${
-    data.businessName
-  }Type>({ pageNum: 1, pageSize: 10 })
+  const [queryParams, setQueryParams] = useState<I${data.businessName}Type>({ pageNum: 1, pageSize: 10 })
   // 列表数据
-  ${
-    data.tplCategory === 'tree'
-      ? `const [dataList, setDataList] = useState([])`
-      : `const [dataList, setDataList] = useState({ count: 0, rows: [] as I${data.businessName}DetailType[] })`
-  }
+  ${data.tplCategory === 'tree' ? 'const [dataList, setDataList] = useState([])' : `const [dataList, setDataList] = useState({ count: 0, rows: [] as I${data.businessName}DetailType[] })`}
   // table loading
   const [loading, setLoading] = useState(true)
   // 新增编辑 model显隐
@@ -893,7 +835,7 @@ import { commonDelImgAPI } from '@/api/modules/common'\n`
   const [isAdd, setIsAdd] = useState(true)
   ${
     data.tplCategory === 'tree'
-      ? ``
+      ? ''
       : `// 非单个禁用
   const [single, setSingle] = useState(true)
   // 非多个禁用
@@ -907,7 +849,7 @@ import { commonDelImgAPI } from '@/api/modules/common'\n`
   const [searchShow, setSearchShow] = useState(true)
   // 当前编辑的id
   const [currentId, setCurrentId] = useState<number>()
-  ${data.columns.find((item) => item.htmlType === 'fileUpload') ? `const fileRef = useRef()` : ``}
+  ${data.columns.find((item) => item.htmlType === 'fileUpload') ? 'const fileRef = useRef()' : ''}
   ${
     data.columns.find((item) => item.htmlType === 'editor')
       ? `// editor
@@ -938,9 +880,7 @@ import { commonDelImgAPI } from '@/api/modules/common'\n`
       const { data } = await getListAPI(queryParams)
       ${
         data.tplCategory === 'tree'
-          ? `const treeData = generalTreeFn(data.result.rows, '${underline(
-              data.treeParentCode
-            )}', '${underline(data.treeCode)}') as any
+          ? `const treeData = generalTreeFn(data.result.rows, '${underline(data.treeParentCode)}', '${underline(data.treeCode)}') as any
       setDataList(treeData)`
           : 'setDataList({ ...data.result })'
       }
@@ -963,7 +903,7 @@ import { commonDelImgAPI } from '@/api/modules/common'\n`
   // 重置
   const resetQueryFn = () => {
     queryForm.resetFields()
-    ${data.tplCategory === 'tree' ? `` : `setSelectKeys([])`}
+    ${data.tplCategory === 'tree' ? '' : 'setSelectKeys([])'}
     setQueryParams({ pageNum: 1, pageSize: 10 })
   }
   ${
@@ -991,17 +931,15 @@ import { commonDelImgAPI } from '@/api/modules/common'\n`
     await commonDelImgAPI(delImgs)
 
     // 3 将 html 存储到 form 表单
-    addEditForm.setFieldValue('${
-      data.columns.find((item) => item.htmlType === 'editor').tsField
-    }', html)
+    addEditForm.setFieldValue('${data.columns.find((item) => item.htmlType === 'editor').tsField}', html)
 
     addEditForm.submit()
   }\n`
-      : ``
+      : ''
   }
   ${
     data.tplCategory === 'tree'
-      ? ``
+      ? ''
       : `// row-select
   const rowSelection = {
     selectedRowKeys: selectKeys,
@@ -1025,10 +963,8 @@ import { commonDelImgAPI } from '@/api/modules/common'\n`
       ${
         data.columns.find((item) => item.htmlType === 'editor')
           ? `setEditorHtml(data.result.noticeContent as string)
-          setImgs(data.result.${data.columns.find(
-            (item) => item.htmlType === 'editor'
-          )} as string)\n`
-          : ``
+          setImgs(data.result.${data.columns.find((item) => item.htmlType === 'editor')} as string)\n`
+          : ''
       }setCurrentId(id)
       setIsModalOpen(true)
       setIsAdd(false)
@@ -1040,17 +976,11 @@ import { commonDelImgAPI } from '@/api/modules/common'\n`
   const handleFormFinish = async (values: I${data.businessName}DetailType) => {
     try {
       if (isAdd) {
-        await addAPI({ ...values ${
-          data.columns.find((item) => item.htmlType === 'editor')
-            ? `,${data.columns.find((item) => item.htmlType === 'editor').columnName}:imgs`
-            : ''
-        }})
+        await addAPI({ ...values ${data.columns.find((item) => item.htmlType === 'editor') ? `,${data.columns.find((item) => item.htmlType === 'editor').columnName}:imgs` : ''}})
         message.success('新增成功')
       } else {
         await putAPI({ ...values, ${
-          data.columns.find((item) => item.htmlType === 'editor')
-            ? `${data.columns.find((item) => item.htmlType === 'editor').columnName}:imgs,`
-            : ''
+          data.columns.find((item) => item.htmlType === 'editor') ? `${data.columns.find((item) => item.htmlType === 'editor').columnName}:imgs,` : ''
         } ${mainIdKey}: currentId })
         message.success('修改成功')
       }
@@ -1061,7 +991,7 @@ import { commonDelImgAPI } from '@/api/modules/common'\n`
         handleUploadCancel: Function
       }
       handleUploadOk()`
-          : ``
+          : ''
       }
     } catch (error) {}
     setIsModalOpen(false)
@@ -1072,7 +1002,7 @@ import { commonDelImgAPI } from '@/api/modules/common'\n`
   // 分页
   ${
     data.tplCategory === 'tree'
-      ? ``
+      ? ''
       : `const onPagChange = async (pageNum: number, pageSize: number) => {
     setQueryParams({ pageNum, pageSize })
   }`
@@ -1268,7 +1198,7 @@ import { commonDelImgAPI } from '@/api/modules/common'\n`
                     icon={<SyncOutlined />}
                     onClick={() => {
                       searchQueryFn()
-                      ${data.tplCategory === 'tree' ? `` : `setSelectKeys([])`}
+                      ${data.tplCategory === 'tree' ? '' : 'setSelectKeys([])'}
                     }}
                   />
                 </Tooltip>
@@ -1288,12 +1218,12 @@ import { commonDelImgAPI } from '@/api/modules/common'\n`
               data.tplCategory === 'tree'
                 ? `expandable={expandKeys}
             onExpand={() => setExpandKeys({})}`
-                : `rowSelection={{ type: 'checkbox', fixed: 'left', ...rowSelection }}`
+                : "rowSelection={{ type: 'checkbox', fixed: 'left', ...rowSelection }}"
             }
           />
           ${
             data.tplCategory === 'tree'
-              ? ``
+              ? ''
               : `<Pagination
           className="pagination"
           onChange={onPagChange}
@@ -1311,11 +1241,7 @@ import { commonDelImgAPI } from '@/api/modules/common'\n`
         <Modal
           title={isAdd ? '添加${data.functionName}' : '编辑${data.functionName}'}
           open={isModalOpen}
-          onOk={${
-            data.columns.find((item) => item.htmlType === 'editor')
-              ? `addEditFn`
-              : `() => addEditForm.submit()`
-          }}
+          onOk={${data.columns.find((item) => item.htmlType === 'editor') ? 'addEditFn' : '() => addEditForm.submit()'}}
           onCancel={() => {
             setIsModalOpen(false)
             ${
@@ -1325,7 +1251,7 @@ import { commonDelImgAPI } from '@/api/modules/common'\n`
               handleUploadCancel: Function
             }
             handleUploadCancel()`
-                : ``
+                : ''
             }
             addEditForm.resetFields()
           }}
@@ -1344,7 +1270,7 @@ import { commonDelImgAPI } from '@/api/modules/common'\n`
   )
 }
 
-export default ${stringFirst(data.className)}`
+export default ${stringFirst(data.className)}`;
 
   // 第八步 前端 生成typescript类型标注
   codes['react.d.ts'] = `
@@ -1386,7 +1312,7 @@ export interface IsuccessTypeAPI {
   code: number
   message: string
   result?: null
-}`
+}`;
 
   // 第九步 后端 生成父子表绑定
   if (data.tplCategory === 'sub') {
@@ -1394,15 +1320,11 @@ export interface IsuccessTypeAPI {
     // 此父子表数据库绑定关系需剪切放置到后端文件 src/mysql/db/index.ts initRelation
         
     // ${data.tableComment}模块
-    ${underlineToCamel(data.subTableName)}.hasOne(${underlineToCamel(
-      data.tableName
-    )}, { foreignKey: '${data.subTableFkName}', sourceKey: '${data.subTableFkName}' })
-    ${underlineToCamel(data.tableName)}.belongsTo( ${underlineToCamel(
-      data.subTableName
-    )}, { foreignKey: '${data.subTableFkName}', targetKey: '${
-      data.subTableFkName
-    }', as: '${underline(data.subTableName)}' })`
+    ${underlineToCamel(data.subTableName)}.hasOne(${underlineToCamel(data.tableName)}, { foreignKey: '${data.subTableFkName}', sourceKey: '${data.subTableFkName}' })
+    ${underlineToCamel(data.tableName)}.belongsTo( ${underlineToCamel(data.subTableName)}, { foreignKey: '${data.subTableFkName}', targetKey: '${data.subTableFkName}', as: '${underline(
+      data.subTableName,
+    )}' })`;
   }
 
-  return codes
-}
+  return codes;
+};

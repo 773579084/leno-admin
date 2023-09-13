@@ -1,4 +1,5 @@
-module.exports = {
+module.exports =
+{
   env: {
     browser: true,
     es2021: true,
@@ -12,9 +13,6 @@ module.exports = {
     'plugin:promise/recommended',
     'plugin:@typescript-eslint/recommended',
     'prettier',
-    'prettier/@typescript-eslint',
-    'prettier/react',
-    'prettier/unicorn',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -32,16 +30,4 @@ module.exports = {
     },
   },
   plugins: ['react', 'unicorn', 'promise', '@typescript-eslint'],
-  rules: {
-    'import/extensions': [
-      ERROR,
-      'ignorePackages',
-      {
-        ts: 'never',
-        tsx: 'never',
-        json: 'never',
-        js: 'never',
-      },
-    ],
-  },
 }

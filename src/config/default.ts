@@ -25,9 +25,10 @@ export default () => {
       // 是否开启禁止操作修改删除类接口（此功能仅用于上线网页预览使用）
       STOP_EDIT: false,
       // 日志时区
-      LOG_TIME: 'zh-CN'
-    }
-  } else if (process.env.NODE_ENV === 'docker-desktop') {
+      LOG_TIME: 'zh-CN',
+    };
+  }
+  if (process.env.NODE_ENV === 'docker-desktop') {
     return {
       // 服务器运行地址及端口
       APP_HOST: 'localhost',
@@ -53,9 +54,10 @@ export default () => {
       // 是否开启禁止操作修改删除类接口（此功能仅用于上线网页预览使用）
       STOP_EDIT: false,
       // 日志时区
-      LOG_TIME: 'zh-CN'
-    }
-  } else if (process.env.NODE_ENV === 'production') {
+      LOG_TIME: 'zh-CN',
+    };
+  }
+  if (process.env.NODE_ENV === 'production') {
     return {
       // 服务器运行地址及端口
       APP_HOST: 'localhost',
@@ -80,7 +82,7 @@ export default () => {
       // 是否开启禁止操作修改删除类接口（此功能仅用于上线网页预览使用）
       STOP_EDIT: true,
       // 日志时区
-      LOG_TIME: 'zh-CN'
-    }
+      LOG_TIME: 'zh-CN',
+    };
   }
-}
+};

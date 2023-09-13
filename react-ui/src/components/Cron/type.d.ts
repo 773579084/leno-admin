@@ -1,3 +1,4 @@
+/* global OpTypes */
 export interface IradioType {
   second: number | string
   minute: number | string

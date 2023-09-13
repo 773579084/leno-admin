@@ -1,24 +1,26 @@
-import { IdictDataSer } from '@/types'
-export interface excelParamsType {
-  headerColumns: headerType[]
-  tableData: any
-  sheetName: string
-  style?: Partial<XLSX.Style>
-  dicts?: dictMapListType
-}
+/* global XLSX */
+import { IdictDataSer } from '@/types';
 
 export interface headerType {
-  title: sting
-  dataIndex: string
-  width?: number
+  title: string;
+  dataIndex: string;
+  width?: number;
 }
 
 export interface dictMapType {
   [key: string]: {
-    [key: string]: string
-  }
+    [key: string]: string;
+  };
 }
 
 export interface dictMapListType {
-  [key: string]: IdictDataSer[]
+  [key: string]: IdictDataSer[];
+}
+
+export interface excelParamsType {
+  headerColumns: headerType[];
+  tableData: any;
+  sheetName: string;
+  style?: Partial<XLSX.Style>;
+  dicts?: dictMapListType;
 }

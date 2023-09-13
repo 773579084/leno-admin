@@ -19,14 +19,14 @@
     }
   },
   // 需要编译的的文件和目录
-  // "include": [
-  //   "src/**/*",
-  // ],
+  "include": [
+    "src/",
+  ],
   "exclude": [
     "node_modules",
     "dist",
     "react-ui",
-    "static",
+    "uploads",
     "docker",
   ]
 }
