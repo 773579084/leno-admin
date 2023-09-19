@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 // ant
 import { MenuFoldOutlined, MenuUnfoldOutlined, GithubOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Layout, Tooltip } from 'antd';
@@ -6,8 +6,6 @@ import { PropsType } from '@/type';
 import ScreenFull from '@/components/ScreenFull';
 import useStore from '@/store';
 import classes from './index.module.scss';
-// types
-// components
 import AvatarCom from './components/AvatarCom';
 import BreadcrumbCom from './components/Breadcrumb';
 import NoticeCom from './components/NoticeCom';

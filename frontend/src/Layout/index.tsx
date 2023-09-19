@@ -38,6 +38,7 @@ const LayoutCom = () => {
           setSider996(true);
           setOpen(false);
           setExpansion(false);
+          setCollapsed(true);
         } else {
           setSider996(false);
           setCollapsed(true);
@@ -59,7 +60,7 @@ const LayoutCom = () => {
 
   // sider 状态保持
   useEffect(() => {
-    console.log(62, collapsed);
+    // console.log(67, collapsed);
 
     const screenWidth = document.body.clientWidth;
     if (screenWidth < 996) {
