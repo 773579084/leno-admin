@@ -119,6 +119,26 @@
 </body>
 
 <script>
+  /* 此处代码用以解决 antdesign4.2*版本table组件使用了ResizeObserver会导致浏览器开发模式下报错 */
+  const debounce = (fn, delay) => {
+    let timer = null;
+    return function () {
+      let context = this;
+      let args = arguments;
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        fn.apply(context, args);
+      }, delay);
+    }
+  }
+
+  const _ResizeObserver = window.ResizeObserver;
+  window.ResizeObserver = class ResizeObserver extends _ResizeObserver {
+    constructor(callback) {
+      callback = debounce(callback, 16);
+      super(callback);
+    }
+  }
 
 </script>
 

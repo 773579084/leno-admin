@@ -2,6 +2,7 @@ import axios, { type Method } from 'axios';
 import { getToken, removeToken } from '@/utils/auth';
 import { message, Modal } from 'antd';
 import useStore from '@/store';
+import cache from '@/utils/cache';
 import NProgress from './nprogress';
 
 const { confirm } = Modal;
@@ -14,9 +15,36 @@ const instance = axios.create({
 // 请求拦截器
 instance.interceptors.request.use(
   (response: any) => {
+    // 是否需要防止数据重复提交
+    const isRepeatSubmit = false;
     // token配置请求头
     if (!response.headers?.authorization && getToken()) {
       response.headers.Authorization = `Bearer ${getToken()}`;
+    }
+
+    if (isRepeatSubmit && (response.method === 'post' || response.method === 'put')) {
+      console.log(25);
+
+      const requestObj = {
+        url: response.url,
+        data: typeof response.data === 'object' ? JSON.stringify(response.data) : response.data,
+        time: new Date().getTime(),
+      };
+      const sessionObj = cache.session.getJSON('sessionObj');
+      if (sessionObj === undefined || sessionObj === null || sessionObj === '') {
+        cache.session.setJSON('sessionObj', requestObj);
+      } else {
+        const s_url = sessionObj.url; // 请求地址
+        const s_data = sessionObj.data; // 请求数据
+        const s_time = sessionObj.time; // 请求时间
+        const interval = 1000; // 间隔时间(ms)，小于此时间视为重复提交
+        if (s_data === requestObj.data && requestObj.time - s_time < interval && s_url === requestObj.url) {
+          const mes = '数据正在处理，请勿重复提交';
+          message.warning(mes);
+          return Promise.reject(new Error(mes));
+        }
+        cache.session.setJSON('sessionObj', requestObj);
+      }
     }
     NProgress.start();
     return response;
@@ -32,7 +60,7 @@ instance.interceptors.response.use(
   },
   (error) => {
     // 二进制数据则不走公用错误提示
-    if (error.request.responseType === 'blob' || error.request.responseType === 'arraybuffer') {
+    if ((error && error.request.responseType === 'blob') || error.request.responseType === 'arraybuffer') {
       return Promise.reject(error);
     }
     // userStore
