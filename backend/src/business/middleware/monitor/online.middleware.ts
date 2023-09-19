@@ -62,7 +62,6 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
           browser: item.browser,
         };
       }
-      return {};
     });
 
     // 分页

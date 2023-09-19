@@ -28,8 +28,9 @@ module.exports = {
     "import/extensions": ["error", "ignorePackages", { "ts": "never" }],
     // 允许大括号前后不空格
     "object-curly-newline": ["error", { "multiline": true }],
-    // 允许函数省略return语句
+    // 允许函数省略和没有return语句
     "consistent-return": "off",
+    "array-callback-return": "off",
     // 允许console
     "no-console": "off",
     "max-len": ["error", {

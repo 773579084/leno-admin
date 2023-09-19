@@ -20,7 +20,7 @@ module.exports = {
     },
   },
   // 不检查sql类型文件
-  ignorePatterns: ["**/*.sql"],
+  ignorePatterns: ["**/*.sql", "build/*"],
   rules: {
     // 关闭行尾规则
     "linebreak-style": "off",
