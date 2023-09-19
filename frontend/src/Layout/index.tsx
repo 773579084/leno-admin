@@ -74,10 +74,13 @@ const LayoutCom = () => {
 
   const SiderCom = (
     <Sider theme="light" trigger={null} collapsible={true} collapsed={expansion}>
-      <div hidden={!layoutSet.sidebarLogo} className={`${classes.logo} ${layoutSet.headerTheme}`}>
-        <div className={classes['logo-image']}></div>
-        {!collapsed && <div className={classes['logo-font']}>Leno Admin</div>}
-      </div>
+      {layoutSet.sidebarLogo && (
+        <div className={`${classes.logo} ${layoutSet.headerTheme}`}>
+          <div className={classes['logo-image']}></div>
+          {!collapsed && <div className={classes['logo-font']}>Leno Admin</div>}
+        </div>
+      )}
+
       <div className={classes['sider-menu']}>
         <MenuCom collapsed={collapsed} />
       </div>

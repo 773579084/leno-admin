@@ -111,7 +111,6 @@ const User = () => {
   // 查询列表
   const getList = async () => {
     try {
-      // const { data } = await getUserListAPI(queryParams)
       const { data } = await getUserListAPI(queryParams);
 
       setUserList({ ...data.result });
@@ -546,7 +545,7 @@ const User = () => {
           <Search style={{ marginBottom: 8 }} placeholder="请输入部门名称" onChange={onChange} />
           <Tree
             onExpand={onExpand}
-            expandedKeys={expandedKeys}
+            expandedKeys={expandedKeys as any}
             autoExpandParent={autoExpandParent}
             treeData={treeData}
             onSelect={(selectedKeys: Key[]) => {

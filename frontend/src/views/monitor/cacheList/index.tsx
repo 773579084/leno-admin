@@ -11,7 +11,7 @@ const CacheList = () => {
   const [cacheForm] = Form.useForm();
 
   // 缓存列表
-  const [cacheList, setCacheList] = useState<ICacheListType[]>();
+  const [cacheList, setCacheList] = useState<ICacheListType[]>([]);
   // 当前的缓存列表名
   const [cacheName, setCacheName] = useState('');
   // 键列表
