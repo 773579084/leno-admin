@@ -28,7 +28,7 @@ const TabsCom = () => {
     let currentPath = pathname.split('/')[pathname.split('/').length - 1];
     let route = {} as RouteType;
 
-    const findCurrentRoute = (routes: any) => {
+    const findCurrentRoute = (routes: RouteType[]) => {
       routes.forEach((_route: RouteType) => {
         if (_route.children instanceof Array) {
           findCurrentRoute(_route.children);
@@ -42,11 +42,8 @@ const TabsCom = () => {
           route = _route;
         }
       });
-
-      try {
-        findCurrentRoute(dynamicRouters);
-      } catch (error) {}
     };
+    findCurrentRoute(toJS(dynamicRouters));
     // 判断当前的pathname 在 tabsArr里面有没有
     let isSetTab = false;
     try {

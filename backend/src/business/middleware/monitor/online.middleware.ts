@@ -49,20 +49,23 @@ export const getListMid = async (ctx: Context, next: () => Promise<void>) => {
     if (!userName && !ipaddr) values = await queryAllKeyValue(onlineTokens);
 
     // 4 提取前端需要信息
-    const newV = values.map((item, index) => {
-      if (item) {
-        return {
-          tokenId: onlineTokens[index],
-          os: item?.os,
-          loginTime: item.loginTime && dayjs(item.loginTime).format('YYYY-MM-DD HH:mm:ss'),
-          loginLocation: item.address,
-          deptName: item.userInfo.dept.deptName,
-          ipaddr: item.ip,
-          userName: item.userInfo.userName,
-          browser: item.browser,
-        };
-      }
-    });
+    const newV = values
+      .map((item, index) => {
+        if (item) {
+          return {
+            tokenId: onlineTokens[index],
+            os: item?.os,
+            loginTime: item.loginTime && dayjs(item.loginTime).format('YYYY-MM-DD HH:mm:ss'),
+            loginLocation: item.address,
+            deptName: item.userInfo.dept.deptName,
+            ipaddr: item.ip,
+            userName: item.userInfo.userName,
+            browser: item.browser,
+          };
+        }
+        return '';
+      })
+      .filter((item) => item !== '');
 
     // 分页
     ctx.state.formatData = {
