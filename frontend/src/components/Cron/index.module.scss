@@ -26,6 +26,7 @@
   .run-time {
 
     :global {
+
       .ant-card-body {
         padding-top: 10px;
         padding-bottom: 0;
@@ -37,7 +38,7 @@
         color: #707070;
       }
 
-      ul>li {
+      ul > li {
         font-size: 14px;
         color: #606266;
       }
@@ -46,10 +47,9 @@
 
   .week-font {
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    margin: 7px 10px 0;
     font-size: 14px;
-    margin:  7px 10px 0;
   }
 }
-

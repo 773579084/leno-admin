@@ -10,17 +10,17 @@ $boderColor:#dfe6ec;
     }
 
     .header {
-      border-bottom: 1px solid $boderColor;
-      padding-bottom: 15px;
       margin-bottom: 10px;
+      padding-bottom: 15px;
       font-weight: bold;
+      border-bottom: 1px solid $boderColor;
       color: #9093a6;
     }
 
     .body {
-      border-bottom: 1px solid $boderColor;
-      padding-bottom: 10px;
       margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid $boderColor;
       color: #606266;
     }
 

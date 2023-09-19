@@ -1,11 +1,11 @@
 .notice-div {
+  overflow: auto;
   width: 250px;
   height: 300px;
-  overflow: auto;
 }
 
 .notice-content {
-  color:#c1bfbf ;
+  color: #c1bfbf;
 }
 
 :global {

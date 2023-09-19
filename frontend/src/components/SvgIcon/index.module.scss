@@ -3,12 +3,12 @@
 .svg-class {
   display: inline-block;
   overflow: hidden;
-  font-size: 12px;
-  min-width: 12px;
   width: 1em;
+  min-width: 12px;
   height: 1em;
+  font-size: 12px;
 }
 
 .icon-i {
-  @include dis-center
+  @include dis-center;
 }

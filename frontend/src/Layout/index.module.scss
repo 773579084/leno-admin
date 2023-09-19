@@ -1,22 +1,23 @@
 .layout-container {
+  display: flex;
   width: 100%;
   height: 100%;
-  display: flex;
 }
 
 .sider-drawer {
 
   :global {
+
     .ant-drawer-body {
+      overflow: hidden;
       padding: 0;
       width: 200px;
       height: 100%;
-      overflow: hidden;
     }
   }
 }
 
-// logo
+/* logo */
 .logo {
   display: flex;
   justify-content: space-evenly;
@@ -31,23 +32,24 @@
   }
 
   .logo-font {
-    color: rgb(255, 255, 255);
     margin-top: -3px;
     font-size: 23px;
     font-weight: bold;
     white-space: nowrap;
+    color: rgb(255 255 255);
   }
 }
-// menu
+
 .sider-menu {
   overflow-y: auto;
   height: 92vh;
   border-right: 1px solid #eae6e6;
 
   :global {
+
     .ant-menu-inline {
       width: 99%;
-      border-right: 0px;
+      border-right: 0;
     }
   }
 }
@@ -65,16 +67,17 @@
 }
 
 #components-layout-demo-custom-trigger .logo {
-  height: 32px;
   margin: 16px;
-  background: rgba(255, 255, 255, 0.3);
+  height: 32px;
+  background: rgb(255 255 255 / 30%);
 }
 
-// 顶部与内容区背景色
+/* 顶部与内容区背景色 */
 .site-layout {
 
   :global {
-    .ant-layout-content{
+
+    .ant-layout-content {
       position: relative;
     }
   }

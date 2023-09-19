@@ -5,30 +5,30 @@ $theme-color:#b2aeae;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  width: 100vw;
   overflow: hidden;
+  width: 100vw;
+  min-height: 100vh;
 
   .svg-bg {
     position: fixed;
-    left: 0;
     top: 0;
+    left: 0;
+    z-index: -10;
     width: 100vw;
     height: 100vh;
     transform: scale(1.1);
-    z-index: -10;
   }
 
   .login-sencond-box {
     display: flex;
-    align-items: center;
     justify-content: space-around;
+    align-items: center;
+    overflow: hidden;
+    padding: 0 4vw 0 0;
     width: 96vw;
     height: 94vh;
-    padding: 0 4vw 0 0;
-    overflow: hidden;
-    background-color: hsla(0, 0%, 100%, 0.8);
     border-radius: 10px;
+    background-color: hsl(0deg 0% 100% / 80%);
   }
 
   /* 左边图像 */
@@ -46,7 +46,7 @@ $theme-color:#b2aeae;
     }
 
     .project-name {
-      padding:20px 0 0 0 ;
+      padding: 20px 0 0;
       font-size: 3.5vw;
       font-weight: 700;
     }
@@ -54,18 +54,17 @@ $theme-color:#b2aeae;
 
   /* LOGIN */
   .login-box {
-    // flex: 6;
-    width: 500px;
     padding: 5vh 4vh;
-    background-color: #ffffff;
+    width: 500px;
     border-radius: 10px;
+    background-color: #ffffff;
     box-shadow: 2px 2px 20px 2px #c7cdcfa3;
 
     .login-form {
       position: relative;
-      padding: 0px 20px 0;
-      margin: 0 auto;
       overflow: hidden;
+      margin: 0 auto;
+      padding: 0 20px;
     }
 
     /* login title byte */
@@ -80,24 +79,25 @@ $theme-color:#b2aeae;
       }
     }
 
-    // login 按钮
+    /* login 按钮 */
     .login-btn {
+      margin: 0 30px 0 0;
       border-radius: 2px;
-      margin:0px 30px 0 0;
     }
 
-    // 局部修改 antd 样式
+    /* 局部修改 antd 样式 */
     :global {
 
-      .ant-input-affix-wrapper,.ant-input {
-        background-color: transparent!important;
+      .ant-input-affix-wrapper,
+      .ant-input {
         color: $theme-color;
+        background-color: transparent !important;
       }
 
       .ant-form-item-control-input-content {
-         display: flex;
-         align-items: center;
-       }
+        display: flex;
+        align-items: center;
+      }
 
       .ant-input-affix-wrapper {
         line-height: 2.6;
@@ -113,7 +113,7 @@ $theme-color:#b2aeae;
     }
   }
 
-  // 底部版权信息
+  /* 底部版权信息 */
   .copyright {
     position: fixed;
     bottom: 4vh;

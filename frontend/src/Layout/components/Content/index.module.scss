@@ -1,24 +1,29 @@
 .site-layout-background {
-  background: #fff;
-  animation: fade .6s linear;
+  background: #ffffff;
+  animation: fade 0.6s linear;
 
-  :global{
-    .ka-wrapper,.ka-content {
+  :global {
+
+    .ka-wrapper,
+    .ka-content {
       height: 100%;
     }
   }
 }
 
 @keyframes fade {
+
   0% {
     opacity: 0;
     transform: translateX(-30px);
   }
+
   50% {
     opacity: 0;
   }
+
   100% {
     opacity: 1;
-    transform: translateX(0px);
+    transform: translateX(0);
   }
 }

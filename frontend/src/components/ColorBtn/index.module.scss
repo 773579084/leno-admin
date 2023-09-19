@@ -7,18 +7,21 @@ $btn-border-color:#a3d3ff #c4e3ff #a1ebc2 #d0f5e0 #ffb6b6 #ffdbdb #d3d4d6 #d3d4d
 
 @each $class,$color,$colorHover,$background,$backgroundHover,$boder in zip($color-class,$btn-color,$btn-color-hoover,$btn-backgroud,$btn-backgroud-hover,$btn-border-color,) {
   .color-#{$class} {
+
     :global {
-      .ant-btn-default{
+
+      .ant-btn-default {
+        border-color: $boder;
         border-radius: 5px;
         color: $color;
         background: $background;
-        border-color: $boder;
       }
+
       .ant-btn-default:hover {
-        background: $backgroundHover;
-        color: $colorHover;
         border-color: $boder;
+        color: $colorHover;
+        background: $backgroundHover;
       }
     }
   }
-};
+}

@@ -1,5 +1,6 @@
-// 头部搜索，form-item 统一样式间隔设置
+/* 头部搜索，form-item 统一样式间隔设置 */
 .leno-search {
+
   .ant-form-item {
     margin-bottom: 14px;
   }
@@ -10,46 +11,50 @@
 
   .ant-form-item-label {
     font-weight: bold;
-     > label {
+
+    > label {
       color: #606266;
     }
   }
 }
 
-// table
+/* table */
 .leno-table {
-  .ant-table-thead{
-    .ant-table-cell  {
+
+  .ant-table-thead {
+
+    .ant-table-cell {
       font-weight: bold;
       color: #606266;
     }
   }
 
-  // pagination
-  .pagination{
-    margin-top: 20px;
+  /* pagination */
+  .pagination {
     float: right;
+    margin-top: 20px;
   }
 }
 
 .sys-user {
+
   .site-tree-search-value {
-    color: #f50;
+    color: #ff5500;
   }
 }
 
-// btn text类型 hover更改
+/*  btn text类型 hover更改 */
 .ant-btn-text:hover {
+  border-color: transparent;
   color: #40a9ff;
   background-color: #e8f4ff;
-  border-color: transparent;
 }
 
 .ant-layout {
   background-color: white;
 }
 
-// 全局统一 -- 间隔距离
+/* 全局统一 -- 间隔距离 */
 .mb10 {
   margin-bottom: 10px;
 }

@@ -3,24 +3,24 @@
 .layout-drawer {
 
   .title {
-    color: rgba(0,0,0,.85);
-    font-size: 14px;
-    line-height: 22px;
     margin: 14px 0;
+    font-size: 14px;
+    color: rgb(0 0 0 / 85%);
+    line-height: 22px;
   }
 
   .theme {
     margin: 10px 0;
 
     .theme-square {
-      width: 40px;
-      height: 40px;
-      margin-right: 20px;
-      border-radius: 5px;
-      cursor: pointer;
       display: flex;
       justify-content: center;
       align-items: center;
+      margin-right: 20px;
+      width: 40px;
+      height: 40px;
+      border-radius: 5px;
+      cursor: pointer;
     }
   }
 
@@ -30,9 +30,7 @@
   }
 
   .base-layout {
-    margin: 30px 0 15px 0;
+    margin: 30px 0 15px;
     color: #6f6e6e;
   }
 }
-
-

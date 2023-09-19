@@ -2,24 +2,26 @@
 .tree-border {
   margin-top: 5px;
   border: 1px solid #e5e6e7;
-  background: #FFFFFF none;
-  border-radius:4px;
+  border-radius: 4px;
+  background: #ffffff none;
 }
 
-//main-container全局样式
+/* main-container全局样式 */
 .app-container {
   padding: 20px;
 }
 
-// 全局自定义滚动条样式配置
+/* 全局自定义滚动条样式配置 */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
+
 ::-webkit-scrollbar-thumb {
-  background-color: silver;
   border-radius: 3px;
+  background-color: silver;
 }
+
 ::-webkit-scrollbar-track {
   background-color: #f1f1f1;
 }

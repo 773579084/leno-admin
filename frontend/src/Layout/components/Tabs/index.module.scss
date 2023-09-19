@@ -11,15 +11,15 @@
     width: 80vw;
   }
 
-  // 局部修改 antd 样式
+  /* 局部修改 antd 样式 */
   :global {
 
     .ant-tabs-nav {
-      margin: 0!important;
+      margin: 0 !important;
     }
 
     .anticon {
-      margin-right: 7px!important;
+      margin-right: 7px !important;
     }
   }
 }

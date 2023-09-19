@@ -1,12 +1,12 @@
 .generate-mes {
 
   h4 {
-    color: #6379ca;
-    border-bottom: 1px solid #dddddd;
     margin: 10px 0 20px;
+    border-bottom: 1px solid #dddddd;
+    color: #6379ca;
   }
 
-  // 局部修改 antd 样式
+  /* 局部修改 antd 样式 */
   :global {
 
     .ant-input-group-addon {

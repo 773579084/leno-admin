@@ -1,15 +1,15 @@
 @import '@/assets/style';
 
 .site-layout-background {
-  background: #fff;
+  background: #ffffff;
 
   :global {
 
     .ant-layout-header {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      height: 56px!important;
+      align-items: center;
+      height: 56px !important;
       line-height: 56px;
 
       .anticon {
@@ -25,6 +25,7 @@
   }
 }
 
-.header-left,.header-right {
+.header-left,
+.header-right {
   @include dis-center;
 }
