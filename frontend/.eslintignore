@@ -1,3 +1,6 @@
-/node_modules
-/build
-/dist
+# 忽略build目录下文件的语法检查
+*.build
+# 忽略public目录下文件的语法检查
+*.dist
+# 忽略当前目录下为js的文件的语法检查
+*.js

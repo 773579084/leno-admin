@@ -2,7 +2,7 @@ module.exports = {
   root: true,
   extends: ['stylelint-config-prettier', "stylelint-config-standard"],
   plugins: ["stylelint-order", "stylelint-scss"],
-  ignoreFiles: ['**/*.js', '**/*.jsx', '**/*.tsx', '**/*.ts', '**/*.json', "dist/**/*", "public/**/*"],
+  ignoreFiles: ['**/*.js', '**/*.jsx', '**/*.tsx', '**/*.ts', '**/*.json', "dist/**/*", "public/**/*", "node_modules/**/*"],
   customSyntax: "postcss-scss",
   rules: {
     indentation: 2,
