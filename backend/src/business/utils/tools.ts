@@ -870,10 +870,6 @@ import { commonDelImgAPI } from '@/api/modules/common'\n`
     } catch (error) {}
   }, [])
 
-  useEffect(() => {
-    getList()
-  }, [queryParams])
-
   // 查询列表
   const getList = async () => {
     try {
@@ -889,6 +885,11 @@ import { commonDelImgAPI } from '@/api/modules/common'\n`
       setLoading(false)
     } catch (error) {}
   }
+
+  
+  useEffect(() => {
+    getList()
+  }, [queryParams])
 
   // 搜索
   const searchQueryFn = () => {
@@ -943,7 +944,7 @@ import { commonDelImgAPI } from '@/api/modules/common'\n`
       : `// row-select
   const rowSelection = {
     selectedRowKeys: selectKeys,
-    onChange: (selectedRowKeys: React.Key[], selectedRows: I${data.businessName}DetailType[]) => {
+    onChange: (selectedRowKeys: React.Key[]) => {
       if (!selectedRowKeys.length || selectedRowKeys.length > 1) {
         setSingle(true)
       } else {
@@ -1275,13 +1276,13 @@ export default ${stringFirst(data.className)}`;
   // 第八步 前端 生成typescript类型标注
   codes['react.d.ts'] = `
 // 前端 类型文件
+export interface I${data.businessName}DetailType {
+  ${typeCreate(data.columns, 'Query')}}
+
 export interface I${data.businessName}Type extends I${data.businessName}DetailType {
   pageNum: number
   pageSize: number
  }
-
-export interface I${data.businessName}DetailType {
-  ${typeCreate(data.columns, 'Query')}}
 
 // 数据列表
 export interface IgetListAPI {
