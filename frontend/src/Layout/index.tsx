@@ -41,8 +41,8 @@ const LayoutCom = () => {
           setCollapsed(true);
         } else {
           setSider996(false);
-          setCollapsed(true);
-          setExpansion(true);
+          setCollapsed(false);
+          setExpansion(false);
         }
       })();
   };
@@ -60,8 +60,6 @@ const LayoutCom = () => {
 
   // sider 状态保持
   useEffect(() => {
-    // console.log(67, collapsed);
-
     const screenWidth = document.body.clientWidth;
     if (screenWidth < 996) {
       collapsed ? setOpen(false) : setOpen(true);
@@ -74,13 +72,12 @@ const LayoutCom = () => {
 
   const SiderCom = (
     <Sider theme="light" trigger={null} collapsible={true} collapsed={expansion}>
-      {layoutSet.sidebarLogo && (
-        <div className={`${classes.logo} ${layoutSet.headerTheme}`}>
-          <div className={classes['logo-image']}></div>
-          {!collapsed && <div className={classes['logo-font']}>Leno Admin</div>}
+      <div hidden={!layoutSet.sidebarLogo} className={`${classes.logo} ${layoutSet.headerTheme}`}>
+        <div className={classes['logo-image']}></div>
+        <div hidden={collapsed} className={classes['logo-font']}>
+          Leno Admin
         </div>
-      )}
-
+      </div>
       <div className={classes['sider-menu']}>
         <MenuCom collapsed={collapsed} />
       </div>

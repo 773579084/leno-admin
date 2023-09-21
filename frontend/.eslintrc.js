@@ -63,5 +63,6 @@ module.exports = {
     "no-labels": ["error", { "allowLoop": true }],
     // 允许空捕获
     "no-empty": ["error", { "allowEmptyCatch": true }],
+    "import/no-extraneous-dependencies": 'off'
   },
 }

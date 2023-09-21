@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-// ant
+import React from 'react';
 import { MenuFoldOutlined, MenuUnfoldOutlined, GithubOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Layout, Tooltip } from 'antd';
 import { PropsType } from '@/type';
