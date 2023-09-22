@@ -36,7 +36,6 @@ const TabsCom = () => {
           if (pathname.indexOf(_route.path?.split('/:')[0] as string) !== -1) {
             currentPath = pathname.split('/')[pathname.split('/').length - 2];
             route = _route;
-            throw new Error('找到就结束循环');
           }
         } else if (pathname.indexOf(_route.path) !== -1 || (pathname === '/' && _route.path === HOME_URL)) {
           route = _route;
@@ -50,7 +49,6 @@ const TabsCom = () => {
       tabsArr.forEach((tab) => {
         if (tab.path === pathname) {
           isSetTab = true;
-          throw new Error('找到就结束循环');
         }
       });
     } catch (error) {}

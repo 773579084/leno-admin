@@ -114,7 +114,6 @@ export default class UseRoutersStore {
           handleRouter(router.children, `${router.path}/` as string);
         } else {
           // 无子元素则判断是否需要缓存
-
           // eslint-disable-next-line no-lonely-if
           if (router.meta?.noCache) {
             keeps.push(beforePath + router.path);
