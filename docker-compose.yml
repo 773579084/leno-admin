@@ -13,7 +13,7 @@ services:
     networks:
       - app-leno-admin-web
     environment:
-      - TZ=Asia/Guangzhou
+      - TZ=Asia/Shanghai
       - MYSQL_ROOT_PASSWORD=Aa363689;
       - MYSQL_DATABASE=leno_admin
     volumes:
@@ -28,11 +28,11 @@ services:
     networks:
       - app-leno-admin-web
     environment:
-      - TZ=Asia/Guangzhou
+      - TZ=Asia/Shanghai
       - REDIS_PASSWORD=admin123
 
   backend:
-    image: registry.cn-shenzhen.aliyuncs.com/zwc-docker/leno_admin:backend-2.0.0
+    image: registry.cn-shenzhen.aliyuncs.com/zwc-docker/leno_admin:backend-2.0.4
     ports:
       - 9000:9000
     depends_on:
@@ -42,12 +42,16 @@ services:
       - app-leno-admin-web
     volumes:
       - /home/leno_admin/backend/logs:/home/backend/logs
+    environment:
+      - TZ=Asia/Shanghai
 
   frontend:
-    image: registry.cn-shenzhen.aliyuncs.com/zwc-docker/leno_admin:frontend-2.0.0
+    image: registry.cn-shenzhen.aliyuncs.com/zwc-docker/leno_admin:frontend-2.0.1
     ports:
       - 80:80
     networks:
       - app-leno-admin-web
     depends_on:
       - backend
+    environment:
+      - TZ=Asia/Shanghai

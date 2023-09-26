@@ -130,6 +130,24 @@ export const formatHumpLineTransfer = (data, type = 'hump'): Array<any> => {
   return newData;
 };
 
+/**
+ * 时间格式转换
+ * @param utcTime
+ * @returns
+ */
+function convertToBeijingTime(utcTime: string | number | Date) {
+  // 创建一个新的 Date 对象，将 UTC 时间字符串解析为日期对象
+  const date = new Date(utcTime);
+
+  // 使用偏移量调整小时数
+  date.setHours(date.getHours());
+
+  // 格式化为 'YYYY-MM-DD HH:mm:ss' 格式
+  const formattedBeijingTime = date.toISOString().replace('T', ' ').slice(0, 19);
+
+  return formattedBeijingTime;
+}
+
 /** 返回数据时间命名修改
  * @param {data} 'obj或ary'
  * @param {type}
@@ -150,8 +168,13 @@ export const timeChange = (data: any[]): Array<any> => {
             item[key],
           )
         ) {
+          // console.log(153, item[key]);
+          const temp = new Date(item[key]);
+          const d = new Date(temp.getTime() + 1000 * 60 * 60 * 8);
           // eslint-disable-next-line no-param-reassign
-          item[key] = dayjs(item[key]).format('YYYY-MM-DD hh:mm:ss');
+          item[key] = convertToBeijingTime(d);
+          // item[key] = dayjs(item[key]).tz('PRC').format('YYYY-MM-DD hh:mm:ss');
+          // console.log(155, d, item[key]);
         }
         // 如果值为对象
         if (Object.prototype.toString.call(item[key]) === '[object Object]') {
