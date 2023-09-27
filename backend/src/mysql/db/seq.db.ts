@@ -21,6 +21,18 @@ const seq = new Sequelize(MYSQL_DB as string, MYSQL_USER as string, MYSQL_PWD as
     // 把驼峰命名转换为下划线
     underscored: true,
   },
+  // 此配置矫正 seq查询的时区，并且修正返回时间格式
+  dialectOptions: {
+    useUTC: false, // for reading from database
+    dateStrings: true,
+    typeCast: (field, next) => {
+      // for reading from database
+      if (field.type === 'DATETIME') {
+        return field.string();
+      }
+      return next();
+    },
+  },
   pool: {
     // 使用连接池
     max: 50, // 连接池中最大连接数量

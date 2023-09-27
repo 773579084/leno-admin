@@ -22,7 +22,8 @@ const app = new Koa();
 initDB();
 
 // 注册中间件
-app.use(cors()); // 解决跨域问题
+// 解决跨域问题
+app.use(cors());
 
 app.use(
   KoaBody({

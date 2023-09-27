@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-import dayjs from 'dayjs';
 import bcrypt from 'bcryptjs';
 import { dictMapListType, dictMapType } from '@/types';
 
@@ -123,75 +122,6 @@ export const formatHumpLineTransfer = (data, type = 'hump'): Array<any> => {
   if (Object.prototype.toString.call(data) === '[object Object]') {
     let obj = null;
     newData.forEach((item) => {
-      obj = item;
-    });
-    return obj;
-  }
-  return newData;
-};
-
-/**
- * 时间格式转换
- * @param utcTime
- * @returns
- */
-function convertToBeijingTime(utcTime: string | number | Date) {
-  // 创建一个新的 Date 对象，将 UTC 时间字符串解析为日期对象
-  const date = new Date(utcTime);
-
-  // 使用偏移量调整小时数
-  date.setHours(date.getHours());
-
-  // 格式化为 'YYYY-MM-DD HH:mm:ss' 格式
-  const formattedBeijingTime = date.toISOString().replace('T', ' ').slice(0, 19);
-
-  return formattedBeijingTime;
-}
-
-/** 返回数据时间命名修改
- * @param {data} 'obj或ary'
- * @param {type}
- * @return {Array||Object}
- */
-export const timeChange = (data: any[]): Array<any> => {
-  // 判断传入的值是对象还是数组
-  const newData = Object.prototype.toString.call(data) === '[object Object]' ? [JSON.parse(JSON.stringify(data))] : JSON.parse(JSON.stringify(data));
-
-  function toggleFn(list: any[]) {
-    list.forEach((item) => {
-      // eslint-disable-next-line guard-for-in
-      for (const key in item) {
-        // 如果 item[key] 为时间，则修改时间格式重新赋值
-        if (
-          // eslint-disable-next-line max-len
-          /^[0-9]{4}-((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01])|(0[469]|11)-(0[1-9]|[12][0-9]|30)|(02)-(0[1-9]|[12][0-9]))T(0[0-9]|1[0-9]|2[0-3]):(0[0-9]|[1-5][0-9]):(0[0-9]|[1-5][0-9])\.[0-9]{3}Z$/.test(
-            item[key],
-          )
-        ) {
-          // console.log(153, item[key]);
-          const temp = new Date(item[key]);
-          const d = new Date(temp.getTime() + 1000 * 60 * 60 * 8);
-          // eslint-disable-next-line no-param-reassign
-          item[key] = convertToBeijingTime(d);
-          // item[key] = dayjs(item[key]).tz('PRC').format('YYYY-MM-DD hh:mm:ss');
-          // console.log(155, d, item[key]);
-        }
-        // 如果值为对象
-        if (Object.prototype.toString.call(item[key]) === '[object Object]') {
-          toggleFn([item[key]]);
-        }
-        // 如果值为数组
-        if (Object.prototype.toString.call(item[key]) === '[object Array]') {
-          toggleFn(item[key]);
-        }
-      }
-    });
-  }
-  toggleFn(newData);
-  // 因为上面操作为了方便操作，会将对象转化为数组格式，操作完后，需要将原先是对象的重新转化为对象
-  if (Object.prototype.toString.call(data) === '[object Object]') {
-    let obj = null;
-    newData.forEach((item: any) => {
       obj = item;
     });
     return obj;

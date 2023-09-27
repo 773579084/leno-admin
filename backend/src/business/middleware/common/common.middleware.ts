@@ -6,7 +6,7 @@ import { dictMapListType, imgType } from '@/types';
 import errors from '@/app/err.type';
 import { getExcelAddress, parsingExcel } from '@/business/utils/excel';
 import { getDataTypeSer } from '@/business/service/system/dict_data.service';
-import { formatHumpLineTransfer, pwdHash, removeSpecifyFile, timeChange } from '@/business/utils';
+import { formatHumpLineTransfer, pwdHash, removeSpecifyFile } from '@/business/utils';
 import { userExcelHeader } from '@/business/public/excelMap';
 import env from '@/config/default';
 
@@ -17,7 +17,7 @@ const { IMG_URL } = env();
 export const formatHandle = async (ctx: Context, next: () => Promise<void>) => {
   const res = formatHumpLineTransfer(ctx.state.formatData);
   // 转换时间格式
-  ctx.state.formatData = timeChange(res);
+  ctx.state.formatData = res;
   await next();
 };
 

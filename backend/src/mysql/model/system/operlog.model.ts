@@ -1,4 +1,4 @@
-import { DataTypes, Sequelize } from 'sequelize';
+import { DataTypes } from 'sequelize';
 import seq from '@/mysql/db/seq.db';
 
 // 创建数据库模型 操作日志记录
