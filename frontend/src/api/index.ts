@@ -23,8 +23,6 @@ instance.interceptors.request.use(
     }
 
     if (isRepeatSubmit && (response.method === 'post' || response.method === 'put')) {
-      console.log(25);
-
       const requestObj = {
         url: response.url,
         data: typeof response.data === 'object' ? JSON.stringify(response.data) : response.data,
