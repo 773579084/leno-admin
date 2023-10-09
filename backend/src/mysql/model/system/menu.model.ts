@@ -24,7 +24,7 @@ const SysMenu = seq.define(
       comment: '父菜单ID',
     },
     order_num: {
-      type: DataTypes.INET,
+      type: DataTypes.INTEGER,
       defaultValue: 0,
       comment: '显示顺序',
     },
