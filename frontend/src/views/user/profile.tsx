@@ -90,7 +90,7 @@ const Profile = () => {
           <Card title="个人信息" style={{ borderRadius: 5 }}>
             <ul className={classes['user-info']}>
               <li className={classes.avatar}>
-                <ImgCrop rotate onModalOk={(file: any) => onModalOK(file)}>
+                <ImgCrop rotationSlider onModalOk={(file: any) => onModalOK(file)}>
                   <Upload name="avatar" listType="picture-card" showUploadList={false} beforeUpload={beforeUpload}>
                     {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
                   </Upload>
